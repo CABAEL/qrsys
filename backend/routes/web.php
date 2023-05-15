@@ -28,17 +28,24 @@ use GuzzleHttp\Middleware;
 |
 */
 
+
+//login routes
+Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
+
 Route::get('/', function (Request $request) {
-    return view('portal.index');
+    return view('login');
 })->name('portal');
-
-
-Route::get('/test', function (Request $request) {
-    return Auth::user();
-});
 
 Route::get('/register', function (Request $request) {
     return view('register');
+});
+
+Route::get('/test', function (Request $request) {
+    if (Auth::check()) {
+        return Auth::user();
+    }else{
+        return "not";
+    }
 });
 
 Route::get('/login', function (Request $request) {
@@ -50,11 +57,7 @@ Route::get('/hash',[ApplicantController::class,'incrementalHash']);
 
 Route::resource('/register/add_user',ApplicantController::class);
 
-Route::post('login/login_post',[LoginController::class,'authenticate']);
 Route::get('/logout',[LogoutController::class,'logout_user'])->name('logout');
-//Route::post('login_post',[ 'as' => 'login', 'uses' => 'LoginController@authenticate']);
-
-
 
 //portal get routes
 Route::get('/portal_event',[EventController::class,'index']);
@@ -63,19 +66,19 @@ Route::get('/portal_announcement',[AnnouncementController::class,'index']);
 
 //Route::post('google_auth',[LoginController::class,'google_auth']);
 Route::middleware(['auth','role'])->group(function(){
-
     Route::group([                                           
         'prefix' => 'admin',
         'as' => 'admin',
         ],function(){
 
        
-        Route::get('/chat_support',function(Request $request){
-            return view('template.admin.chat_support');
-        });
-        Route::resource('/chat',ChatController::class);
-        Route::get('/getAdminChats',[ChatController::class,'getAdminChats']);
-        Route::get('/updateMsgsStatus/{id}',[ChatController::class,'updateMsgsStatus']);
+        // Route::get('/chat_support',function(Request $request){
+        //     return view('template.admin.chat_support');
+        // });
+
+        // Route::resource('/chat',ChatController::class);
+        // Route::get('/getAdminChats',[ChatController::class,'getAdminChats']);
+        // Route::get('/updateMsgsStatus/{id}',[ChatController::class,'updateMsgsStatus']);
         
         Route::get('/',function(Request $request){
             return redirect('admin/home');
@@ -85,33 +88,33 @@ Route::middleware(['auth','role'])->group(function(){
             return view('template.admin.index');
         });
 
-        Route::get('/deactivated_users',function(){
-            return view('template.admin.deactivated_users');
-        });
+        // Route::get('/deactivated_users',function(){
+        //     return view('template.admin.deactivated_users');
+        // });
 
         Route::get('/logout',function(Request $request){
             return redirect(route('logout'));
         });
 
-        Route::get('/users',function(){
-            return view('template.admin.users');
-        });
+        // Route::get('/users',function(){
+        //     return view('template.admin.users');
+        // });
 
-        Route::get('/activate_user/{id}',[UserController::class,'activate']);
+        // Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
-        Route::put('/update_user_data/{id}',[UserController::class,'update']);
+        // Route::put('/update_user_data/{id}',[UserController::class,'update']);
 
-        Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
+        // Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
-        Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
+        // Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
 
-        Route::get('/user_list',[UserController::class,'index']);
+        // Route::get('/user_list',[UserController::class,'index']);
 
-        Route::get('/deactivated_list',[UserController::class,'deactivatedUser']);
+        // Route::get('/deactivated_list',[UserController::class,'deactivatedUser']);
 
-        Route::get('/user_info/{id}',[UserController::class,'user_info']);
+        // Route::get('/user_info/{id}',[UserController::class,'user_info']);
 
-        Route::post('add_user',[UserController::class,'store']);
+        // Route::post('add_user',[UserController::class,'store']);
     
     });
 
@@ -387,20 +390,6 @@ Route::middleware(['auth','role'])->group(function(){
 
 
 });
-    /*Route::post('/sendEmail',[EmailController::class,'send']);*/
-
-/*Route::get('/invalidUser',function(){
-    
-    $data = [
-        'status' => 'Invalid request.',
-        'message' => 'Access denied.',
-    ];
-
-    //return response()->json($data);
-    return redirect(route('base'));
-
-
-})->name('invalidUser');*/
 
 
 

@@ -23,26 +23,32 @@
   </head>
 
   <body class="bg-dark">
-
-    <div class="container">
-
+    <div class="container" style="margin-top: 15%;">
       <div class="card card-login mx-auto mt-5">
         <div class="card-header">
-          Login
+        <span style="font-size:10px;">Welcome to</span> <span style="font-family:tahoma;color:#032c45;font-weight:bolder;">Intellidocs</span>
         </br>
-        {{Auth::user();}}
           </br>
         </div>
         <div class="card-body">
           <form id="loginForm">
             <div class="form-group">
               <label for="username">Username</label>
-              <input type="text" class="form-control" id="username" placeholder="Enter username">
+              <input type="text" class="form-control" id="username">
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="password">Password</label>
               <input type="password" class="form-control" id="password" placeholder="Password">
+            </div> -->
+            <div class="form-group">
+            <label>Password</label>
+            <div class="input-group" id="show_hide_password">
+              <input class="form-control" id="password" type="password">
+              <div class="input-group-addon">
+              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+              </div>
             </div>
+          </div>
             <div class="form-group">
               <div class="form-check">
                 <label class="form-check-label">
@@ -53,17 +59,8 @@
             </div>
             <input type="hidden" value="{{ csrf_token() }}" id="csrf"/>
            
-            <a class="btn btn-primary btn-block" id="loginBtn">Login</a>
+            <input type="submit" class="btn btn-primary btn-block" id="loginBtn" value="Login"></input>
           </form>
-          <!--
-          <center><span>Sign-in with: 
-            <div class="g-signin2" data-onsuccess="onSignIn" style="width:35px;" alt="Google"></div>
-          </span></center>
-          <a href="#" onclick="signOut();">Sign out</a>-->
-          <div class="text-center">
-            <a class="d-block small mt-3" href="/register">Register an Account</a>
-            <a class="d-block small" href="{{route('portal')}}">Portal</a>
-          </div>
         </div>
       </div>
     </div>
@@ -76,40 +73,55 @@
     <script src="{{ asset('js/custom/custom.js') }}"></script>
 <script>
 $( document ).ready(function() {
+
   $('#loginBtn').on('click', function() {
-  
-  show_loader();
-  var token = $('#csrf').val();
-  $.ajax({
-      url: base_url("login_post"),
-      type: 'POST',
-      dataType: 'json',
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-      },
-      data: {
-        username: $('#username').val(),
-        password: $('#password').val(),
-        remember: $('#remember:checked').val(),
-      },
-      success: function(data) {
-        console.log(data);
-        
-        if(data.flag == 1 ){
-          hide_loader();
-          window.location = (data.rdr);
-        }else{
+    show_loader();
+    var token = $('#csrf').val();
+    $.ajax({
+        url: "{{route('login_post')}}",
+        type: 'POST',
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        data: {
+          username: $('#username').val(),
+          password: $('#password').val(),
+          remember: $('#remember:checked').val(),
+        },
+        success: function(data) {
+          console.log(data.rdr);
+          
+          if(data.flag == 1 ){
+            hide_loader();
+            window.location = (data.rdr);
+          }else{
+            alert("Login Failed!");
+            hide_loader();
+          }
+        },
+        error: function(e) {
           alert("Login Failed!");
           hide_loader();
         }
-      },
-      error: function(e) {
-        alert("Login Failed!");
-        hide_loader();
-      }
-  });
+    });
 
-}); 
+  }); 
+
+  $("#show_hide_password a").on('click', function(event) {
+        event.preventDefault();
+        if($('#show_hide_password input').attr("type") == "text"){
+            $('#show_hide_password input').attr('type', 'password');
+            $('#show_hide_password i').addClass( "fa-eye-slash" );
+            $('#show_hide_password i').removeClass( "fa-eye" );
+        }else if($('#show_hide_password input').attr("type") == "password"){
+            $('#show_hide_password input').attr('type', 'text');
+            $('#show_hide_password i').removeClass( "fa-eye-slash" );
+            $('#show_hide_password i').addClass( "fa-eye" );
+        }
+    });
+
+
 });
 
 </script>

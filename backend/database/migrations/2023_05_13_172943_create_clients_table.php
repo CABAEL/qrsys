@@ -20,8 +20,8 @@ class CreateClientsTable extends Migration
             $table->string('contact_no',20);
             $table->string('email',60);
             $table->string('address',255);
-            $table->string('client_description',255);
-            $table->string('client_logo');
+            $table->string('description',255);
+            $table->string('logo');
             $table->timestamps();
             $table->softDeletes();
         });

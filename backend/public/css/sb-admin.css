@@ -7,6 +7,9 @@ html {
   position: relative;
   min-height: 100%; 
 }
+.btn , .card{
+  border-radius: 0px !important;
+}
 .navbar-nav .dropdown-menu{
 left:-100% !important;
 }
