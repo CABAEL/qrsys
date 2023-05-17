@@ -10,7 +10,7 @@
         <!-- Breadcrumbs -->
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <b>USER LIST</b>
+            <b>CLIENT LIST</b>
           </li>
         </ol>
 
@@ -19,8 +19,8 @@
         <table class="table table-bordered" width="100%" id="user-table" cellspacing="0">
                 <thead>
                   <tr>
-                    <th>Username</th>
-                    <th>User level</th>
+                    <th>Name</th>
+                    <th>Status</th>
                     <th>---</th>
                   </tr>
                 </thead>

@@ -21,6 +21,18 @@
     <link href="{{ asset('css/sb-admin.css') }}" rel="stylesheet">
     
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-  
+    <style>
+      #logoContainer{
+        width:200px;
+        height:200px;
+        background-color:red;
+        border-radius:50%;
+        background-repeat:no-repeat;
+        background-size:100%;
+      }
+      .hidden{
+        visibility:hidden;
+      }
+    </style>
   </head>
   <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader>

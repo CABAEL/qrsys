@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="">Add New User</h5>
+                <h5 class="modal-title" id="">Add New Client/Organization</h5>
                 
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -12,41 +12,16 @@
             <div class="modal-body">
             <center><div class="alert alert-danger" id="add_user_errors"></div></center>
                 <div class="container-fluid">
+                  <center>
+                    <div id="logoContainer"></div>
+                  </center>
                   <form id="add_user_form">
+                    <input type="file" id="logo" name="logo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg"/>
                     <div class="form-group">
                         <div class="form-row">
-                            <div class="col-md-4">
-                                <label for="fname">First name</label>
+                            <div class="col-md-12">
+                                <label for="name">Client/Organization Name</label>
                                 <input type="text" class="form-control" id="fname" name="fname" autofocus/>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="mname">Middle name</label>
-                                <input type="text" class="form-control" id="mname" name="mname" placeholder="Leave blank if N/A" >
-                            </div>
-                            <div class="col-md-4">
-                                <label for="lname">Last name</label>
-                                <input type="text" class="form-control" id="lname" name="lname" aria-describedby="nameHelp" >
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="form-row">
-                            <div class="col-md-4">
-                                <label for="fname">Age</label>
-                                <input type="number" class="form-control" id="age" name="age" autofocus/>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="gender">Gender</label>
-                                <select name="gender" class="form-control" id="gender">
-                                  <option value="">---</option>
-                                  <option value="M">MALE</option>
-                                  <option value="F">FEMALE</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="lname">Birth date</label>
-                                <input type="date" class="form-control" id="birthday" name="birthday" aria-describedby="nameHelp" >
                             </div>
                         </div>
                     </div>
@@ -65,11 +40,12 @@
                         <div class="col-md-6">
                         <label for="email">Email address</label>
                         <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp">
-                      </div>                      
-                        <div class="col-md-6">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" aria-describedby="emailHelp">
-                      </div>                      
+                      </div> 
+                      <div class="col-md-6">
+                          <label for="mobile_number">Description</label>
+                          <textarea class="form-control" name="description"></textarea>             
+                        </div>                    
+                    
                     </div>
                     </div>
 
@@ -79,15 +55,11 @@
                           <label for="mobile_number">Mobile number</label>
                           <input type="text" class="form-control" id="mobile_number" name="mobile_number" aria-describedby="nameHelp">
                                                       
-                        </div>    
-                        <div class="col-md-6" >
-                            <label for="role">Role</label>
-                            <select class="form-control" id="role" name="role" aria-describedby="nameHelp">
-                                <option value="">---</option>
-                                <option value="hr_head">HR head</option>
-                                <option value="hr_assistant">HR assistant</option>
-                            </select>
-                        </div>                      
+                        </div>                    
+                        <div class="col-md-6">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" aria-describedby="emailHelp">
+                      </div>  
                     </div>
                     </div>
 
@@ -95,20 +67,19 @@
                         <div class="form-row">
                           <div class="col-md-6">
                             <label for="retypePassword">Password</label>
-                            <div class="input-group">
-                              <input type="password" class="form-control" id="password" name="password" />
-                              <div class="input-group-append" onclick="viewpass()">
-                                <i class="fa fa-eye" id="viewpass"></i>
-                              </div>
+                            <div class="input-group" class="show_hide_password">
+                              <input class="form-control" id="password" type="password">
+                              <div class="input-group-addon" onclick="viewpass()">
+                              <i class="fa fa-eye-slash" id="viewpass" aria-hidden="true"></i>
+                            </div>    
                           </div>  
                             </div>
                             <div class="col-md-6">
-                            <label for="password_confirmation">Password</label>
-                            <div class="input-group">
-                              <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" />
-                              <div class="input-group-append" onclick="view_retype_pass()">
-                                <i class="fa fa-eye" id="view_retype_pass"></i>
-                              </div>
+                            <label for="password_confirmation">Retype Password</label>
+                            <div class="input-group" class="show_hide_password">
+                              <input class="form-control" id="password_confirmation" type="password">
+                              <div class="input-group-addon"  onclick="view_retype_pass()">
+                              <i class="fa fa-eye-slash" id="view_retype_pass" aria-hidden="true"></i>
                             </div>  
                             </div>
                         </div>
@@ -117,9 +88,11 @@
                   
                 </div>
             </div>
+            <br>
             <div class="modal-footer">
               <button class="btn btn-primary btn-block" id="AddAccountSubmit">Submit</button>
             </div>
+            <br>
         </div>
     </div>
 </div>

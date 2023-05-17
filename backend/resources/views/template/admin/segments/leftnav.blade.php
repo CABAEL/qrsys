@@ -14,16 +14,16 @@ $user_dir = $exploded_url[4];
           </li>
           <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
             <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-users"></i>
+              <i class="fa fa-fw fa-database"></i>
               <span class="nav-link-text">
-              User Accounts</span>
+              Client Accounts</span>
             </a>
             <ul class="sidenav-second-level collapse" id="collapseComponents">
               <li>
-                <a class="leftnavtext" id="adduser">Add User</a>
+                <a class="leftnavtext" id="adduser">Add Client</a>
               </li>
               <li>
-                <a class="leftnavtext" href="/admin/deactivated_users">Deactivated User</a>
+                <a class="leftnavtext" href="/admin/deactivated_users">Deactivated Client</a>
               </li>
             </ul>
           </li>

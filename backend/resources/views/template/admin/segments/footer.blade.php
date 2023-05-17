@@ -53,4 +53,37 @@
 <script src="{{ asset('js/custom/custom.js') }}"></script>
 <script src="{{ asset('js/custom/ajax_request.js') }}"></script>
 
+<script>
+    $('#logoContainer').on('click',function(){
+        $('#logo').trigger('click');
+    });
+
+    $('#logo').on('change',function(){
+
+        var oFReader = new FileReader();
+        oFReader.readAsDataURL(document.getElementById("logo").files[0]);
+
+        oFReader.onload = function (oFREvent) {
+            $('#logoContainer').css("background-image", "url('"+oFREvent.target.result+"')");
+        };
+
+
+        //$('#logoContainer').css("background-image", "url('"+$('#logo').val()+"')");
+    });
+
+
+    $(".show_hide_password a").on('click', function(event) {
+        event.preventDefault();
+        if($('.show_hide_password input').attr("type") == "text"){
+            $('.show_hide_password input').attr('type', 'password');
+            $('.show_hide_password i').addClass( "fa-eye-slash" );
+            $('.show_hide_password i').removeClass( "fa-eye" );
+        }else if($('.show_hide_password input').attr("type") == "password"){
+            $('.show_hide_password input').attr('type', 'text');
+            $('.show_hide_password i').removeClass( "fa-eye-slash" );
+            $('.show_hide_password i').addClass( "fa-eye" );
+        }
+    });
+</script>
+
 

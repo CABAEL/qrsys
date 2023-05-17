@@ -19,7 +19,7 @@ class AuthorizedUser
         if(Auth::check()){
             $url = $request->url();
             $segment = explode('/',$url);
-            $user_dir = $segment[3];
+            $user_dir = (isset($segment[3])?$segment[3]:0);
             $user_role = Auth::user()->role;
     
             if ($user_dir != $user_role)

@@ -26,7 +26,7 @@
     <div class="container" style="margin-top: 15%;">
       <div class="card card-login mx-auto mt-5">
         <div class="card-header">
-        <span style="font-size:10px;">Welcome to</span> <span style="font-family:tahoma;color:#032c45;font-weight:bolder;">Intellidocs</span>
+        <span style="font-size:10px;">Welcome toss</span> <span style="font-family:tahoma;color:#032c45;font-weight:bolder;">Intellidocs</span>
         </br>
           </br>
         </div>
@@ -36,10 +36,6 @@
               <label for="username">Username</label>
               <input type="text" class="form-control" id="username">
             </div>
-            <!-- <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" placeholder="Password">
-            </div> -->
             <div class="form-group">
             <label>Password</label>
             <div class="input-group" id="show_hide_password">
@@ -59,7 +55,7 @@
             </div>
             <input type="hidden" value="{{ csrf_token() }}" id="csrf"/>
            
-            <input type="submit" class="btn btn-primary btn-block" id="loginBtn" value="Login"></input>
+            <a class="btn btn-primary btn-block" id="loginBtn">Login</a>
           </form>
         </div>
       </div>
@@ -74,7 +70,20 @@
 <script>
 $( document ).ready(function() {
 
+  $(this).find('input').keypress(function(e) {
+            // Enter pressed?
+            if(e.which == 10 || e.which == 13) {
+              ajaxCall();
+            }
+  });
+
   $('#loginBtn').on('click', function() {
+
+    ajaxCall();
+
+  }); 
+
+  function ajaxCall(){
     show_loader();
     var token = $('#csrf').val();
     $.ajax({
@@ -105,8 +114,7 @@ $( document ).ready(function() {
           hide_loader();
         }
     });
-
-  }); 
+  }
 
   $("#show_hide_password a").on('click', function(event) {
         event.preventDefault();

@@ -34,7 +34,7 @@ Route::post('login/login_post',[LoginController::class,'authenticate'])->name('l
 
 Route::get('/', function (Request $request) {
     return view('login');
-})->name('portal');
+})->middleware('role')->name('portal');
 
 Route::get('/register', function (Request $request) {
     return view('register');
