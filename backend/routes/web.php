@@ -33,8 +33,12 @@ use GuzzleHttp\Middleware;
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
 Route::get('/', function (Request $request) {
+    return view('portal.index');
+})->name('portal');
+
+Route::get('/login', function (Request $request) {
     return view('login');
-})->middleware('role')->name('portal');
+})->middleware('role')->name('login');
 
 Route::get('/register', function (Request $request) {
     return view('register');

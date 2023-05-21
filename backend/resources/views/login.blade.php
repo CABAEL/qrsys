@@ -34,12 +34,12 @@
           <form id="loginForm">
             <div class="form-group">
               <label for="username">Username</label>
-              <input type="text" class="form-control" id="username">
+              <input type="text" class="form-control" id="username" required>
             </div>
             <div class="form-group">
             <label>Password</label>
             <div class="input-group" id="show_hide_password">
-              <input class="form-control" id="password" type="password">
+              <input class="form-control" id="password" type="password" required/>
               <div class="input-group-addon">
               <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
               </div>
@@ -55,7 +55,9 @@
             </div>
             <input type="hidden" value="{{ csrf_token() }}" id="csrf"/>
            
-            <a class="btn btn-primary btn-block" id="loginBtn">Login</a>
+            <input type="submit" class="btn btn-primary btn-block" id="loginBtn" values="Login"></input>
+            <br>
+            <a href="/" style=" float:right;"><< Portal</a>
           </form>
         </div>
       </div>
@@ -70,20 +72,8 @@
 <script>
 $( document ).ready(function() {
 
-  $(this).find('input').keypress(function(e) {
-            // Enter pressed?
-            if(e.which == 10 || e.which == 13) {
-              ajaxCall();
-            }
-  });
-
-  $('#loginBtn').on('click', function() {
-
-    ajaxCall();
-
-  }); 
-
-  function ajaxCall(){
+  $('#loginForm').on('submit',function(event){
+    event.preventDefault();
     show_loader();
     var token = $('#csrf').val();
     $.ajax({
@@ -114,7 +104,7 @@ $( document ).ready(function() {
           hide_loader();
         }
     });
-  }
+  });
 
   $("#show_hide_password a").on('click', function(event) {
         event.preventDefault();
