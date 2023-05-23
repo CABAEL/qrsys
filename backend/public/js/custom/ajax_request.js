@@ -1,32 +1,22 @@
-$.ajax({
-    url: base_url('user_list'),
-    type: 'GET',
-    dataType: 'json',
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+
+
+
+let table = $('#user-table').DataTable({
+  ajax: '/admin/user_list',
+  columnDefs: [
+    {
+        targets: -1,
+        data: 'user_list',
+        defaultContent: '<button>Click!</button>',
     },
-    success: function(ret) {
-     // console.log(ret);
-      var div = '';
-
-      $.each(ret.data, function( index, value ) {
-       // console.log( index + ": " + value.username );
-
-        div +='<tr>'; 
-        div +='<td>'+value.username+'</td>';
-        div +='<td>'+value.role+'</td>';
-        div +='<td><button class="btn btn-sm btn-default viewuser" data-id="'+value.id+'"><i class="fa fa-user"></i></button></td>';
-        div +='</tr>';
-        $('#UserListBody').html(div);
-      });
-      
-      $( "#user-table" ).DataTable();
-
-    },
-    error: function(e){
-
-    }
+],
 });
+
+$('#user-table tbody').on('click', 'button', function () {
+  var data = table.row($(this).parents('tr')).data();
+  alert(data[0] + "'s salary is: " + data[5]);
+});
+
 
 $(document).on('click','.viewuser',function(event) {
     event.preventDefault();

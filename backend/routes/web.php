@@ -112,7 +112,7 @@ Route::middleware(['auth','role'])->group(function(){
 
         // Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
 
-        // Route::get('/user_list',[UserController::class,'index']);
+        Route::get('/user_list',[UserController::class,'index']);
 
         // Route::get('/deactivated_list',[UserController::class,'deactivatedUser']);
 

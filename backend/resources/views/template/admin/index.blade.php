@@ -16,17 +16,18 @@
 
         <!-- table list -->
         <!--<button class="btn btn-sm viewuser2">sample</button>-->
-        <table class="table table-bordered" width="100%" id="user-table" cellspacing="0">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>---</th>
-                  </tr>
-                </thead>
-               
-                <tbody id="UserListBody"></tbody>
-
+        <table cellspacing="0" class="display table table-bordered" width="100%" id="user-table" style="width:100%">
+        <thead>
+            <tr>
+            <th>Client Name</th>
+                <th>---</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr><th>Client Name</th>
+                <th>---</th>
+            </tr>
+        </tfoot>
         </table>
       </div>
       <!-- /.container-fluid -->

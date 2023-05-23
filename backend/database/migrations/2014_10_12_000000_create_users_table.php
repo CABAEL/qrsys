@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('username');
             $table->string('password');
-            $table->string('role',6)->default("client");
+            $table->string('role',10)->default("client");
             $table->integer('status')->default(1);
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();

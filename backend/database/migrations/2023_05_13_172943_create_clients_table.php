@@ -17,11 +17,11 @@ class CreateClientsTable extends Migration
             $table->id('client_id')->unique();
             $table->integer('user_id')->unique();
             $table->string('client_name',60);
-            $table->string('contact_no',20);
-            $table->string('email',60);
-            $table->string('address',255);
-            $table->string('description',255);
-            $table->string('logo');
+            $table->string('contact_no',20)->nullable();
+            $table->string('email',60)->nullable();
+            $table->string('address',255)->nullable();
+            $table->string('description',255)->nullable();
+            $table->string('logo')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

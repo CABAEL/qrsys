@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\User_profile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -19,47 +20,38 @@ class UserController extends Controller
     {
 
         if(Auth::user()->role == "admin"){
+
             $current_user = Auth::user()->id;
-            $request = User::all()
+
+            $request = DB::table('users')
+            ->join("clients",'clients.user_id','=','users.id','inner')
             ->where('id', '!=' , $current_user)
-            ->where('status','!=',0);
+            ->where('users.status','!=',0);
             
-            $data = [
-                'response_time' => LARAVEL_START,
-                'count' => count($request),
-                'data' => $request,
-            ];
-        }
-        if(Auth::user()->role == "hr_head"){
-            $current_user = Auth::user()->id;
-            $request = User::all()
-            ->where('id', '!=' , $current_user)
-            ->where('status','!=',0)
-            ->where('role','!=','admin');
-            
-            $data = [
-                'response_time' => LARAVEL_START,
-                'count' => count($request),
-                'data' => $request,
-            ];
+            // $data = [
+            //     'response_time' => LARAVEL_START,
+            //     'count' => is_array($request)?count($request):0,
+            //     'data' => $request,
+            // ];
         }
 
-        if(Auth::user()->role == "hr_assistant"){
-            $current_user = Auth::user()->id;
-            $request = User::all()
-            ->where('id', '!=' , $current_user)
-            ->where('status','!=',0)
-            ->where('role','!=','admin');
-            
-            $data = [
-                'response_time' => LARAVEL_START,
-                'count' => count($request),
-                'data' => $request,
-            ];
-        }
+        // $data =  array (
+        //     "draw" => 1,
+        //     "recordsTotal" => count($request),
+        //     "recordsFiltered" => count($request),
+        //     "data" => $request
+        // );
 
+        $data = array();
         
-        return response()->json($data);
+        foreach($request->get() as $rows_k => $rows_v){
+            $data [] = [$rows_v->client_name];  
+
+        }
+        
+
+
+       return json_encode(array('data'=>$data));
 
     }
 
