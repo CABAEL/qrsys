@@ -5,14 +5,14 @@ $user_dir = $exploded_url[4];
 ?>
 <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
 
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
+          <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Client List">
             <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-home"></i>
+              <i class="fa fa-fw fa-list"></i>
               <span class="nav-link-text">
-                Home</span>
+              Client List</span>
             </a>
           </li>
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
+          <!-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Client Accounts">
             <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-database"></i>
               <span class="nav-link-text">
@@ -20,27 +20,13 @@ $user_dir = $exploded_url[4];
             </a>
             <ul class="sidenav-second-level collapse" id="collapseComponents">
               <li>
-                <a class="leftnavtext" id="adduser">Add Client</a>
+                <a class="leftnavtext">Add Client</a>
               </li>
               <li>
                 <a class="leftnavtext" href="/admin/deactivated_users">Deactivated Client</a>
               </li>
             </ul>
-          </li>
-
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
-            <br>
-            
-            <br>
-            <br>
-            <br>
-            <a class="nav-link" href="/admin/chat_support" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-envelope"></i>
-              <span class="nav-link-text">
-                Chat</span>
-            </a>
-          </li>
-
+          </li> -->
         </ul>
         <ul class="navbar-nav sidenav-toggler">
           <li class="nav-item">

@@ -14,8 +14,9 @@
           </li>
         </ol>
 
-        <!-- table list -->
-        <!--<button class="btn btn-sm viewuser2">sample</button>-->
+      <hr/>
+      <button class="btn btn-sm" id="adduser"> + Client</button>
+      <hr/>
         <table cellspacing="0" class="display table table-bordered" width="100%" id="user-table" style="width:100%">
         <thead>
             <tr>
@@ -23,11 +24,11 @@
                 <th>---</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr><th>Client Name</th>
-                <th>---</th>
-            </tr>
-        </tfoot>
+        <tbody id="UserListBody">
+          <tr>
+            <td colspan="2"><center>Loading...</center></td>
+          </tr>
+        </tbody>
         </table>
       </div>
       <!-- /.container-fluid -->

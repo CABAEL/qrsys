@@ -13,9 +13,8 @@ $.ajax({
        // console.log( index + ": " + value.username );
 
         div +='<tr>'; 
-        div +='<td>'+value.username+'</td>';
-        div +='<td>'+value.role+'</td>';
-        div +='<td><button class="btn btn-sm btn-default viewuser" data-id="'+value.id+'"><i class="fa fa-user"></i></button></td>';
+        div +='<td>'+value.client_name+'</td>';
+        div +='<td><button class="btn btn-sm btn-default viewuser" data-id="'+value.id+'"><i class="fa fa-folder-open"></i></button></td>';
         div +='</tr>';
         $('#UserListBody').html(div);
       });

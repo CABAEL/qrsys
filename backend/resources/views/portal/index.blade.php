@@ -113,7 +113,7 @@
     <div class="container">
       <div class="row">
         <div class="footer-col col-md-6">
-          <p>Copyright © 2022 {{env('APP_NAME')}} </p>
+          <p>Copyright © {{env('YEAR')}} {{env('APP_NAME')}} </p>
         </div>
         <div class="footer-col col-md-3">
           <h5></h5>

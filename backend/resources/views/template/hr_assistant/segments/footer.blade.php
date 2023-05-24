@@ -1,7 +1,7 @@
 <footer class="sticky-footer">
     <div class="container">
         <div class="text-center">
-            <small>Copyright &copy; {{env('APP_NAME')}} 2022</small>
+            <small>Copyright &copy; {{env('APP_NAME')}} {{env('YEAR')}}</small>
         </div>
     </div>
     @include('template.hr_assistant.segments.modal.edit_job_modal')    
@@ -25,7 +25,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" onclick="signOut();">Logout</a>
+                <a class="btn btn-primary" style="color:#fff;" onclick="signOut();">Logout</a>
             </div>
         </div>
     </div>

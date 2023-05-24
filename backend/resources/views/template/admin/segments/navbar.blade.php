@@ -7,7 +7,24 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
 
-          <li class="nav-item dropdown">
+        <li class="nav-item">
+          <form id="searchForm">
+          <div class="input-group" id="show_hide_password">
+              <input class="form-control" id="search" type="text"/>
+              <div class="input-group-addon">
+              <a href=""><i class="fa fa-search" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </form>
+        </li>
+
+        <li class="nav-item">
+          <a class="btn" data-toggle="modal" data-target="#logoutmodal">
+            <i class="fa fa-fw fa-sign-out" style="color:#fff;"></i>
+          </a>
+        </li>
+
+          <!-- <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle mr-lg-2" href="#" id="alertsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-fw fa-user"></i>
               <span class="d-lg-none">Alerts
@@ -18,19 +35,16 @@
 
               <div class="dropdown-divider"></div>
 
-              <!--<a class="dropdown-item btn text-info" data-toggle="modal" data-target="#logoutmodal">
+              <a class="dropdown-item btn text-info" data-toggle="modal" data-target="#logoutmodal">
               <i class="fa fa-fw fa-user"></i>
               My Account<br>
-              </a>-->
-
-              <a class="dropdown-item btn" data-toggle="modal" data-target="#logoutmodal">
-              <i class="fa fa-fw fa-sign-out"></i>
-              Logout
               </a>
+
+
 
               <div class="dropdown-divider"></div>
             </div>
-          </li>
+          </li> -->
 
         </ul>
         @include('template.admin.segments.leftnav')

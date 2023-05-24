@@ -26,32 +26,17 @@ class UserController extends Controller
             $request = DB::table('users')
             ->join("clients",'clients.user_id','=','users.id','inner')
             ->where('id', '!=' , $current_user)
-            ->where('users.status','!=',0);
+            ->where('users.status','!=',0)
+            ->get();
             
-            // $data = [
-            //     'response_time' => LARAVEL_START,
-            //     'count' => is_array($request)?count($request):0,
-            //     'data' => $request,
-            // ];
+            $data = [
+                'response_time' => LARAVEL_START,
+                'count' => is_array($request)?count($request):0,
+                'data' => $request,
+            ];
         }
 
-        // $data =  array (
-        //     "draw" => 1,
-        //     "recordsTotal" => count($request),
-        //     "recordsFiltered" => count($request),
-        //     "data" => $request
-        // );
-
-        $data = array();
-        
-        foreach($request->get() as $rows_k => $rows_v){
-            $data [] = [$rows_v->client_name];  
-
-        }
-        
-
-
-       return json_encode(array('data'=>$data));
+       return response()->json($data);
 
     }
 

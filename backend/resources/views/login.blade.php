@@ -27,8 +27,6 @@
       <div class="card card-login mx-auto mt-5">
         <div class="card-header">
         <span style="font-size:10px;">Welcome toss</span> <span style="font-family:tahoma;color:#032c45;font-weight:bolder;">Intellidocs</span>
-        </br>
-          </br>
         </div>
         <div class="card-body">
           <form id="loginForm">
