@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-@include('template.admin.segments.header')
+@include('template.header')
   <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   @include('template.admin.segments.navbar')
 
@@ -20,7 +20,8 @@
         <table cellspacing="0" class="display table table-bordered" width="100%" id="user-table" style="width:100%">
         <thead>
             <tr>
-            <th>Client Name</th>
+            <th>CLIENT NAME</th>
+            <th>DOCUMENT COUNT</th>
                 <th>---</th>
             </tr>
         </thead>
@@ -35,7 +36,8 @@
     </div>
     <!-- /.content-wrapper -->
     
-  @include('template.admin.segments.footer')
+  @include('template.footer')
+  @include('template.admin.segments.custom.script_index')
 
   <script>
 

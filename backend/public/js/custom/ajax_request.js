@@ -1,32 +1,3 @@
-$.ajax({
-    url: base_url('user_list'),
-    type: 'GET',
-    dataType: 'json',
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-    },
-    success: function(ret) {
-     // console.log(ret);
-      var div = '';
-
-      $.each(ret.data, function( index, value ) {
-       // console.log( index + ": " + value.username );
-
-        div +='<tr>'; 
-        div +='<td>'+value.client_name+'</td>';
-        div +='<td><button class="btn btn-sm btn-default viewuser" data-id="'+value.id+'"><i class="fa fa-folder-open"></i></button></td>';
-        div +='</tr>';
-        $('#UserListBody').html(div);
-      });
-      
-      $( "#user-table" ).DataTable();
-
-    },
-    error: function(e){
-
-    }
-});
-
 $(document).on('click','.viewuser',function(event) {
     event.preventDefault();
     var id = $(this).data('id');
@@ -107,41 +78,6 @@ $(document).on('click','.viewuser',function(event) {
         hide_loader();
       }
   });
-});
-
-  $('#AddAccountSubmit').on('click',function(event) {
-    event.preventDefault();
-    // Get form
-    var form = $('#add_user_form');
-    // FormData object 
-    var formData = form.serialize();
-
-  show_loader();
-   $.ajax({
-    url: base_url("add_user"),
-    type: 'POST', 
-    dataType: 'json',
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-    },
-    data:formData,
-    success: function(data) {
-      console.log(data);
-      alert('User added successfully!');
-      //promt_success(element,data)
-      hide_loader();
-      window.location.replace('/login');
-    },
-    error: function(e) {
-      //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
-      var element = $('#add_user_errors');
-      var form = '#addusermodal'; 
-      promt_errors(form,element,e);
-
-      hide_loader();
-    }
-});
-
 });
 
 

@@ -1,19 +1,5 @@
 var token = $('#csrf').val();
 
-var url_segment = window.location.pathname.split('/');
-var user_level_dir = url_segment[1];
-
-function base_url(append)
-{
-  var base_url = window.location.origin;
-  if(user_level_dir == ''){
-    return base_url+"/"+append;
-  }
-  else{
-    return base_url+"/"+user_level_dir+"/"+append;
-  }
-}
-
 function promt_errors(form='',element,e){
   
     div = '';
@@ -91,16 +77,6 @@ function promt_success(element,e){
   $('.alert').css('visibility','visible');
 }
 
-
-function signOut() {
-    //var auth2 = gapi.auth2.getAuthInstance();
-    //auth2.disconnect().then(function () {
-    var url = base_url("logout");
-    location.replace(url);
-    //console.log('User signed out.');
-  //});
-}
-
 function viewpass() {
   var x = document.getElementById("password");
 
@@ -175,11 +151,6 @@ $(document).on("click","#clear",function() {
 $(document).on("click","#generate_pass",function() {
   element = $('#viewusermodal #update_password');
   random_text_generator(element);
-});
-
-
-$('#adduser').on('click',function(){
-  $('#addusermodal').modal('show');
 });
 
 
