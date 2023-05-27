@@ -26,7 +26,7 @@
     <div class="container" style="margin-top: 15%;">
       <div class="card card-login mx-auto mt-5">
         <div class="card-header">
-        <span style="font-size:10px;">Welcome to</span> <span style="font-family:tahoma;color:#032c45;font-weight:bolder;">Intellidocs</span>
+        <span style="font-size:10px;">Welcome to</span>  <image src="{{asset('img/logo.png')}}" width="100px"/>
         </div>
         <div class="card-body">
           <form id="loginForm">
