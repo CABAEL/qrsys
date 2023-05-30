@@ -13,7 +13,7 @@
             <center><div class="alert alert-danger" id="add_user_errors"></div></center>
                 <div class="container-fluid">
                   <center>
-                    <div id="logoContainer"></div>
+                    <div id="logoContainer">Click to add image.</div>
                   </center>
                   <form id="add_user_form">
                     <input type="file" id="logo" name="logo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg"/>

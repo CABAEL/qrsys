@@ -8,14 +8,12 @@
         <ul class="navbar-nav ml-auto">
 
         <li class="nav-item">
-          <form id="searchForm">
-          <div class="input-group" id="show_hide_password">
-              <input class="form-control" id="search" type="text"/>
-              <div class="input-group-addon">
-              <a href=""><i class="fa fa-search" aria-hidden="true"></i></a>
-              </div>
-            </div>
-          </form>
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch">
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                </div>
+            </form>
         </li>
 
         <li class="nav-item">

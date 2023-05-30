@@ -1,6 +1,7 @@
 
 @include('template.admin.segments.modal.add_user_modal')
 @include('template.admin.segments.modal.view_user_modal')
+<script src="{{ asset('packages/chart.js/Chart.min.js') }}"></script>
 <script>
     $('#logoContainer').on('click',function(){
         $('#logo').trigger('click');
@@ -99,4 +100,56 @@ $('#AddAccountSubmit').on('click',function(event) {
 });
 
 });
+
+
+
+    var myLineChart1 = new Chart(document.getElementById('myBarChart'), {
+      type: 'bar',
+        data: {
+          labels: ['Monday', 'Tuesday' , 'Wednesday' , 'Thursday' , 'Friday' , 'Saturday' , 'Sunday '],
+          datasets: [
+            {
+              label: 'Traffic',
+              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
+              borderColor: '#36A2EB',
+              backgroundColor: '#035fae',
+            },
+            {
+              label: 'Uploads',
+              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
+              borderColor: '#36A2EB',
+              backgroundColor: '#ace',
+            },
+          ],
+        },
+      // options: {
+      //   scales: {
+      //     xAxes: [{
+      //       time: {
+      //         unit: 'month'
+      //       },
+      //       gridLines: {
+      //         display: true
+      //       },
+      //       ticks: {
+      //         maxTicksLimit: 12
+      //       }
+      //     }],
+      //     yAxes: [{
+      //       ticks: {
+      //         min: 0,
+      //         max: 100,
+      //         maxTicksLimit: 10
+      //       },
+      //       gridLines: {
+      //         display: true
+      //       }
+      //     }],
+      //   },
+      //   legend: {
+      //     display: true
+      //   }
+      // }
+    });
+
 </script>

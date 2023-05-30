@@ -5,11 +5,11 @@ $user_dir = $exploded_url[4];
 ?>
 <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
 
-          <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Client List">
+          <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Home">
             <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-list"></i>
+              <i class="fa fa-fw fa-key"></i>
               <span class="nav-link-text">
-              Client List</span>
+              Admin Panel</span>
             </a>
           </li>
           <!-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Client Accounts">
