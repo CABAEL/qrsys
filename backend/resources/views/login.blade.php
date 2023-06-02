@@ -55,7 +55,6 @@
            
             <input type="submit" class="btn btn-primary btn-block" id="loginBtn" values="Login"></input>
             <br>
-            <a href="/" style=" float:right;"><< Portal</a>
           </form>
         </div>
       </div>

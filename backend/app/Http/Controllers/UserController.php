@@ -101,22 +101,11 @@ class UserController extends Controller
 
     public function user_info($id) 
     {
-        $fetch = User::join('user_profiles', 'users.id', '=', 'user_profiles.id')->where('users.id','=',$id)
-        ->get(
-        ['users.id','fname',
-        'mname',
-        'lname',
-        'age',
-        'gender',
-        'birthday',
-        'address',
-        'email',
-        'mobile_number',
-        'role',
-        'username',
-        'password']
-        );
-        $user = $fetch[0];
+        $fetch = User::select('users.id','clients.*')
+        ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$id)
+        ->first();
+        
+        $user = $fetch;
         return response()->json($user);
     }
 

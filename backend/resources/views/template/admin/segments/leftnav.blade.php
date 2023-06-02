@@ -12,6 +12,13 @@ $user_dir = $exploded_url[4];
               Admin Panel</span>
             </a>
           </li>
+          <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
+            <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
+              <i class="fa fa-fw fa-history"></i>
+              <span class="nav-link-text">
+              Logs</span>
+            </a>
+          </li>          
           <!-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Client Accounts">
             <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-database"></i>
