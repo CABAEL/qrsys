@@ -1,22 +1,25 @@
-<div class="modal fade bd-example-modal-lg" id="addusermodal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade" id="addclient" tabindex="-1" role="dialog" aria-labelledby="addclient" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="">Add New Client/Organization</h5>
+              <h5 class="modal-title" id="">Add New Client/Organization</h5>
                 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
                 
             </div>
+
             <div class="modal-body">
             <center><div class="alert alert-danger" id="add_user_errors"></div></center>
                 <div class="container-fluid">
                   <center>
-                    <div id="logoContainer">Click to add image.</div>
+                    <div id="logoContainer"></div>
                   </center>
                   <form id="add_user_form">
+
                     <input type="file" id="logo" name="logo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg"/>
+
                     <div class="form-group">
                         <div class="form-row">
                             <div class="col-md-12">
@@ -36,17 +39,21 @@
                     </div>
 
                     <div class="form-group">
-                      <div class="form-row">                     
+
+                      <div class="form-row"> 
+
                         <div class="col-md-6">
-                        <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp">
-                      </div> 
-                      <div class="col-md-6">
-                          <label for="mobile_number">Description</label>
-                          <textarea class="form-control" name="description"></textarea>             
+                          <label for="email">Email address</label>
+                          <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp">
+                        </div> 
+
+                        <div class="col-md-6">
+                            <label for="mobile_number">Description</label>
+                            <textarea class="form-control" name="description"></textarea>             
                         </div>                    
                     
-                    </div>
+                      </div>
+
                     </div>
 
                     <div class="form-group">
@@ -84,6 +91,7 @@
                             </div>
                         </div>
                     </div>
+                    
                   </form>
                   
                 </div>

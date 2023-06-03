@@ -73,7 +73,7 @@
                </li>
             </ol>
             <hr/>
-            <button class="btn btn-sm" id="adduser"> + Client</button>
+            <button class="btn btn-sm" type="button" id="addclient_btn" data-toggle="modal" data-target="#addclient"> + Client</button>
             <hr/>
             <table cellspacing="0" class="display table table-bordered" width="100%" id="user-table" style="width:100%">
                <thead>

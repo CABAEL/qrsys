@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="">User info</h5>
+                <h5 class="modal-title" id="">Client Information</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -11,7 +11,7 @@
             <center><div class="alert alert-danger" id="update_user_errors"></div></center>
                 <div class="container-fluid">
                 <center>
-                    <div id="logoContainer">Click to add image.</div>
+                    <div id="logoContainer"></div>
                   </center>
                   <form id="update_user_form">
                     <input type="file" id="logo" name="logo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg"/>
@@ -42,8 +42,7 @@
                       <div class="col-md-6">
                           <label for="update_mobile_number">Description</label>
                           <textarea class="form-control" name="update_description"></textarea>             
-                        </div>                    
-                    
+                      </div>
                     </div>
                     </div>
 

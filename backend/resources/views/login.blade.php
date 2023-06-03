@@ -53,7 +53,7 @@
             </div>
             <input type="hidden" value="{{ csrf_token() }}" id="csrf"/>
            
-            <input type="submit" class="btn btn-primary btn-block" id="loginBtn" values="Login"></input>
+            <input type="submit" class="btn btn-primary btn-block" id="loginBtn" value="Submit"></input>
             <br>
           </form>
         </div>

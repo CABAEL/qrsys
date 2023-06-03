@@ -48,7 +48,7 @@
         div +='<tr>'; 
         div +='<td>'+value.client_name+'</td>';
         div +='<td>200</td>';
-        div +='<td><button class="btn btn-sm btn-default viewuser" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
+        div +='<td><button type="button" class="btn btn-sm btn-default viewuser" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
         div +='</tr>';
         $('#UserListBody').html(div);
       });
@@ -61,9 +61,6 @@
     }
 });
 
-$('#adduser').on('click',function(){
-  $('#addusermodal').modal('show');
-});
 
 
 $('#AddAccountSubmit').on('click',function(event) {
