@@ -46,31 +46,5 @@
 <script src="{{ asset('js/custom/preloader.js') }}"></script>
 <!-- <script src="{{ asset('js/custom/home.js') }}"></script>
 <script src="{{ asset('js/custom/custom.js') }}"></script> -->
-<!-- <script src="{{ asset('js/custom/ajax_request.js') }}"></script> -->
-
-<script>
-    var url_segment = window.location.pathname.split('/');
-    var user_level_dir = url_segment[1];
-
-    function base_url(append)
-    {
-        var base_url = window.location.origin;
-        if(user_level_dir == ''){
-            return base_url+"/"+append;
-        }
-        else{
-            return base_url+"/"+user_level_dir+"/"+append;
-        }
-    }
-
-    function signOut() {
-        //var auth2 = gapi.auth2.getAuthInstance();
-        //auth2.disconnect().then(function () {
-        var url = base_url("logout");
-        location.replace(url);
-        //console.log('User signed out.');
-        //});
-    }
-</script>
-
+<script src="{{ asset('js/custom/general.js') }}"></script>
 

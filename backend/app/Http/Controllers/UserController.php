@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Employee;
+use App\Models\Client;
 use App\Models\User_profile;
+use App\Models\Upload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -109,52 +110,51 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function store(Request $request) 
+    public function storeClient(Request $request) 
     {
-        
-        //return $request;
+        $filename = $_FILES['logo']['name'];
+        $location = "uploads/system_files/client_logo/".$filename;
+        $tmp_name = $_FILES['logo']['tmp_name'];
+
+        $update_logo = new Upload();
+        $update_logo2 = $update_logo->fileUpload($tmp_name,$location);
+
+        return $update_logo2;
+
         $validated_user = $request->validate([
-            'username' => 'unique:users,username|required|max:60',
-            'password' => 'required|confirmed|max:60',
-            'fname' => 'required|max:60',
-            'mname' => 'nullable|max:60',
-            'lname' => 'required|max:60',
-            'age' => 'required|integer',
             'address' => 'required',
-            'gender' => 'required|max:1',
-            'birthday' => 'required',
             'email' => 'required|email|max:60',
-            'mobile_number' => 'required|numeric',
-            'role' => 'required'
+            'description' => 'nullable',
+            'contact_number' => 'required|numeric',
+            'client_name' => 'required|max:100',
+            'username' => 'unique:users,username|required|max:60',
+            'password' => 'required|confirmed|max:60|min:8',
         ]);
 
 
         $merge_data = array();
 
-        $request_user = User::create([
+        $user_creds = User::create([
             'username' => $validated_user['username'],
             'password' => Hash::make($validated_user['password']),
-            'role' => $validated_user['role'],
         ]);
 
-        $user_id = $request_user->id;
+        $user_id = $user_creds->id;
     
-        $request_profile = User_profile::create([
-            'id' => $user_id,
-            'fname' => $validated_user['fname'],
-            'mname' => $validated_user['mname'],
-            'lname' => $validated_user['lname'],
-            'age' => $validated_user['age'],
-            'gender' => $validated_user['gender'],
-            'birthday' => $validated_user['birthday'],
+        $client_profile = Client::create([
+            'user_id' => $user_id,
+            'client_name' => $validated_user['client_name'],
             'address' => $validated_user['address'],
-            'mobile_number' => $validated_user['mobile_number'],
+            'contact_no' => $validated_user['contact_number'],
             'email' => $validated_user['email'],
+            'description' => $validated_user['description'],
         ]);
+
+
 
         $merge_data = [
-            'user' => $request_user,
-            'user_profile' => $request_profile
+            'user' => $user_creds,
+            'client_profile' => $client_profile
         ];
 
         $data = [

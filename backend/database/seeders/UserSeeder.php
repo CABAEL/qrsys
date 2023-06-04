@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
     public function run()
     {
 
-        for($count = 0;$count <= 200;){
+        for($count = 0;$count <= 5;){
 
             $db = DB::table('users')->insert
             (

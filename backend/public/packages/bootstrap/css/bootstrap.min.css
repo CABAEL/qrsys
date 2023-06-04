@@ -9153,4 +9153,16 @@ a.text-dark:hover {
     visibility: hidden !important
 }
 
+.logoContainer{
+    width:200px;
+    height:200px;
+    background-image:url('/img/bg_logo.png');
+    border-radius:50%;
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+  }
+.hidden{
+    visibility:hidden;
+}
+
 /*# sourceMappingURL=bootstrap.min.css.map */

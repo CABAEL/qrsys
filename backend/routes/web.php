@@ -118,7 +118,7 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/user_info/{id}',[UserController::class,'user_info']);
 
-        Route::post('add_client',[UserController::class,'store']);
+        Route::post('add_client',[UserController::class,'storeClient']);
     
     });
 
