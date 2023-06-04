@@ -13,4 +13,4 @@ backend/npm-debug.log
 backend/yarn-error.log
 /.idea
 /.vscode
-backend/upload
+backend/uploads
