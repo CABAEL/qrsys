@@ -169,7 +169,7 @@
 
 // form submit
 
-formSubmit = (form) => {
+addClientSubmit = (form) => {
   event.preventDefault();
    // Get form
     var form = $('#add_client_form')[0];
@@ -189,12 +189,14 @@ formSubmit = (form) => {
      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
    },
    data:formData,
-   success: function(data) {
-     console.log(data);
-     alert('User added successfully!');
-     //promt_success(element,data)
-     hide_loader();
-     window.location.replace('/login');
+   success: function(response) {
+    parseError(response);
+
+    //  console.log(response);
+    //  alert('User added successfully!');
+    //  //promt_success(element,data)
+    //  hide_loader();
+    //  window.location.replace('/login');
    },
    error: function(e) {
      //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);

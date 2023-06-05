@@ -46,4 +46,19 @@ function promt_errors(form='',element,e){
 }
 
 
+parseError = (response) => {
+    let entries = Object.entries(response);
+    console.log(entries);
+
+    Object.values(entries[1][1]['image']).forEach(function(k,v){
+        console.log(k);
+    });
+    // let response_arr = Object.entries(response);
+    // if (response_arr.errors){
+    //     console.log("errors nga!");
+    // }
+
+}
+
+
 

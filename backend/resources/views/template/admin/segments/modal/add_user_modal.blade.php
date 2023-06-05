@@ -6,7 +6,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
          </div>
-         <form id="add_client_form" onSubmit="formSubmit(this.id)" enctype="multipart/form-data">
+         <form id="add_client_form" onSubmit="addClientSubmit(this.id)" enctype="multipart/form-data">
          <div class="modal-body">
             <center>
                <div class="alert alert-danger" id="add_user_errors"></div>

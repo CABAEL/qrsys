@@ -112,12 +112,16 @@ class UserController extends Controller
 
     public function storeClient(Request $request) 
     {
-        $filename = $_FILES['logo']['name'];
-        $location = "uploads/system_files/client_logo/".$filename;
-        $tmp_name = $_FILES['logo']['tmp_name'];
 
-        $update_logo = new Upload();
-        $update_logo2 = $update_logo->fileUpload($tmp_name,$location);
+        $file_params [] = array(
+            'filename' => $_FILES['logo']['name'],
+            'location' => "uploads/system_files/client_logo/",
+            'tmp_name' => $_FILES['logo']['tmp_name'],
+            'filesize' => $_FILES['logo']['size'],
+            'type' => 'image'
+        );
+
+        $update_logo2 = Upload::fileUpload($file_params);
 
         return $update_logo2;
 
@@ -130,6 +134,8 @@ class UserController extends Controller
             'username' => 'unique:users,username|required|max:60',
             'password' => 'required|confirmed|max:60|min:8',
         ]);
+
+
 
 
         $merge_data = array();
