@@ -113,17 +113,6 @@ class UserController extends Controller
     public function storeClient(Request $request) 
     {
 
-        $file_params [] = array(
-            'filename' => $_FILES['logo']['name'],
-            'location' => "uploads/system_files/client_logo/",
-            'tmp_name' => $_FILES['logo']['tmp_name'],
-            'filesize' => $_FILES['logo']['size'],
-            'type' => 'image'
-        );
-
-        $update_logo2 = Upload::fileUpload($file_params);
-
-        return $update_logo2;
 
         $validated_user = $request->validate([
             'address' => 'required',
@@ -135,8 +124,16 @@ class UserController extends Controller
             'password' => 'required|confirmed|max:60|min:8',
         ]);
 
+        $file_params [] = array(
+            'filename' => $_FILES['logo']['name'],
+            'location' => "uploads/system_files/client_logo/",
+            'tmp_name' => $_FILES['logo']['tmp_name'],
+            'filesize' => $_FILES['logo']['size']
+        );
 
+        $update_logo2 = Upload::fileUpload($file_params);
 
+        // return $update_logo2;
 
         $merge_data = array();
 
@@ -146,29 +143,30 @@ class UserController extends Controller
         ]);
 
         $user_id = $user_creds->id;
-    
-        $client_profile = Client::create([
-            'user_id' => $user_id,
-            'client_name' => $validated_user['client_name'],
-            'address' => $validated_user['address'],
-            'contact_no' => $validated_user['contact_number'],
-            'email' => $validated_user['email'],
-            'description' => $validated_user['description'],
-        ]);
+        
+        if($user_creds){
+            $client_profile = Client::create([
+                'user_id' => $user_id,
+                'client_name' => $validated_user['client_name'],
+                'address' => $validated_user['address'],
+                'contact_no' => $validated_user['contact_number'],
+                'email' => $validated_user['email'],
+                'description' => $validated_user['description'],
+                'logo' => $update_logo2['responseJSON']['data'][0]
+            ]);
 
+            
+            $merge_data = [
+                'user' => $user_creds,
+                'client_profile' => $client_profile
+            ];
 
+            return responseBuilder("User successfully added!",[],$merge_data);
+            
+        }
 
-        $merge_data = [
-            'user' => $user_creds,
-            'client_profile' => $client_profile
-        ];
+        return responseBuilder("Invalid request.",array('User' => "Unable to add."),$merge_data);
 
-        $data = [
-            'data' => $merge_data,
-            'message' => 'User Created Successfully!'
-        ];
-
-        return response()->json($data);
     }
 
     /**

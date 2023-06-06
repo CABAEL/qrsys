@@ -61,7 +61,7 @@
                         <div class="col-md-6">
                            <label for="retypePassword">Password</label>
                            <div class="input-group" class="show_hide_password">
-                              <input class="form-control" name="password" id="password" type="password">
+                              <input class="form-control" name="password" id="password" type="password" autocomplete="off">
                               <div class="input-group-addon" onclick="viewpass()">
                                  <i class="fa fa-eye-slash" id="viewpass" aria-hidden="true"></i>
                               </div>
@@ -70,7 +70,7 @@
                         <div class="col-md-6">
                            <label for="password_confirmation">Retype Password</label>
                            <div class="input-group" class="show_hide_password">
-                              <input class="form-control" name="password_confirmation" id="password_confirmation" type="password">
+                              <input class="form-control" name="password_confirmation" id="password_confirmation" type="password" autocomplete="off">
                               <div class="input-group-addon"  onclick="view_retype_pass()">
                                  <i class="fa fa-eye-slash" id="view_retype_pass" aria-hidden="true"></i>
                               </div>

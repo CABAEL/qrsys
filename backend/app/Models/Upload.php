@@ -19,7 +19,10 @@ class Upload extends Model
         }
 
         
-
+        $success_count = 0;
+        $upload_error = array ();
+        $data = array();
+    
         foreach($file_params as $key => $value ){
 
             $raw_filename = $value['filename'];
@@ -30,12 +33,18 @@ class Upload extends Model
             $final_filename = $name_hash.".".$extension;
 
             if(move_uploaded_file($value['tmp_name'],$value['location'].$final_filename)){
-                return $value;
+                
+                //success uploads
+                $success_count += 1;
+                $data [] = $final_filename;
+
             }else{
-                return "hindi";
+                $upload_error [] = $raw_filename." failed to upload";  
             }
 
         }
+
+        return responseBuilder($success_count." file(s) successfully Uploaded!",$upload_error,$data);
 
 
 
@@ -87,28 +96,24 @@ class Upload extends Model
             $exploded_filename = explode(".",$raw_filename);
             $extension = $exploded_filename[1];
             $filesize = $value['filesize'];
-            $file_type = $value['type'];
+            $file_type = self::acceptedFormat($extension);
 
             if($file_type === 'image'){
                 
                 if($filesize > env('IMAGE_ALLOWED_SIZE')){
-                    $image_err [] = ($raw_filename." image file size if larger than the allowed value (".env('IMAGE_ALLOWED_SIZE').")");
+                    $image_err [] = ($raw_filename." image file size is larger than the allowed value (".self::formatSizeUnits(env('IMAGE_ALLOWED_SIZE')).")");
                     $errors ['image'] = $image_err; 
                 }
 
             }else if ($type === 'document'){
-                $document_err [] = ($raw_filename." image file size if larger than the allowed value (".env('IMAGE_ALLOWED_SIZE').")");
+                $document_err [] = ($raw_filename." image file size is larger than the allowed value (".self::formatSizeUnits(env('IMAGE_ALLOWED_SIZE')).")");
                 $errors ['document'] = $document_err; 
             }
 
         }
 
         if(!empty($errors)){
-
-            return array(
-                'message' => "Invalid file size.",
-                'errors' => $errors
-            );
+            return responseBuilder("Invalid file size.",$errors,$raw_filename);
         }
 
         return false;
@@ -119,15 +124,15 @@ class Upload extends Model
     {
         if ($bytes >= 1073741824)
         {
-            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+            $bytes = round(number_format($bytes / 1073741824, 2)) . ' GB';
         }
         elseif ($bytes >= 1048576)
         {
-            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+            $bytes = round(number_format($bytes / 1048576, 2)) . ' MB';
         }
         elseif ($bytes >= 1024)
         {
-            $bytes = number_format($bytes / 1024, 2) . ' KB';
+            $bytes = round(number_format($bytes / 1024, 2)) . ' KB';
         }
         elseif ($bytes > 1)
         {
@@ -144,5 +149,29 @@ class Upload extends Model
 
         return $bytes;
     }
+
+    static function acceptedFormat($file){
+
+        $is_image = ['img','jpg','jpeg','png'];
+        $is_document = ['docx','xlsx','pptx','pdf'];
+
+        if(in_array($file,$is_image)){
+
+            return "image";
+
+        }else if(in_array($file,$is_document)){
+
+            return "document";
+
+        }else{
+
+            return false;
+
+        }
+
+    }
+    
+    
+
 
 }

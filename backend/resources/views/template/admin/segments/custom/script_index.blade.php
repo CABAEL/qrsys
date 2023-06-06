@@ -173,12 +173,13 @@ addClientSubmit = (form) => {
   event.preventDefault();
    // Get form
     var form = $('#add_client_form')[0];
+    var element = $('#add_user_errors');
    // FormData object 
    var formData = new FormData(form);
 
    formData.append('image', $('input[type=file]')[0].files[0]);
    
-   //show_loader();
+   show_loader();
    $.ajax({
    url: base_url("add_client"),
    type: 'POST', 
@@ -190,21 +191,39 @@ addClientSubmit = (form) => {
    },
    data:formData,
    success: function(response) {
-    parseError(response);
 
-    //  console.log(response);
-    //  alert('User added successfully!');
-    //  //promt_success(element,data)
-    //  hide_loader();
-    //  window.location.replace('/login');
+    let response2 = response.responseJSON.message;
+
+    console.log(response2);
+
+    // var element = $('#add_user_errors');
+    // var form = '#add_client_form';
+
+    // let flag = parseError(response,form,element);
+
+    // alert("result:");
+    // if(flag == false){
+    //   alert("no error!");
+    // }
+    // if(error_response == "false"){
+    //   alert("no error!");
+
+    //   // console.log(response);
+    //   // console.log(parseError(response,form,element));
+    //   //  alert('User added successfully!');
+    //   // //  //promt_success(element,data)
+ 
+    //   //  //window.location.replace('/login');
+    // }else{
+    //   alert("pasok2");
+    //   hide_loader();
+    // }
    },
    error: function(e) {
-     //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
      var element = $('#add_user_errors');
      var form = '#add_client_form'; 
      promt_errors(form,element,e);
-   
-     //hide_loader();
+     hide_loader();
    }
    });
 }

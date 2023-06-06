@@ -42,23 +42,23 @@ function promt_errors(form='',element,e){
 
     element.css('visibility','visible');
     $(form+' .alert').css('visibility','visible');
-    //console.log(smpl)
 }
 
 
-parseError = (response) => {
-    let entries = Object.entries(response);
-    console.log(entries);
+parseError = (response,form,element) => {
 
-    Object.values(entries[1][1]['image']).forEach(function(k,v){
-        console.log(k);
-    });
-    // let response_arr = Object.entries(response);
-    // if (response_arr.errors){
-    //     console.log("errors nga!");
-    // }
+    if(response.responseJSON.errors.length > 0){ 
+
+        promt_errors(form,element,response);
+
+    }
 
 }
+
+
+$(':input').on('keypress',function(){
+    $(this).css('border','1px solid rgba(0, 0, 0, .15)');
+});
 
 
 
