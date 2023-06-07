@@ -61,4 +61,46 @@ $(':input').on('keypress',function(){
 });
 
 
+function random_char(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+
+
+function random_text_generator(element) {
+
+    var value = random_char(10);
+    
+    return element.val(value);
+    
+}
+
+function clear(element) {
+
+    return element.val('');
+  
+}
+
+function promt_warning_delete(form='',element,message,data_id){
+    div = '';
+    div += '<h6><b>'+message+'</b></h6>';
+    div += '<button class="btn btn-sm btn-default delete_no">NO</button>&nbsp;';
+    div += '<button class="btn btn-sm btn-warning delete_yes" data-id='+data_id+'>YES</button>';
+
+    element.removeClass('alert-danger');
+    element.removeClass('alert-success');
+
+    element.addClass('alert-warning');
+    $('.alert').css('height','auto');
+    $('.alert').css('width','100%');
+  
+    element.html(div);
+    $(form+' .alert').css('visibility','visible');
+  
+}
 

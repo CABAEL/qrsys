@@ -28,6 +28,7 @@ class UserController extends Controller
             ->join("clients",'clients.user_id','=','users.id','inner')
             ->where('id', '!=' , $current_user)
             ->where('users.status','!=',0)
+            ->where('users.deleted_at','=',null)
             ->get();
             
             $data = [
@@ -102,7 +103,7 @@ class UserController extends Controller
 
     public function user_info($id) 
     {
-        $fetch = User::select('users.id','clients.*')
+        $fetch = User::select('users.id','users.username','clients.*')
         ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$id)
         ->first();
         

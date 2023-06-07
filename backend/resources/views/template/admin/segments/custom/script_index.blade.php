@@ -48,7 +48,7 @@
        div +='<td>'+value.client_name+'</td>';
        div +='<td>200</td>';
        div +='<td>Active</td>';
-       div +='<td><button type="button" class="btn btn-sm btn-default viewuser" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
+       div +='<td><button type="button" class="btn btn-sm btn-default viewclient" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
        div +='</tr>';
        $('#UserListBody').html(div);
      });
@@ -118,7 +118,7 @@
    });
    
    
-   $(document).on('click','.viewuser',function(event) {
+   $(document).on('click','.viewclient',function(event) {
    event.preventDefault();
    var id = $(this).data('id');
    //alert(base_url("user_info/"+id));
@@ -131,31 +131,30 @@
        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
      },
      success: function(data){
+
+      
+      var flagsUrl = '{{ URL::asset("uploads/system_files/client_logo") }}'+"/"+data.logo;
+      
+       $('#viewclientmodal .logoContainer').css('background-image','url('+flagsUrl+')');
+
+       $('#update_client_form #update').attr('data-id',data.id);
+       $('#update_client_form #client_name').val(data.client_name);
+       $('#update_client_form #address').val(data.address);
+       $('#update_client_form #email').val(data.email);
+       $('#update_client_form #username').val(data.username);
+       $('#update_client_form #mobile_number').val(data.contact_no);
+       $('#update_client_form #description').val(data.description);
+       $('#update_client_form #password').val("");
+       $('#update_client_form #password_confirmation').val("");
    
-       hide_loader();
-   
-       // $('#viewusermodal #update').attr('data-id',data.id);
-       // $('#viewusermodal #update_fname').val(data.fname);
-       // $('#viewusermodal #update_mname').val(data.mname);
-       // $('#viewusermodal #update_lname').val(data.lname);
-   
-       // $('#viewusermodal #update_age').val(data.age);
-       // $("#viewusermodal option[value="+data.gender+"]").attr('selected','selected');
-       // $('#viewusermodal #update_birthday').val(data.birthday);
-       // $('#viewusermodal #update_address').val(data.address);
-   
-       // $('#viewusermodal #update_email').val(data.email);
-       // $('#viewusermodal #update_username').val(data.username);
-       // $('#viewusermodal #update_mobile_number').val(data.mobile_number);
-       // $("#viewusermodal option[value="+data.role+"]").attr('selected','selected');
-   
-       // $("#viewusermodal #updateAccount").attr('data-id',id);
+       $("#viewclientmodal #updateAccount").attr('data-id',id);
        
-       // $("#viewusermodal .deactivate").attr('data-id',id);
+       $("#viewclientmodal .deactivate").attr('data-id',id);
    
-       // $("#viewusermodal .delete").attr('data-id',id);
-   
-       $('#viewusermodal').modal('toggle');
+       $("#viewclientmodal .delete").attr('data-id',id);
+
+       hide_loader();
+       $('#viewclientmodal').modal('toggle');
        console.log(data);
      },
      error: function(e) {
@@ -180,6 +179,7 @@ addClientSubmit = (form) => {
    formData.append('image', $('input[type=file]')[0].files[0]);
    
    show_loader();
+
    $.ajax({
    url: base_url("add_client"),
    type: 'POST', 
@@ -192,32 +192,16 @@ addClientSubmit = (form) => {
    data:formData,
    success: function(response) {
 
-    let response2 = response.responseJSON.message;
+    let error_check = response.responseJSON.errors.length;
 
-    console.log(response2);
+    if(error_check == 0){
 
-    // var element = $('#add_user_errors');
-    // var form = '#add_client_form';
+      alert('User added successfully!');
+      hide_loader();
+      window.location.replace('/login');
 
-    // let flag = parseError(response,form,element);
+    }
 
-    // alert("result:");
-    // if(flag == false){
-    //   alert("no error!");
-    // }
-    // if(error_response == "false"){
-    //   alert("no error!");
-
-    //   // console.log(response);
-    //   // console.log(parseError(response,form,element));
-    //   //  alert('User added successfully!');
-    //   // //  //promt_success(element,data)
- 
-    //   //  //window.location.replace('/login');
-    // }else{
-    //   alert("pasok2");
-    //   hide_loader();
-    // }
    },
    error: function(e) {
      var element = $('#add_user_errors');
@@ -227,6 +211,104 @@ addClientSubmit = (form) => {
    }
    });
 }
+
+
+$(document).on("click","#generate_pass",function(event) {
+  event.preventDefault();
+  element = $('#viewclientmodal #password');
+  random_text_generator(element);
+});
+
+function copy_text(element) {
+event.preventDefault();
+
+
+var copyText = $(element);
+
+/* Select the text field */
+copyText.select();
+ /* Copy the text inside the text field */
+navigator.clipboard.writeText(copyText.val());
+
+}
+
+
+$(document).on("click","#update_client_form #clear",function() {
+  event.preventDefault();
+
+  var pass = $('#update_client_form #password');
+  clear(pass);
+  clear(pass);
+});
+
+
+$("#show_hide_password a").on('click', function(event) {
+        event.preventDefault();
+        if($('#show_hide_password input').attr("type") == "text"){
+            $('#show_hide_password input').attr('type', 'password');
+            $('#show_hide_password i').addClass( "fa-eye-slash" );
+            $('#show_hide_password i').removeClass( "fa-eye" );
+        }else if($('#show_hide_password input').attr("type") == "password"){
+            $('#show_hide_password input').attr('type', 'text');
+            $('#show_hide_password i').removeClass( "fa-eye-slash" );
+            $('#show_hide_password i').addClass( "fa-eye" );
+        }
+});
+
+$("#show_hide_password2 a").on('click', function(event) {
+        event.preventDefault();
+        if($('#show_hide_password2 input').attr("type") == "text"){
+            $('#show_hide_password2 input').attr('type', 'password');
+            $('#show_hide_password2 i').addClass( "fa-eye-slash" );
+            $('#show_hide_password2 i').removeClass( "fa-eye" );
+        }else if($('#show_hide_password2 input').attr("type") == "password"){
+            $('#show_hide_password2 input').attr('type', 'text');
+            $('#show_hide_password2 i').removeClass( "fa-eye-slash" );
+            $('#show_hide_password2 i').addClass( "fa-eye" );
+        }
+});
+
+
+$(document).on("click","#viewclientmodal .delete",function(e) {
+  var data_id = $(this).data('id');
+  var form = '#viewclientmodal';
+  var element = $('#viewclientmodal #add_user_errors');
+  var message = "Are you sure that you want to delete this user?";
+
+  promt_warning_delete(form,element,message,data_id);
+  //$('#confirmation').modal('toggle');
+  console.log(data_id);
+
+});
+
+
+$(document).on("click","#viewclientmodal .delete_yes",function(e) {
+    var id = $(this).data('id');
+    show_loader();
+    $.ajax({
+        url: base_url("confirm_delete/"+id),
+        type: 'DELETE', 
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function(data) {
+          console.log(data);
+          alert('User deleted!');
+          //promt_success(element,data)
+          hide_loader();
+          window.location.replace('/login');
+        },
+        error: function(e){
+          console.log(e);
+          //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+          // var element = $('#add_user_errors');
+          // var form = '#addusermodal'; 
+          // promt_errors(form,element,e);
+          // hide_loader();
+        }
+    });
+  });
    
 </script>
 <script src="{{ asset('js/custom/general.js') }}"></script>

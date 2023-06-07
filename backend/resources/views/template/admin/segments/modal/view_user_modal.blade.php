@@ -1,4 +1,4 @@
-<div class="modal fade" id="viewusermodal" tabindex="-1" role="dialog" aria-labelledby="viewusermodal" aria-hidden="true">
+<div class="modal fade" id="viewclientmodal" tabindex="-1" role="dialog" aria-labelledby="viewusermodal" aria-hidden="true">
    <div class="modal-dialog modal-lg">
       <div class="modal-content">
          <div class="modal-header">
@@ -20,7 +20,7 @@
                      <div class="form-row">
                         <div class="col-md-12">
                            <label for="name">Client/Organization Name</label>
-                           <input type="text" class="form-control" id="fname" name="fname" autofocus/>
+                           <input type="text" class="form-control" id="client_name" name="client_name" autofocus/>
                         </div>
                      </div>
                   </div>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-md-6">
                            <label for="mobile_number">Description</label>
-                           <textarea class="form-control" name="description"></textarea>             
+                           <textarea class="form-control" id="description" name="description"></textarea>             
                         </div>
                      </div>
                   </div>
@@ -60,25 +60,28 @@
                      <div class="form-row">
                         <div class="col-md-6">
                            <label for="retypePassword">Password</label>
-                           <div class="input-group" class="show_hide_password">
-                              <input class="form-control" id="password" type="password">
-                              <div class="input-group-addon" onclick="viewpass()">
-                                 <i class="fa fa-eye-slash" id="viewpass" aria-hidden="true"></i>
+                           <div class="input-group" id="show_hide_password">
+                              <input class="form-control" id="password" type="password" required/>
+                              <div class="input-group-addon">
+                              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                               </div>
                            </div>
+
                         </div>
                         <div class="col-md-6">
                            <label for="password_confirmation">Retype Password</label>
-                           <div class="input-group" class="show_hide_password">
-                              <input class="form-control" id="password_confirmation" type="password">
-                              <div class="input-group-addon"  onclick="view_retype_pass()">
-                                 <i class="fa fa-eye-slash" id="view_retype_pass" aria-hidden="true"></i>
+                           <div class="input-group" id="show_hide_password2">
+                              <input class="form-control" id="password_confirmation" type="password" required/>
+                              <div class="input-group-addon">
+                              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                               </div>
                            </div>
                         </div>
-                        <button class="btn btn-sm" id="generate_pass"><i class="fa fa-recycle"></i> Generate</button>
-                        <button class="btn btn-sm btn-default" id="copy" onclick="copy_text('#update_password')"><i class="fa fa-copy"></i> Copy</button> 
-                        <button class="btn btn-sm btn-info" id="clear"><i class="fa fa-clear"></i> Clear</button>
+                        <div class="container">
+                           <button class="btn btn-sm" id="generate_pass"><i class="fa fa-recycle"></i> Generate</button>
+                           <button class="btn btn-sm btn-default" id="copy" onclick="copy_text('#update_client_form #password')"><i class="fa fa-copy"></i> Copy</button> 
+                           <button class="btn btn-sm btn-info" id="clear"><i class="fa fa-clear"></i> Clear</button>
+                        </div>
                      </div>
                   </div>
                </form>

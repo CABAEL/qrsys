@@ -110,7 +110,7 @@ Route::middleware(['auth','role'])->group(function(){
 
         // Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
-        // Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
+        Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
 
         Route::get('/user_list',[UserController::class,'index']);
 

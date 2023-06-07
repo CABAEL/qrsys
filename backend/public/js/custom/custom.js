@@ -21,25 +21,6 @@ function promt_warning(form='',element,message,data_id){
   
 }
 
-function promt_warning_delete(form='',element,message,data_id){
-
-    div = '';
-    div += '<h6><b>'+message+'</b></h6>';
-    div += '<button class="btn btn-sm btn-default delete_no">NO</button>&nbsp;';
-    div += '<button class="btn btn-sm btn-warning delete_yes" data-id='+data_id+'>YES</button>';
-
-    element.removeClass('alert-danger');
-    element.removeClass('alert-success');
-
-    element.addClass('alert-warning');
-    $('.alert').css('height','auto');
-    $('.alert').css('width','100%');
-  
-    element.html(div);
-    $(form+' .alert').css('visibility','visible');
-  
-}
-
 function promt_success(element,e){
   div = '';
   div += '<h6><b>'+e.message+'</b></h6>';
@@ -52,19 +33,7 @@ function promt_success(element,e){
   element.html(div);
   $('.alert').css('visibility','visible');
 }
-
-function viewpass() {
-  var x = document.getElementById("password");
-
-  if (x.type === "password") {
-    x.type = "text";
-    $('#viewpass').css('color','#ace');
-  } else {
-    x.type = "password";
-    $('#viewpass').css('color','#000');
-  }
-
-} 
+ 
 
 function view_retype_pass(){
   var x = document.getElementById("password_confirmation");
@@ -79,55 +48,14 @@ function view_retype_pass(){
 
 }
 
-function random_char(length) {
-  var result           = '';
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-  for ( var i = 0; i < length; i++ ) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
- }
- return result;
-}
 
-
-function random_text_generator(element) {
-
-var value = random_char(10);
-
-return element.val(value);
-
-}
 
 function clear_modal_promt(modal) {
   $(modal+' .alert').css('visibility','hidden');
 }
 
-function clear(element) {
 
-  return element.val('');
 
-}
-
-function copy_text(element) {
-
-var copyText = $(element);
-
-/* Select the text field */
-copyText.select();
- /* Copy the text inside the text field */
-navigator.clipboard.writeText(copyText.val());
-
-}
-
-$(document).on("click","#clear",function() {
-  var pass = $('#viewusermodal #update_password');
-  clear(pass);
-});
-
-$(document).on("click","#generate_pass",function() {
-  element = $('#viewusermodal #update_password');
-  random_text_generator(element);
-});
 
 
 $(document).on("click",".deactivate",function(e) {
@@ -146,17 +74,7 @@ $(document).on("click",".deactivate",function(e) {
 });
 
 
-$(document).on("click",".delete",function(e) {
-  var data_id = $(this).data('id');
-  var form = '#viewusermodal';
-  var element = $('.alert');
-  var message = "Are you sure that you want to delete this user?";
 
-  promt_warning_delete(form,element,message,data_id);
-  //$('#confirmation').modal('toggle');
-  console.log(data_id);
-
-});
 
 $(document).on("click",".deactivate_no",function(e) {
   $('.alert').css('visibility','hidden');

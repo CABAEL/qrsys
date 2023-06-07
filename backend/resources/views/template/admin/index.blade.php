@@ -96,7 +96,7 @@
                </thead>
                <tbody id="UserListBody">
                   <tr>
-                     <td colspan="2">
+                     <td colspan="4">
                         <center>Loading...</center>
                      </td>
                   </tr>
