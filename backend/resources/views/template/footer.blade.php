@@ -40,6 +40,7 @@
 <!--<script src="{{ asset('packages/chart.js/Chart.min.js') }}"></script>-->
 <script src="{{ asset('packages/datatables/jquery.dataTables.js') }}"></script>
 <script src="{{ asset('packages/datatables/dataTables.bootstrap4.js') }}"></script>
+<script src="{{ asset('packages/jquery.md5.min.js') }}"></script>
 <!-- Custom scripts for this template -->
 <script src="{{ asset('js/sb-admin.min.js') }}"></script>
 <!-- Custom js-->

@@ -60,19 +60,19 @@
                      <div class="form-row">
                         <div class="col-md-6">
                            <label for="retypePassword">Password</label>
-                           <div class="input-group" class="show_hide_password">
-                              <input class="form-control" name="password" id="password" type="password" autocomplete="off">
-                              <div class="input-group-addon" onclick="viewpass()">
-                                 <i class="fa fa-eye-slash" id="viewpass" aria-hidden="true"></i>
+                           <div class="input-group" id="show_hide_password">
+                              <input class="form-control" name="password" id="password" type="password" autocomplete="off" required/>
+                              <div class="input-group-addon">
+                              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                               </div>
                            </div>
                         </div>
                         <div class="col-md-6">
                            <label for="password_confirmation">Retype Password</label>
-                           <div class="input-group" class="show_hide_password">
-                              <input class="form-control" name="password_confirmation" id="password_confirmation" type="password" autocomplete="off">
-                              <div class="input-group-addon"  onclick="view_retype_pass()">
-                                 <i class="fa fa-eye-slash" id="view_retype_pass" aria-hidden="true"></i>
+                           <div class="input-group" id="show_hide_password2">
+                              <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" required/>
+                              <div class="input-group-addon">
+                              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                               </div>
                            </div>
                         </div>

@@ -66,7 +66,6 @@
                               <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                               </div>
                            </div>
-
                         </div>
                         <div class="col-md-6">
                            <label for="password_confirmation">Retype Password</label>

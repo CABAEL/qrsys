@@ -41,19 +41,22 @@
     // console.log(ret);
      var div = '';
    
-     $.each(ret.data, function( index, value ) {
+
+      $.each(ret.data, function( index, value ) {
       // console.log( index + ": " + value.username );
-   
-       div +='<tr>'; 
-       div +='<td>'+value.client_name+'</td>';
-       div +='<td>200</td>';
-       div +='<td>Active</td>';
-       div +='<td><button type="button" class="btn btn-sm btn-default viewclient" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
-       div +='</tr>';
-       $('#UserListBody').html(div);
-     });
+  
+      div +='<tr>'; 
+      div +='<td>'+value.client_name+'</td>';
+      div +='<td>200</td>';
+      div +='<td>Active</td>';
+      div +='<td><button type="button" class="btn btn-sm btn-default viewclient" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
+      div +='</tr>';
+      
+    });
      
-     $( "#user-table" ).DataTable();
+
+    $('#UserListBody').html(div);
+    $( "#user-table" ).DataTable();
    
    },
    error: function(e){
@@ -131,11 +134,16 @@
        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
      },
      success: function(data){
-
       
-      var flagsUrl = '{{ URL::asset("uploads/system_files/client_logo") }}'+"/"+data.logo;
+      let logo = '/img/bg_logo.png';
       
-       $('#viewclientmodal .logoContainer').css('background-image','url('+flagsUrl+')');
+      if(data.logo){
+        let hash_client_name = $.MD5(data.client_name);
+        let client_logo_path = '/'+'{{ env("CLIENT_DIR_PATH") }}'+hash_client_name+'/logo/'; 
+        logo = client_logo_path+data.logo;
+      }
+      
+       $('#viewclientmodal .logoContainer').css('background-image','url('+logo+')');
 
        $('#update_client_form #update').attr('data-id',data.id);
        $('#update_client_form #client_name').val(data.client_name);

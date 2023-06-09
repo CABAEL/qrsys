@@ -105,7 +105,7 @@ class Upload extends Model
                     $errors ['image'] = $image_err; 
                 }
 
-            }else if ($type === 'document'){
+            }else if ($file_type === 'document'){
                 $document_err [] = ($raw_filename." image file size is larger than the allowed value (".self::formatSizeUnits(env('IMAGE_ALLOWED_SIZE')).")");
                 $errors ['document'] = $document_err; 
             }
