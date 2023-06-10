@@ -9153,7 +9153,7 @@ a.text-dark:hover {
     visibility: hidden !important
 }
 
-.logoContainer{
+.logoContainer, .updatelogoContainer{
     width:200px;
     height:200px;
     background-image:url('/img/bg_logo.png');

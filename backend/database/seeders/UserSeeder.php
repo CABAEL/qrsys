@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             $db = DB::table('users')->insert
             (
                 [
-                'username' => 'admin',
+                'username' => 'admin'.$count,
                 'password' => Hash::make('admin'),
                 'role' => 'admin',
                 ],

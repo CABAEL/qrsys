@@ -44,13 +44,6 @@ Route::get('/register', function (Request $request) {
     return view('register');
 });
 
-Route::get('/test', function (Request $request) {
-    if (Auth::check()) {
-        return Auth::user();
-    }else{
-        return "not";
-    }
-});
 
 Route::get('/login', function (Request $request) {
     return view('/login');
@@ -66,6 +59,8 @@ Route::get('/logout',[LogoutController::class,'logout_user'])->name('logout');
 //portal get routes
 Route::get('/portal_event',[EventController::class,'index']);
 Route::get('/portal_announcement',[AnnouncementController::class,'index']);
+
+
 
 
 //Route::post('google_auth',[LoginController::class,'google_auth']);
@@ -106,7 +101,7 @@ Route::middleware(['auth','role'])->group(function(){
 
         // Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
-        // Route::put('/update_user_data/{id}',[UserController::class,'update']);
+        Route::put('/update_user_data/{id}',[UserController::class,'update']);
 
         // Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
@@ -119,6 +114,8 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/user_info/{id}',[UserController::class,'user_info']);
 
         Route::post('add_client',[UserController::class,'storeClient']);
+
+        Route::get('/active_clients',[UserController::class,'activeClients']);
     
     });
 

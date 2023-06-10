@@ -9,6 +9,7 @@ use App\Models\Upload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -194,6 +195,26 @@ class UserController extends Controller
         //
     }
 
+    public function activeClients(){
+
+        // $select = Client::with(['user' => function($query){
+        //     $query->where('status',1);
+        // }])
+        // //->where('user.status','=',1)
+        // ->get();
+
+
+        $clients = User::join('clients', 'users.id', '=', 'clients.user_id')
+        ->select('clients.*', 'users.id')
+        ->where('users.role','client')
+        ->where('users.status',1)
+        ->get();
+
+        return responseBuilder("Successfully loaded.",[],$clients);
+
+
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -232,72 +253,98 @@ class UserController extends Controller
     public function update(Request $request,$id)
     {
 
-        $user_table = User::find($id);
+        $validated_user = $request->validate([
+            'address' => 'required',
+            'email' => 'required|email|max:60',
+            'description' => 'nullable',
+            'contact_number' => 'nullable|numeric|digits_between:7,13',
+            'client_name' => [
+                'required',
+                'max:100',
+                Rule::unique('clients')->ignore($request['client_name'], 'client_name')
+            ],
+            'username' => 
+            [
+                'required',
+                'max:60',
+                Rule::unique('users')->ignore($request['username'], 'username')
+            ]
+            ,
+            'password' =>             [
+                'nullable',
+                'max:60',
+                'confirmed',
+                Rule::unique('users')->ignore($request['password'], 'password')
+            ],
+        ]);
 
-        $user_profile_table = User_profile::find($id);        
+        $merge_data = array();
 
-        if($user_table->username != $request->update_username){
-            $validated_update = $request->validate([
-                'update_username' => 'unique:users,username|required|max:60',
-                'update_password' => 'nullable|max:60',
-                'update_fname' => 'required|max:60',
-                'update_mname' => 'nullable|max:60',
-                'update_lname' => 'required|max:60',
-                'update_age' => 'required|integer',
-                'update_gender' => 'required|max:60',
-                'update_birthday' => 'required|max:60',
-                'update_address' => 'required',
-                'update_email' => 'required|email|max:60',
-                'update_mobile_number' => 'required|numeric',
-                //'update_role' => 'required'
+        $user_creds = User::find($id);
+
+        if($validated_user['username'] != "" ){
+            $user_creds->username = $validated_user['username'];
+        }
+
+        if($validated_user['password'] !=""){
+            $user_creds->password = Hash::make($validated_user['password']);
+        }
+
+        $user_creds->save();
+
+        // ->update([
+        //     'username' => $validated_user['username'],
+        //     'password' => Hash::make($validated_user['password']),
+        // ]);
+        
+        if($user_creds){
+
+            $client = Client::where('user_id', $user_creds->id)->first();
+            
+            $client->update([
+                'client_name' => $validated_user['client_name'],
+                'address' => $validated_user['address'],
+                'contact_no' => $validated_user['contact_number'],
+                'email' => $validated_user['email'],
+                'description' => $validated_user['description']
             ]);
-        }
-        else{
-            $validated_update = $request->validate([
-                'update_username' => 'required|max:60',
-                'update_password' => 'nullable|max:60',
-                'update_fname' => 'required|max:60',
-                'update_mname' => 'nullable|max:60',
-                'update_lname' => 'required|max:60',
-                'update_age' => 'required|integer',
-                'update_gender' => 'required|max:60',
-                'update_birthday' => 'required|max:60',
-                'update_address' => 'required',                
-                'update_email' => 'required|email|max:60',
-                'update_mobile_number' => 'required|numeric',
-                'update_role' => 'required'
-            ]);
-        }
 
-        $user_table->username = $validated_update['update_username'];
+            $folder_name = md5($validated_user['client_name']);
+            $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
 
-        if($validated_update['update_password']!=''){
-            $user_table->password = Hash::make($validated_update['update_password']);
-        }
-        
-        $user_table->role = $validated_update['update_role'];
+            if (!file_exists($logo_path)) {
+                mkdir($logo_path, 0777, true);
+            }
 
-        
-
-        $user_profile_table->fname = $validated_update['update_fname'];
-        $user_profile_table->mname = $validated_update['update_mname'];
-        $user_profile_table->lname = $validated_update['update_lname'];
-        $user_profile_table->age = $validated_update['update_age'];
-        $user_profile_table->gender = $validated_update['update_gender'];
-        $user_profile_table->birthday = $validated_update['update_birthday'];
-        $user_profile_table->address = $validated_update['update_address'];
-        $user_profile_table->email = $validated_update['update_email'];
-        $user_profile_table->mobile_number = $validated_update['update_mobile_number'];
-        
-        if($user_table->save() && $user_profile_table->save()){
-            $response = [
-                'flag' => 200,
-                'message' => 'User updated succesfully!',
-            ];
+            //return $logo_path;
+            $logo_file = '';
+            if(isset($_FILES['updatelogo']['name'])){
+                $file_params [] = array(
+                    'filename' => $_FILES['updatelogo']['name'],
+                    'location' => $logo_path,
+                    'tmp_name' => $_FILES['updatelogo']['tmp_name'],
+                    'filesize' => $_FILES['updatelogo']['size']
+                );
     
-            return response()->json($response);
-        
-    }
+                $add_logo = Upload::fileUpload($file_params);
+    
+                $client->update(['logo' => $add_logo['responseJSON']['data'][0]]);
+                $logo_file = $add_logo['responseJSON']['data'][0];
+            }
+
+            
+            $merge_data = [
+                'user' => $user_creds,
+                'client_profile' => $client,
+                'logo' => $logo_file
+            ];
+
+            return responseBuilder("User successfully added!",[],$merge_data);
+            
+        }
+
+        return responseBuilder("Invalid request.",array('User' => "Unable to update."),$merge_data);
+
 
     }
 

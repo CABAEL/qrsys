@@ -6,16 +6,18 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
          </div>
-         <div class="modal-body">
+         <form id="update_client_form" onSubmit="updateClientSubmit(this.id)" enctype="multipart/form-data">
+            <div class="modal-body">
+         
             <center>
-               <div class="alert alert-danger" id="add_user_errors"></div>
+               <div class="alert alert-danger" id="update_client_errors"></div>
             </center>
             <div class="container-fluid">
                <center>
-                  <div class="logoContainer"></div>
+                  <div class="updatelogoContainer"></div>
                </center>
-               <form id="update_client_form">
-                  <input type="file" id="logo" name="logo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg"/>
+               
+                  <input type="file" id="updatelogo" name="updatelogo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg"/>
                   <div class="form-group">
                      <div class="form-row">
                         <div class="col-md-12">
@@ -48,7 +50,7 @@
                      <div class="form-row">
                         <div class="col-md-6">
                            <label for="mobile_number">Mobile number</label>
-                           <input type="text" class="form-control" id="mobile_number" name="mobile_number" aria-describedby="nameHelp">
+                           <input type="text" class="form-control" id="contact_number" name="contact_number" aria-describedby="nameHelp">
                         </div>
                         <div class="col-md-6">
                            <label for="username">Username</label>
@@ -61,7 +63,7 @@
                         <div class="col-md-6">
                            <label for="retypePassword">Password</label>
                            <div class="input-group" id="show_hide_password">
-                              <input class="form-control" id="password" type="password" required/>
+                              <input class="form-control" id="password" name="password" type="password"/>
                               <div class="input-group-addon">
                               <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                               </div>
@@ -70,7 +72,7 @@
                         <div class="col-md-6">
                            <label for="password_confirmation">Retype Password</label>
                            <div class="input-group" id="show_hide_password2">
-                              <input class="form-control" id="password_confirmation" type="password" required/>
+                              <input class="form-control" id="password_confirmation" name="password_confirmation" type="password"/>
                               <div class="input-group-addon">
                               <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                               </div>
@@ -83,17 +85,18 @@
                         </div>
                      </div>
                   </div>
-               </form>
+               
             </div>
             <br>
             <div class="modal-footer">
-               <button class="btn btn-primary btn-block" id="updateAccount">Update</button>
+               <button type="submit" class="btn btn-primary btn-block">Update</button>
                <br>
                <button class="btn btn-default btn-block deactivate">Deactivate</button>
                <br>
                <button class="btn btn-danger btn-block delete">Delete</button>
             </div>
             <br>
+         </form>
          </div>
       </div>
    </div>
