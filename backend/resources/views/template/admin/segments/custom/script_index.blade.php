@@ -11,6 +11,8 @@
     });
     
     $('#logo').on('change',function(){
+
+        $('.logoContainer').css('border','none');
     
         var oFReader = new FileReader();
         oFReader.readAsDataURL(document.getElementById("logo").files[0]);
@@ -169,7 +171,7 @@
         $('#update_client_form #address').val(data.address);
         $('#update_client_form #email').val(data.email);
         $('#update_client_form #username').val(data.username);
-        $('#update_client_form #mobile_number').val(data.contact_no);
+        $('#update_client_form #contact_number').val(data.contact_no);
         $('#update_client_form #description').val(data.description);
         $('#update_client_form #password').val("");
         $('#update_client_form #password_confirmation').val("");
@@ -198,6 +200,7 @@
    // form submit
    
    addClientSubmit = (form) => {
+
    event.preventDefault();
     // Get form
      var form = $('#add_client_form')[0];
@@ -207,7 +210,7 @@
    
     formData.append('image', $('input[type=file]')[0].files[0]);
     
-    show_loader();
+    //show_loader();
    
     $.ajax({
     url: base_url("add_client"),
@@ -221,20 +224,35 @@
     data:formData,
     success: function(response) {
    
-     let error_check = response.responseJSON.errors.length;
-   
-     if(error_check == 0){
+     let error_check = response.responseJSON.errors;
+     if(error_check == null || error_check.length == 0){
    
        alert('User added successfully!');
        hide_loader();
        window.location.replace('/login');
    
+     }else{
+
+      if(error_check.image[0]){
+        alert(error_check.image[0]);
+
+        let logo = '/img/bg_logo.png';
+       
+        $('#addclient .logoContainer').css('background-image','url('+logo+')');
+        $('#addclient .logoContainer').css('border','solid 3px red');
+
+      }else{
+        promt_errors(form,element,response);
+      }
+
+      hide_loader();
+
      }
    
     },
     error: function(e) {
-      var element = $('#add_user_errors');
-      var form = '#add_client_form'; 
+      element = $('#add_client_errors');
+      form = '#addclient'; 
       promt_errors(form,element,e);
       hide_loader();
     }
@@ -298,20 +316,22 @@
    });
    
    
-   $(document).on("click","#viewclientmodal .delete",function(e) {
+  $(document).on("click","#viewclientmodal .delete",function(e) {
+  event.preventDefault();
    var data_id = $(this).data('id');
    var form = '#viewclientmodal';
-   var element = $('#viewclientmodal #add_user_errors');
+   var element = $('#viewclientmodal #update_client_errors');
    var message = "Are you sure that you want to delete this user?";
    
    promt_warning_delete(form,element,message,data_id);
    //$('#confirmation').modal('toggle');
-   console.log(data_id);
+  //  console.log(data_id);
    
    });
    
    
    $(document).on("click","#viewclientmodal .delete_yes",function(e) {
+    event.preventDefault();
      var id = $(this).data('id');
      show_loader();
      $.ajax({
@@ -363,15 +383,13 @@
     //  var formData = form.serialize();
      var client_id = $('#update_client_form').data('id');
 
-     alert(client_id);
-
     var formData = new FormData(form);
    
     formData.append('image', $('input[type=file]')[0].files[0]);
    
     $.ajax({
       url: base_url("update_user_data/"+client_id),
-      type: 'put', 
+      type: 'post', 
       dataType: 'json',
       contentType: false,
       processData: false,
@@ -380,11 +398,30 @@
       },
       data:formData,
       success: function(data) {
-        console.log(data);
-        alert('Updated successfully!');
-        //promt_success(element,data)
-        hide_loader();
-        window.location.replace('/login');
+        let error_check = data.responseJSON.errors;
+        if(error_check == null || error_check.length == 0){
+      
+          alert('User added successfully!');
+          hide_loader();
+          window.location.replace('/login');
+      
+        }else{
+
+          if(error_check.image[0]){
+            alert(error_check.image[0]);
+
+            let logo = '/img/bg_logo.png';
+          
+            $('#update_client_form .updatelogoContainer').css('background-image','url('+logo+')');
+            $('#update_client_form .updatelogoContainer').css('border','solid 3px red');
+
+          }else{
+            promt_errors(form,element,response);
+          }
+
+          hide_loader();
+
+        }
       },
       error: function(e) {
         //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);

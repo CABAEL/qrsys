@@ -126,7 +126,32 @@ class UserController extends Controller
             'password' => 'required|confirmed|max:60|min:8',
         ]);
 
-        // return $update_logo2;
+        
+
+        $folder_name = md5($validated_user['client_name']);
+        $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
+
+        if (!file_exists($logo_path)) {
+            mkdir($logo_path, 0777, true);
+        }
+
+        //return $logo_path;
+
+        if(isset($request->logo)){
+            $file_params [] = array(
+                'filename' => $_FILES['logo']['name'],
+                'location' => $logo_path,
+                'tmp_name' => $_FILES['logo']['tmp_name'],
+                'filesize' => $_FILES['logo']['size']
+            );
+    
+            $add_logo = Upload::fileUpload($file_params);
+    
+            if(!empty($add_logo['responseJSON']['errors'])){
+                return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+            }
+        }
+
 
         $merge_data = array();
 
@@ -148,32 +173,15 @@ class UserController extends Controller
                 'description' => $validated_user['description']
             ]);
 
-            $folder_name = md5($validated_user['client_name']);
-            $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
-
-            if (!file_exists($logo_path)) {
-                mkdir($logo_path, 0777, true);
-            }
-
-            //return $logo_path;
-
-            $file_params [] = array(
-                'filename' => $_FILES['logo']['name'],
-                'location' => $logo_path,
-                'tmp_name' => $_FILES['logo']['tmp_name'],
-                'filesize' => $_FILES['logo']['size']
-            );
-
-            $add_logo = Upload::fileUpload($file_params);
-
-            $select_client = Client::where('user_id',$client_profile->id)
+            if(isset($request->logo)){
+            $select_client = Client::where('user_id',$user_id)
             ->update(['logo' => $add_logo['responseJSON']['data'][0]]);
-
+            }
             
             $merge_data = [
                 'user' => $user_creds,
                 'client_profile' => $client_profile,
-                'logo' => $add_logo['responseJSON']['data'][0]
+                'logo' => isset($add_logo['responseJSON']['data'][0])?$add_logo['responseJSON']['data'][0]:""
             ];
 
             return responseBuilder("User successfully added!",[],$merge_data);
@@ -299,7 +307,7 @@ class UserController extends Controller
         
         if($user_creds){
 
-            $client = Client::where('user_id', $user_creds->id)->first();
+            $client = Client::where('user_id', $id)->first();
             
             $client->update([
                 'client_name' => $validated_user['client_name'],
@@ -309,16 +317,17 @@ class UserController extends Controller
                 'description' => $validated_user['description']
             ]);
 
-            $folder_name = md5($validated_user['client_name']);
-            $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
-
-            if (!file_exists($logo_path)) {
-                mkdir($logo_path, 0777, true);
-            }
-
             //return $logo_path;
             $logo_file = '';
-            if(isset($_FILES['updatelogo']['name'])){
+            if(isset($request->updatelogo)){
+
+                $folder_name = md5($validated_user['client_name']);
+                $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
+
+                if (!file_exists($logo_path)) {
+                    mkdir($logo_path, 0777, true);
+                }
+                
                 $file_params [] = array(
                     'filename' => $_FILES['updatelogo']['name'],
                     'location' => $logo_path,
@@ -327,6 +336,10 @@ class UserController extends Controller
                 );
     
                 $add_logo = Upload::fileUpload($file_params);
+
+                if(!empty($add_logo['responseJSON']['errors'])){
+                    return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+                }
     
                 $client->update(['logo' => $add_logo['responseJSON']['data'][0]]);
                 $logo_file = $add_logo['responseJSON']['data'][0];

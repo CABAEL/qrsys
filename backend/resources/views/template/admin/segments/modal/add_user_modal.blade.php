@@ -9,7 +9,7 @@
          <form id="add_client_form" onSubmit="addClientSubmit(this.id)" enctype="multipart/form-data">
          <div class="modal-body">
             <center>
-               <div class="alert alert-danger" id="add_user_errors"></div>
+               <div class="alert alert-danger" id="add_client_errors"></div>
             </center>
             <div class="container-fluid">
                <center>

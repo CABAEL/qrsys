@@ -101,7 +101,7 @@ Route::middleware(['auth','role'])->group(function(){
 
         // Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
-        Route::put('/update_user_data/{id}',[UserController::class,'update']);
+        Route::post('/update_user_data/{id}',[UserController::class,'update']);
 
         // Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
