@@ -103,7 +103,7 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::post('/update_user_data/{id}',[UserController::class,'update']);
 
-        // Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
+        Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
         Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
 

@@ -1,26 +1,6 @@
 var token = $('#csrf').val();
 
 
-
-function promt_warning(form='',element,message,data_id){
-
-    div = '';
-    div += '<h6><b>'+message+'</b></h6>';
-    div += '<button class="btn btn-sm btn-default deactivate_no">NO</button>&nbsp;';
-    div += '<button class="btn btn-sm btn-warning deactivate_yes" data-id='+data_id+'>YES</button>';
-
-    element.removeClass('alert-danger');
-    element.removeClass('alert-success');
-
-    element.addClass('alert-warning');
-    $('.alert').css('height','auto');
-    $('.alert').css('width','100%');
-  
-    element.html(div);
-    $(form+' .alert').css('visibility','visible');
-  
-}
-
 function promt_success(element,e){
   div = '';
   div += '<h6><b>'+e.message+'</b></h6>';
@@ -53,25 +33,6 @@ function view_retype_pass(){
 function clear_modal_promt(modal) {
   $(modal+' .alert').css('visibility','hidden');
 }
-
-
-
-
-
-$(document).on("click",".deactivate",function(e) {
-  e.preventDefault();
-//$('#deactivate').on('click',function(){
-  var data_id = $(this).data('id');
-
-  var form = '#viewusermodal';
-  var element = $('.alert');
-  var message = "Are you sure that you want to deactivate this user?";
-
-  promt_warning(form,element,message,data_id);
-  //$('#confirmation').modal('toggle');
-  console.log(data_id);
-
-});
 
 
 

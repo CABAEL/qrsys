@@ -408,12 +408,8 @@
         }else{
 
           if(error_check.image[0]){
-            alert(error_check.image[0]);
 
-            let logo = '/img/bg_logo.png';
-          
-            $('#update_client_form .updatelogoContainer').css('background-image','url('+logo+')');
-            $('#update_client_form .updatelogoContainer').css('border','solid 3px red');
+            alert(error_check.image[0]);
 
           }else{
             promt_errors(form,element,response);
@@ -434,6 +430,48 @@
     });
 
   }
+
+  $(document).on("click",".deactivate",function(e) {
+  e.preventDefault();
+    var data_id = $(this).data('id');
+
+    var form = '#viewclientmodal';
+    var element = $('#update_client_form .alert');
+    var message = "Are you sure that you want to deactivate this client?";
+
+    promt_warning_deactivate(form,element,message,data_id);
+    console.log(data_id);
+
+  });
+
+  $(document).on("click",".deactivate_yes",function(e) {
+    event.preventDefault();
+    var id = $(this).data('id');
+    show_loader();
+    $.ajax({
+        url: base_url("confirm_deactivate/"+id),
+        type: 'PUT', 
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function(data) {
+          console.log(data);
+          alert('User deactivated!');
+          //promt_success(element,data)
+          hide_loader();
+          window.location.replace('/login');
+        },
+        error: function(e){
+          //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+          var element = $('#update_client_errors');
+          var form = '#viewclientmodal'; 
+          promt_errors(form,element,e);
+          hide_loader();
+        }
+    });
+  });
+
     
 </script>
 <script src="{{ asset('js/custom/general.js') }}"></script>

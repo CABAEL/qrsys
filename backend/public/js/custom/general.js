@@ -104,3 +104,22 @@ function promt_warning_delete(form='',element,message,data_id){
   
 }
 
+function promt_warning_deactivate(form='',element,message,data_id){
+
+    div = '';
+    div += '<h6><b>'+message+'</b></h6>';
+    div += '<button class="btn btn-sm btn-default deactivate_no">NO</button>&nbsp;';
+    div += '<button class="btn btn-sm btn-warning deactivate_yes" data-id='+data_id+'>YES</button>';
+
+    element.removeClass('alert-danger');
+    element.removeClass('alert-success');
+
+    element.addClass('alert-warning');
+    $('.alert').css('height','auto');
+    $('.alert').css('width','100%');
+  
+    element.html(div);
+    $(form+' .alert').css('visibility','visible');
+  
+}
+

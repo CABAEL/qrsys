@@ -247,14 +247,10 @@ class UserController extends Controller
         $user_table = User::find($id);
         $user_table->status = 0;
 
-        $user_table->save();
+        if($user_table->save()){
+            return responseBuilder("User Deactivated!",[],$user_table);
+        }
 
-        $response = [
-            'flag' => 1,
-            'message' => 'User deactivated!',
-        ];
-
-        return response()->json($response);
 
     }
 
