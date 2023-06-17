@@ -28,7 +28,8 @@ class Upload extends Model
             $raw_filename = $value['filename'];
             $exploded_filename = explode(".",$raw_filename);
             $name_hash = $current_user."_".$time."_".base64_encode($exploded_filename[0]);
-            $extension = $exploded_filename[1];
+            //$extension = $exploded_filename[1];
+            $extension =  strtolower(pathinfo($raw_filename, PATHINFO_EXTENSION));
 
             $final_filename = $name_hash.".".$extension;
 

@@ -35,14 +35,6 @@ function clear_modal_promt(modal) {
 }
 
 
-
-
-$(document).on("click",".deactivate_no",function(e) {
-  $('.alert').css('visibility','hidden');
-  $('.alert').css('height','0px');
-  $('.alert').css('width','0px');
-});
-
 $('#viewusermodal').on('hidden.bs.modal', function (){
   $('.alert').css('visibility','hidden');
   $('.alert').css('height','0px');

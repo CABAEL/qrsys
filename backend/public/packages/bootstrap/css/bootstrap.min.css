@@ -9163,6 +9163,13 @@ a.text-dark:hover {
   }
 .hidden{
     visibility:hidden;
+    width: 0px;
+    height: 0px;
 }
+.center {
+    margin: auto;
+    padding: 10px;
+    text-align: center;
+  }
 
 /*# sourceMappingURL=bootstrap.min.css.map */

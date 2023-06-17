@@ -123,3 +123,32 @@ function promt_warning_deactivate(form='',element,message,data_id){
   
 }
 
+function getFormattedDate(date) {
+    var date_format = new Date(date);
+    var year = date_format.getFullYear();
+  
+    var month = (1 + date_format.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+  
+    var day = date_format.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+    
+    return month + '/' + day + '/' + year;
+  }
+
+
+  $(document).on("click",".deactivate_no",function(e) {
+    event.preventDefault();
+    $('.alert').css('height','0px');
+    $('.alert').css('overflow','hidden');
+    $('.alert').css('visibility','hidden');
+  });
+
+
+  $(document).on("click",".delete_no",function(e) {
+    event.preventDefault();
+    $('.alert').css('height','0px');
+    $('.alert').css('overflow','hidden');
+    $('.alert').css('visibility','hidden');
+  });
+

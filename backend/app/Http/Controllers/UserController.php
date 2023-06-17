@@ -26,10 +26,12 @@ class UserController extends Controller
             $current_user = Auth::user()->id;
 
             $request = DB::table('users')
+            ->select('users.id','users.status','clients.*')
             ->join("clients",'clients.user_id','=','users.id','inner')
             ->where('id', '!=' , $current_user)
-            ->where('users.status','!=',0)
+            //->where('users.status','!=',0)
             ->where('users.deleted_at','=',null)
+            ->orderBy('users.created_at','DESC')
             ->get();
             
             $data = [
@@ -104,7 +106,7 @@ class UserController extends Controller
 
     public function user_info($id) 
     {
-        $fetch = User::select('users.id','users.username','clients.*')
+        $fetch = User::select('users.id','users.status','users.username','clients.*')
         ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$id)
         ->first();
         

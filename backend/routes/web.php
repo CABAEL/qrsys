@@ -61,23 +61,12 @@ Route::get('/portal_event',[EventController::class,'index']);
 Route::get('/portal_announcement',[AnnouncementController::class,'index']);
 
 
-
-
-//Route::post('google_auth',[LoginController::class,'google_auth']);
 Route::middleware(['auth','role'])->group(function(){
+
     Route::group([                                           
         'prefix' => 'admin',
         'as' => 'admin',
         ],function(){
-
-       
-        // Route::get('/chat_support',function(Request $request){
-        //     return view('template.admin.chat_support');
-        // });
-
-        // Route::resource('/chat',ChatController::class);
-        // Route::get('/getAdminChats',[ChatController::class,'getAdminChats']);
-        // Route::get('/updateMsgsStatus/{id}',[ChatController::class,'updateMsgsStatus']);
         
         Route::get('/',function(Request $request){
             return redirect('admin/home');
@@ -87,19 +76,10 @@ Route::middleware(['auth','role'])->group(function(){
             return view('template.admin.index');
         });
 
-        // Route::get('/deactivated_users',function(){
-        //     return view('template.admin.deactivated_users');
-        // });
 
         Route::get('/logout',function(Request $request){
             return redirect(route('logout'));
         });
-
-        // Route::get('/users',function(){
-        //     return view('template.admin.users');
-        // });
-
-        // Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
         Route::post('/update_user_data/{id}',[UserController::class,'update']);
 
@@ -109,7 +89,41 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/user_list',[UserController::class,'index']);
 
-        // Route::get('/deactivated_list',[UserController::class,'deactivatedUser']);
+        Route::get('/user_info/{id}',[UserController::class,'user_info']);
+
+        Route::post('add_client',[UserController::class,'storeClient']);
+
+        Route::get('/active_clients',[UserController::class,'activeClients']);
+
+        Route::get('/activate_user/{id}',[UserController::class,'activate']);
+    
+    });
+
+    Route::group([                                           
+        'prefix' => 'client',
+        'as' => 'client',
+        ],function(){
+        
+        Route::get('/',function(Request $request){
+            return redirect('client/home');
+        })->name('client_home');
+
+        Route::get('/home',function(Request $request){
+            return view('template.client.index');
+        });
+
+
+        Route::get('/logout',function(Request $request){
+            return redirect(route('logout'));
+        });
+
+        Route::post('/update_user_data/{id}',[UserController::class,'update']);
+
+        Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
+
+        Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
+
+        Route::get('/user_list',[UserController::class,'index']);
 
         Route::get('/user_info/{id}',[UserController::class,'user_info']);
 
@@ -175,8 +189,6 @@ Route::middleware(['auth','role'])->group(function(){
             });
     
             Route::get('/activate_user/{id}',[UserController::class,'activate']);
-
-            //Route::resource('/employee_list',UserController::class);
             
             Route::get('/employee_list',[UserController::class,'employeeList']);
 

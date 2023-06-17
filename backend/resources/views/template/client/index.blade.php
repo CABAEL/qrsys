@@ -1,49 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
    @include('template.header')
+   <style>
+      #dropArea:hover{
+      background-color:red;
+      cursor:pointer;
+      }
+   </style>
    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
-      @include('template.admin.segments.navbar')
+      @include('template.client.segments.navbar')
       <div class="content-wrapper">
-         <div class="container-fluid">
-            <div class="row">
-
-            </div>
-            <!-- Breadcrumbs -->
-            <ol class="breadcrumb">
-               <li class="breadcrumb-item">
-                  <b>DEMOGRAPHICS</b>
-               </li>
-            </ol>
-            <hr/>
-         </div>
          <!-- /.container-fluid -->
          <div class="container-fluid">
-            <div class="row">
-               <div class="col-xl-6">
-                  <div class="card mb-4">
-                     <div class="card-header">
-                        <i class="fas fa-chart-bar me-1"></i>
-                        System usage graph
-                     </div>
-                     <div class="card-body">
-                        <div class="chartjs-size-monitor">
-                           <div class="chartjs-size-monitor-expand">
-                              <div class=""></div>
-                           </div>
-                           <div class="chartjs-size-monitor-shrink">
-                              <div class=""></div>
-                           </div>
-                        </div>
-                        <canvas id="myBarChart" width="450" height="180" class="chartjs-render-monitor" style="display: block; width: 450px; height: 180px;"></canvas>
-                     </div>
-                  </div>
-               </div>
+
 
                <div class="col-xl-6">
                   <div class="row">
                      <div class="col-xl-3 col-md-6">
-                        <div class="card bg-warning text-white mb-4">
-                           <div class="card-body">Total documents</div>
+                        <div class="card bg-primary text-white mb-4">
+                           <div class="card-body">Total Uploads</div>
                            <div class="card-footer d-flex align-items-center justify-content-between">
                                  <h1>3000</h1>
                               <div class="small text-white">
@@ -57,7 +32,7 @@
                      </div>
                      <div class="col-xl-3 col-md-6">
                         <div class="card bg-black text-black mb-4">
-                           <div class="card-body">Active Clients</div>
+                           <div class="card-body">Active Users</div>
                            <div class="card-footer d-flex align-items-center justify-content-between">
                               <h1 id="activeClients">3000</h1>
                               <div class="small text-white">
@@ -72,6 +47,48 @@
                   </div>
                </div>
 
+
+               <div class="row">
+               <div class="col-xl-12">
+                  <div class="card mb-4">
+                     <div class="card-body">
+                        <div id="dropArea" class="center">
+                        <p style="text-align:center;">Click/Drag and drop files here.</p>
+                        </div>
+
+
+                     <div id="SelectionList" class="hidden">
+                        <div class="row">
+                           
+                           <div class="col-xl-4 col-md-4">
+                           <input type="file" id="fileInput" autocomplete="off" multiple/>
+                              Filename: <br/>
+                              Filesize: <br/>
+                              Filetype: <br/>
+                           </div>
+
+                           <div class="col-xl-2 col-md-2">
+                              <div class="form-group">
+                                 <div class="form-row">
+                                    <div class="col-md-12">
+                                       <label for="contact_number">Document Code:</label>
+                                       <input type="text" class="form-control" id="code" name="code" aria-describedby="code" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-12">
+                                       <label for="username">Description</label>
+                                       <textarea class="form-control" name="description" autocomplete="off"></textarea>  
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+
+                        </div>
+                     </div><!--section list-->
+
+                     </div>
+                  </div>
+               </div>
+
             </div>
          </div>
 
@@ -79,25 +96,24 @@
             <!-- Breadcrumbs -->
             <ol class="breadcrumb">
                <li class="breadcrumb-item">
-                  <b>CLIENT LIST</b>
+                  <b>UPLOAD LIST</b>
                </li>
             </ol>
-            <hr/>
-            <button class="btn btn-sm" type="button" id="addclient_btn" data-toggle="modal" data-target="#addclient"> + Client</button>
             <hr/>
             <table cellspacing="0" class="display table table-bordered" width="100%" id="clients-table" style="width:100%">
                <thead>
                   <tr>
-                     <th>CLIENT NAME</th>
-                     <th>DOCUMENT COUNT</th>
-                     <th>STATUS</th>
+                     <th>UPLOAD NAME</th>
+                     
+                     <th>TYPE</th>
+                     <th>UPLOADED BY</th>
                      <th>DATE CREATED</th>
                      <th>---</th>
                   </tr>
                </thead>
                <tbody id="ClientListBody">
                   <tr>
-                     <td colspan="4">
+                     <td colspan="5">
                         <center>Loading...</center>
                      </td>
                   </tr>
@@ -108,6 +124,7 @@
       </div>
       <!-- /.content-wrapper -->
       @include('template.footer')
-      @include('template.admin.segments.custom.script_index')
+      @include('template.client.segments.custom.script_index')
+      <script src="{{asset('js/custom/file_upload.js')}}"></script>
    </body>
 </html>
