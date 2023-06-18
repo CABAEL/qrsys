@@ -2,8 +2,8 @@
 <html lang="en">
    @include('template.header')
    <style>
-      #dropArea:hover{
-      background-color:red;
+      .dropArea:hover{
+      background-color:#ddd;
       cursor:pointer;
       }
    </style>
@@ -52,36 +52,51 @@
                <div class="col-xl-12">
                   <div class="card mb-4">
                      <div class="card-body">
-                        <div id="dropArea" class="center">
-                        <p style="text-align:center;">Click/Drag and drop files here.</p>
+                        <div class="center dropArea">
+                           <hr/>
+                           <h4 style="text-align:center;">Click/Drag and drop files here.</h4>
+                           <hr/>
                         </div>
+                        <br/>
+                        <br/>
 
 
-                     <div id="SelectionList" class="hidden">
-                        <div class="row">
-                           
-                           <div class="col-xl-4 col-md-4">
-                           <input type="file" id="fileInput" autocomplete="off" multiple/>
-                              Filename: <br/>
-                              Filesize: <br/>
-                              Filetype: <br/>
-                           </div>
+                     <div id="SelectionList" class="">
+                        <div class="container-fluid">
+                           <div class="row">
+                              
+                              <div class="col-xl-6 col-md-6">
+                              <input type="file" id="fileInput" autocomplete="off" multiple/>
+                                 Filename: <br/>
+                                 Filesize: <br/>
+                                 Filetype: <br/>
+                              </div>
 
-                           <div class="col-xl-2 col-md-2">
-                              <div class="form-group">
-                                 <div class="form-row">
-                                    <div class="col-md-12">
-                                       <label for="contact_number">Document Code:</label>
-                                       <input type="text" class="form-control" id="code" name="code" aria-describedby="code" autocomplete="off">
+                              <div class="col-xl-4 col-md-4">
+                                 <div class="form-group">
+                                    <div class="form-row">
+                                       <div class="col-md-12">
+                                          <label for="contact_number">Document Code:</label>
+                                          <input type="text" class="form-control" id="code" name="code" aria-describedby="code" autocomplete="off">
+                                       </div>
+                                       <div class="col-md-12">
+                                          <label for="username">Description</label>
+                                          <textarea class="form-control" name="description" autocomplete="off"></textarea>  
+                                       </div>
                                     </div>
-                                    <div class="col-md-12">
-                                       <label for="username">Description</label>
-                                       <textarea class="form-control" name="description" autocomplete="off"></textarea>  
+                                 </div>
+                                 <div class="form-group">
+                                    <div class="form-row">
+                                       <div class="col-md-12">
+                                       <button class="btn btn-default" style="float:right;">Cancel</button>
+                                       <span style="float:right;" >&nbsp;</span>
+                                       <button class="btn btn-primary" style="float:right;">Upload</button>
+                                       </div>
                                     </div>
                                  </div>
                               </div>
-                           </div>
 
+                           </div>
                         </div>
                      </div><!--section list-->
 

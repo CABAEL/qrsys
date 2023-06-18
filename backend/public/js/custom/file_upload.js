@@ -1,51 +1,82 @@
-const fileInput = $("#fileInput");  
+// const fileInput = $("#fileInput");  
   
-  // Prevent the default browser behavior for drag-and-drop
-  $(document).on('dragenter', function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-  });
-  
-  $(document).on('dragover', function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-  });
-  
-  $(document).on('drop', function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-  });
-  
-  // Handle the drop event
-  $('#dropArea').on('drop', function(e) {
-    e.preventDefault();
-    
-    // Get the files from the dropped event
-    var files = e.originalEvent.dataTransfer.files;
-    
-    // Process the files
-    handleFiles(files);
-  });
-  
-  // Function to handle the uploaded files
-  function handleFiles(files) {
-    // You can perform further processing with the files here
-    // For example, you can upload them to a server using AJAX
-    // or display file information to the user
-    
-    // Here, we simply display the file names
+const dropZone = $('.dropArea');
+const fileInput = $('#fileInput');
 
-    fileInput.prop("files", files);
+// Prevent default drag behaviors
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropZone[0].addEventListener(eventName, preventDefaults, false);
+  document.body.addEventListener(eventName, preventDefaults, false);
+});
 
-    $('#SelectionList').removeClass('hidden');
-    $('#dropArea').addClass('hidden');
-    var fileNames = [];
-    for (var i = 0; i < files.length; i++) {
-      fileNames.push(files[i].name);
-    }
-    
-    // Display the file names
-    alert('Uploaded files: ' + fileNames.join(', '));
+// Handle dropped files
+dropZone[0].addEventListener('drop', handleDrop, false);
+
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function handleDrop(e) {
+  var files = e.dataTransfer.files;
+
+  // Append dropped files to existing input value
+  
+  var existingFiles = fileInput[0].files;
+  var allFiles = new DataTransfer();
+
+  for (var i = 0; i < existingFiles.length; i++) {
+    allFiles.items.add(existingFiles[i]);
   }
 
+  for (var j = 0; j < files.length; j++) {
+    allFiles.items.add(files[j]);
+  }
 
+  fileInput[0].files = allFiles.files;
+
+}
+
+dropZone.on('click', function(event) {
+  event.preventDefault();
+  fileInput.click();
+});
+
+
+  // Change event on the fileInput element
+  fileInput.on('change',handleFileSelect);
+
+
+
+  const file_arr = [];
+  function handleFileSelect(e) {
+    
+    var existingFiles = $(this)[0].files;
+    var allFiles = new DataTransfer();
+    for (var i = 0; i < existingFiles.length; i++) {
+      allFiles.items.add(existingFiles[i]);
+    }
+  
+    $(this).prop('files', allFiles.files);
+
+
+    file_arr.push(allFiles.files)
+
+    var arrayContainer = [];
+    Object.values(file_arr).forEach(function(k,v){
+
+      arrayContainer.push(k[0]);
+
+    })
+
+    for (var i = 0; i < arrayContainer.length; i++) {
+      // console.log(arrayContainer[i]);
+      allFiles.items.add(arrayContainer[i]);
+    }
+
+    fileInput[0].files = allFiles.files;
+
+    // console.log(arrayContainer);
+    console.log("+++++++++++++++++++++++++++++++++");
+    console.log(fileInput[0].files);
+  }
