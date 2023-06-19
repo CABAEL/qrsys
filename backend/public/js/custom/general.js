@@ -44,6 +44,27 @@ function promt_errors(form='',element,e){
     $(form+' .alert').css('visibility','visible');
 }
 
+function display_errors(form='',element,e){
+  
+    div = '';
+    div += '<h6><b>'+e.responseJSON.message+'</b></h6>';
+    $.each(e.responseJSON.errors,function(k,v) {
+      div += '<i>* </i>'+v+'<br>';
+    });
+  
+    element.removeClass('alert-success');
+    element.removeClass('alert-danger');
+
+    element.addClass('alert-danger');
+    $('.alert').css('height','auto');
+    $('.alert').css('width','100%');
+  
+    element.html(div);
+
+    element.css('visibility','visible');
+    $(form+' .alert').css('visibility','visible');
+}
+
 
 parseError = (response,form,element) => {
 
@@ -151,4 +172,24 @@ function getFormattedDate(date) {
     $('.alert').css('overflow','hidden');
     $('.alert').css('visibility','hidden');
   });
+
+
+
+  function formatSizeUnits(bytes) {
+    if (bytes >= 1073741824) {
+      bytes = (bytes / 1073741824).toFixed(2) + ' GB';
+    } else if (bytes >= 1048576) {
+      bytes = (bytes / 1048576).toFixed(2) + ' MB';
+    } else if (bytes >= 1024) {
+      bytes = (bytes / 1024).toFixed(2) + ' KB';
+    } else if (bytes > 1) {
+      bytes = bytes + ' bytes';
+    } else if (bytes == 1) {
+      bytes = bytes + ' byte';
+    } else {
+      bytes = '0 bytes';
+    }
+  
+    return bytes;
+  }
 

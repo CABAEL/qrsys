@@ -14,9 +14,16 @@ $user_dir = $exploded_url[4];
           </li>
           <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
             <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-list"></i>
+              <i class="fa fa-fw fa-user"></i>
               <span class="nav-link-text">
               Acount Management</span>
+            </a>
+          </li>          
+          <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
+            <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
+              <i class="fa fa-fw fa-file"></i>
+              <span class="nav-link-text">
+              File Groups</span>
             </a>
           </li>          
           <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">

@@ -117,8 +117,26 @@ class Upload extends Model
 
     static function acceptedFormat($file){
 
-        $is_image = ['img','jpg','jpeg','png'];
-        $is_document = ['docx','xlsx','pptx','pdf'];
+        $is_image = [
+            'jpg',
+            'jpeg',
+            'png'
+        ];
+
+        $is_document = [
+            'pdf',
+            'doc',
+            'docx',
+            'xls',
+            'xlsx',
+            'ppt',
+            'pptx',
+            'pub',
+            'xlsb',
+            'xlsm',
+            'pptm',
+            'docm'
+          ];
 
         if(in_array($file,$is_image)){
 

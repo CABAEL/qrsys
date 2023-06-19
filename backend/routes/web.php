@@ -130,6 +130,8 @@ Route::middleware(['auth','role'])->group(function(){
         Route::post('add_client',[UserController::class,'storeClient']);
 
         Route::get('/active_clients',[UserController::class,'activeClients']);
+
+        Route::post('/file_upload',[FileUploadController::class,'uploadFile']);
     
     });
 

@@ -2,9 +2,14 @@
 <html lang="en">
    @include('template.header')
    <style>
+      .dropArea{
+         background-color:#eee;
+         padding-top:5%;
+         padding-bottom:5%;
+      }
       .dropArea:hover{
-      background-color:#ddd;
-      cursor:pointer;
+         background-color:#ddd;
+         cursor:pointer;
       }
    </style>
    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -53,52 +58,64 @@
                   <div class="card mb-4">
                      <div class="card-body">
                         <div class="center dropArea">
-                           <hr/>
                            <h4 style="text-align:center;">Click/Drag and drop files here.</h4>
-                           <hr/>
                         </div>
                         <br/>
                         <br/>
 
 
-                     <div id="SelectionList" class="">
-                        <div class="container-fluid">
-                           <div class="row">
+                     <uploadSection id="SelectionList" class="">
+                     <div class="alert alert-danger" id="upload_errors"></div>
+                        <form onsubmit="SubmitUpload()">
+                           <div class="container-fluid">
+
+                              <div class="row">
+                              <table class="table" width="100%" style="overflow-y:scroll">
+                                 <tbody id="previewFile"></tbody>
+                                 </table> 
+                              </div>
+                              <div class="row">
                               
-                              <div class="col-xl-6 col-md-6">
-                              <input type="file" id="fileInput" autocomplete="off" multiple/>
-                                 Filename: <br/>
-                                 Filesize: <br/>
-                                 Filetype: <br/>
-                              </div>
+                                 
+                                 <div class="col-xl-4 col-md-4">
+                                 <input type="file" id="fileInput" class="hidden" name="fileInput" accept=".exe,.jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 </div>
 
-                              <div class="col-xl-4 col-md-4">
-                                 <div class="form-group">
-                                    <div class="form-row">
-                                       <div class="col-md-12">
-                                          <label for="contact_number">Document Code:</label>
-                                          <input type="text" class="form-control" id="code" name="code" aria-describedby="code" autocomplete="off">
+                                 <div class="col-xl-4 col-md-4">
+                                    <div class="form-group">
+                                       <div class="form-row">
+                                          <div class="col-md-6">
+                                             <label for="contact_number">Document Code:</label>
+                                             <input type="text" class="form-control" id="code" name="code" aria-describedby="code" autocomplete="off">
+                                          </div>
+                                          <div class="col-md-6">
+                                             <label for="file_group">File Groups:</label>
+                                             <select class="form-control" id="file_group" name="file_group" aria-describedby="file_group" autocomplete="off"></select>
+                                          </div>
+                                          <div class="col-md-12">
+                                             <label for="username">Description</label>
+                                             <textarea class="form-control" name="description" autocomplete="off"></textarea>  
+                                          </div>
                                        </div>
-                                       <div class="col-md-12">
-                                          <label for="username">Description</label>
-                                          <textarea class="form-control" name="description" autocomplete="off"></textarea>  
+                                    </div>
+                                    <div class="form-group">
+                                       <div class="form-row">
+                                          <div class="col-md-12">
+                                          <button class="btn btn-default" style="float:right;">Cancel</button>
+                                          <span style="float:right;" >&nbsp;</span>
+                                          <button class="btn btn-primary" style="float:right;"><i class="fas fa fa-upload"></i> Upload</button>
+                                          </div>
                                        </div>
                                     </div>
                                  </div>
-                                 <div class="form-group">
-                                    <div class="form-row">
-                                       <div class="col-md-12">
-                                       <button class="btn btn-default" style="float:right;">Cancel</button>
-                                       <span style="float:right;" >&nbsp;</span>
-                                       <button class="btn btn-primary" style="float:right;">Upload</button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
 
+
+                                 <div class="col-xl-4 col-md-4"></div>
+
+                              </div>
                            </div>
-                        </div>
-                     </div><!--section list-->
+                        </form>
+                     </uploadSection><!--uploadSection list-->
 
                      </div>
                   </div>

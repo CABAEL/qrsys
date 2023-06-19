@@ -2,46 +2,44 @@
 
 namespace App\Http\Controllers;
 use App\Models\Applicant_data;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class FileUploadController extends Controller
 {
     //
-    public function uploadResume(Request $request){
-            if(isset($_FILES['file']['name'])){
+    public function uploadFile(Request $request){
 
-            /* Getting file name */
-            $filename = $_FILES['file']['name'];
+        $validatedData = $request->validate([
+            'file' => 'required|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,ppt,pptx,pub,xlsb,xlsm,pptm,docm',
+        ]);
 
-            //return $user;
-            /* Location */
-            $location = "upload/resume/".$filename;
-            $imageFileType = pathinfo($location,PATHINFO_EXTENSION);
-            $imageFileType = strtolower($imageFileType);
-         
-            /* Valid extensions */
-            $valid_extensions = array("pdf");
-         
-            $response = 0;
-            /* Check file extension */
-            if(in_array(strtolower($imageFileType), $valid_extensions)) {
-               /* Upload file */
-               if(move_uploaded_file($_FILES['file']['tmp_name'],$location)){
-                $user = $request->user()->id;
-                $qry = Applicant_data::where('user_profile_id',$user)->update(['resume_link'=>$filename]);
-                  $response = $location;
-               }
-            }
-            
-            $response = [
-                'flag' => 1,
-                'message' => 'Resume Uploaded!'
-            ];
+        $file_params = array();
 
-            return response()->json($response);
-            
-         }
+        $current_user_id = Auth::user()->id;
+        $current_user = Client::select('client_id','client_name')
+        ->find($current_user_id);
+
+        $folder_name = md5($current_user['client_name']);
+
+        $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
+
+        if (!file_exists($logo_path)) {
+            mkdir($logo_path, 0777, true);
+        }
+
+        foreach($request->file as $file_k => $file_v){
+            $file_params [] = array(
+                'filename' => $_FILES['file']['name'],
+                'location' => $logo_path,
+                'tmp_name' => $_FILES['file']['tmp_name'],
+                'filesize' => $_FILES['file']['size']
+            );
+        }
+
+    
     }
 
 }
