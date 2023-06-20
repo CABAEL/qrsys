@@ -66,7 +66,7 @@
 
                      <uploadSection id="SelectionList" class="">
                      <div class="alert alert-danger" id="upload_errors"></div>
-                        <form onsubmit="SubmitUpload()">
+                        <form onsubmit="SubmitUpload(this)">
                            <div class="container-fluid">
 
                               <div class="row">
@@ -78,7 +78,8 @@
                               
                                  
                                  <div class="col-xl-4 col-md-4">
-                                 <input type="file" id="fileInput" class="hidden" name="fileInput" accept=".exe,.jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput1" class="inputFiles hidden" name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput2" class="inputFiles hidden" name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
                                  </div>
 
                                  <div class="col-xl-4 col-md-4">

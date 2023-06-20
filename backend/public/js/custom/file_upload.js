@@ -1,6 +1,7 @@
 // const fileInput = $("#fileInput");  
 const dropZone = $('.dropArea');
-const fileInput = $('#fileInput');
+const fileInput1 = document.getElementById('fileInput1');
+const fileInput2 = document.getElementById('fileInput2');
 const array_collection = [];
 
 
@@ -22,7 +23,7 @@ function handleDrop(e) {
     var files = e.dataTransfer.files;
     // Append dropped files to existing input value
 
-    var existingFiles = fileInput[0].files;
+    var existingFiles = fileInput2.files;
     var allFiles = new DataTransfer();
 
     for (var i = 0; i < existingFiles.length; i++) {
@@ -33,21 +34,20 @@ function handleDrop(e) {
         allFiles.items.add(files[j]);
     }
 
-    fileInput[0].files = allFiles.files;
+    fileInput2.files = allFiles.files;
 
-    handleListFiles(fileInput[0].files);
-
+    $(fileInput2).trigger('change');
 
 }
 
 dropZone.on('click', function(event) {
     event.preventDefault();
-    fileInput.click();
+    fileInput1.click();
 });
 
 
 // Change event on the fileInput element
-fileInput.on('change', handleFileSelect);
+$(fileInput1).on('change', handleFileSelect);
 
 function handleFileSelect(e) {
 
@@ -66,19 +66,32 @@ function handleFileSelect(e) {
     });
 
 
-    fileInput[0].files = allFiles.files;
+    fileInput1.files = allFiles.files;
 
-    console.log(fileInput[0].files);
+    console.log(fileInput1.files);
 
 }
 
-fileInput.on('change', () => {
-    var files = fileInput[0].files;
+$(document).on('change','.inputFiles', () => {
 
-    handleListFiles(files);
+    let filesArray1 = fileInput1.files;
+    let filesArray2 = fileInput2.files;
+    var allFiles = new DataTransfer();
+
+    let fileContainer = [];
+
+    for(let i = 0; i < filesArray1.length; i++){
+        fileContainer.push(filesArray1[i]);
+    }
+
+    for(let j=0; j < filesArray2.length; j++){
+        fileContainer.push(filesArray2[j]);
+    }
+
+
+    handleListFiles(fileContainer);
 
 });
-
 
 function handleListFiles(files) {
 
@@ -97,34 +110,107 @@ function handleListFiles(files) {
 
 }
 
-function SubmitUpload() {
+function SubmitUpload(e) {
     event.preventDefault();
 
-    var file = fileInput[0].files;
-
-    var formData = new FormData();
-    formData.append('file', file);
-
-    $.ajax({
+    var formData = new FormData($(e)[0]);
+    formData.append('file_upload', true);
+    
+    var files1 = $('input[name="files1[]"]')[0].files;
+    var files2 = $('input[name="files2[]"]')[0].files;
+    var errors = [];
+    
+    var imageAllowedSize = parseInt("{{ env('IMAGE_ALLOWED_SIZE') }}");
+    var documentAllowedSize = parseInt("{{ env('DOCUMENT_ALLOWED_SIZE') }}");
+    
+    // File validation for files1[]
+    for (var i = 0; i < files1.length; i++) {
+      var file = files1[i];
+      var allowedSize = file.type.startsWith('image/') ? imageAllowedSize : documentAllowedSize;
+      if (file.size > allowedSize * 1024 * 1024) {
+        errors.push('File size exceeds the maximum limit of ' + allowedSize + 'MB for files1[].');
+      }
+    
+      // Image formats
+      if (file.type.startsWith('image/')) {
+        var allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        var fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+          errors.push('Invalid file extension for files1[]. Only ' + allowedExtensions.join(', ').toUpperCase() + ' image files are allowed.');
+        }
+      }
+    
+      // Document formats
+      if (file.type.startsWith('application/')) {
+        var allowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pub', 'xlsb', 'xlsm', 'pptm', 'docm'];
+        var fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+          errors.push('Invalid file extension for files1[]. Only ' + allowedExtensions.join(', ').toUpperCase() + ' document files are allowed.');
+        }
+      }
+    }
+    
+    // File validation for files2[]
+    for (var j = 0; j < files2.length; j++) {
+      var file = files2[j];
+      var allowedSize = file.type.startsWith('image/') ? imageAllowedSize : documentAllowedSize;
+      if (file.size > allowedSize * 1024 * 1024) {
+        errors.push('File size exceeds the maximum limit of ' + allowedSize + 'MB for files2[].');
+      }
+    
+      // Image formats
+      if (file.type.startsWith('image/')) {
+        var allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        var fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+          errors.push('Invalid file extension for files2[]. Only ' + allowedExtensions.join(', ').toUpperCase() + ' image files are allowed.');
+        }
+      }
+    
+      // Document formats
+      if (file.type.startsWith('application/')) {
+        var allowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pub', 'xlsb', 'xlsm', 'pptm', 'docm'];
+        var fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+          errors.push('Invalid file extension for files2[]. Only ' + allowedExtensions.join(', ').toUpperCase() + ' document files are allowed.');
+        }
+      }
+    }
+    
+    if (errors.length > 0) {
+      // Display validation errors
+      var errorMessages = errors.join('\n');
+      alert(errorMessages);
+    } else {
+      // Proceed with AJAX request
+      show_loader();
+      $.ajax({
         url: base_url('file_upload'),
         type: 'POST',
         data: formData,
-        processData: false,
         contentType: false,
+        processData: false,
+        enctype: "multipart/form-data",
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
-
+            alert('Files Uploaded!');
+            hide_loader();
+            window.location.replace('/login');
+          // Handle success response
         },
         error: function(e) {
           element = $('#upload_errors');
-          form = '#SelectionList'; 
-          display_errors(form,element,e);
-
-            console.log('Error:', errorThrown);
+          form = '#SelectionList';
+          display_errors(form, element, e);
+    
+          console.log('Error:', e);
         }
-    });
+      });
+    }
+    
+
 
 }
 

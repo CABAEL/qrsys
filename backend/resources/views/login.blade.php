@@ -86,7 +86,7 @@ $( document ).ready(function() {
           remember: $('#remember:checked').val(),
         },
         success: function(data) {
-          console.log(data.rdr);
+          console.log(data.);
           
           if(data.flag == 1 ){
             hide_loader();
