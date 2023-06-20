@@ -3,6 +3,7 @@ backend/public/hot
 backend/public/storage
 backend/storage/*.key
 backend/vendor
+!backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php
 backend/.env
 backend/.env.backup
 backend/.phpunit.result.cache
