@@ -25,6 +25,12 @@ class FileUploadController extends Controller
             $request->validate([
                 'files1.*' => 'required|file|max:2048|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
                 'files2.*' => 'required|file|max:2048|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
+            ],
+            [
+                'files1.*.max' => 'Selected files must not be greater than 2048 kilobytes.',
+                'files1.*.mimetypes' => 'Files selected must be in one of the following formats: PDF, JPEG, PNG, GIF, Word, Excel, PowerPoint, Publisher.',
+                'files2.*.max' => 'Selected files must not be greater than 2048 kilobytes.',
+                'files2.*.mimetypes' => 'Files selected must be in one of the following formats: PDF, JPEG, PNG, GIF, Word, Excel, PowerPoint, Publisher.',
             ]);
 
 

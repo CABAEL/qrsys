@@ -1,114 +1,74 @@
 // const fileInput = $("#fileInput");  
-const dropZone = $('.dropArea');
+const dropZone = document.getElementById('dropArea');
 const fileInput1 = document.getElementById('fileInput1');
 const fileInput2 = document.getElementById('fileInput2');
-const array_collection = [];
+
 
 
 // Prevent default drag behaviors
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropZone[0].addEventListener(eventName, preventDefaults, false);
-    document.body.addEventListener(eventName, preventDefaults, false);
+  dropZone.addEventListener(eventName, preventDefaults, false);
+  document.body.addEventListener(eventName, preventDefaults, false);
 });
 
 // Handle dropped files
-dropZone[0].addEventListener('drop', handleDrop, false);
+dropZone.addEventListener('drop', handleDrop, false);
+dropZone.addEventListener('change', handleDrop, false);
 
 function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  e.preventDefault();
+  e.stopPropagation();
 }
 
 function handleDrop(e) {
-    var files = e.dataTransfer.files;
-    // Append dropped files to existing input value
+  let files = e.dataTransfer.files;
+  // Append dropped files to existing input value
 
-    var existingFiles = fileInput2.files;
-    var allFiles = new DataTransfer();
+  let existingFiles = fileInput2.files;
+  let allFiles = new DataTransfer();
 
-    for (var i = 0; i < existingFiles.length; i++) {
-      allFiles.items.add(existingFiles[i]);
-    }
+  for (const existingFile of existingFiles) {
+    allFiles.items.add(existingFile);
+  }
 
-    for (var j = 0; j < files.length; j++) {
-        allFiles.items.add(files[j]);
-    }
+  for (const file of files) {
+      allFiles.items.add(file);
+  }
 
-    fileInput2.files = allFiles.files;
+  fileInput2.files = allFiles.files;
 
-    $(fileInput2).trigger('change');
+  handleListFiles();
 
 }
 
-dropZone.on('click', function(event) {
+
+$(dropZone).on('click', function(event) {
     event.preventDefault();
     fileInput1.click();
 });
 
 
+let arr_holder = [];
 // Change event on the fileInput element
-$(fileInput1).on('change', handleFileSelect);
+$(document).on('change',fileInput1, (e) => {
+  event.preventDefault();
 
-function handleFileSelect(e) {
+  let existingFiles = fileInput1.files;
+  let input1allFiles = new DataTransfer();
+  
+  for(let input1_count = 0; input1_count < existingFiles.length; input1_count++){
+    arr_holder.push(existingFiles[input1_count])
+  }
 
-    var existingFiles = $(this)[0].files;
+  for(let arr_holder_count = 0; arr_holder_count < arr_holder.length; arr_holder_count++){
+    input1allFiles.items.add(arr_holder[arr_holder_count]);
+  }
 
-    var allFiles = new DataTransfer();
+  fileInput1.files = input1allFiles.files;
 
-    // allFiles.clearData();
-    Object.values(existingFiles).forEach((k, v) => {
-        array_collection.push(k);
-    })
-
-
-    Object.values(array_collection).forEach((k, v) => {
-        allFiles.items.add(k);
-    });
-
-
-    fileInput1.files = allFiles.files;
-
-    console.log(fileInput1.files);
-
-}
-
-$(document).on('change','.inputFiles', () => {
-
-    let filesArray1 = fileInput1.files;
-    let filesArray2 = fileInput2.files;
-    var allFiles = new DataTransfer();
-
-    let fileContainer = [];
-
-    for(let i = 0; i < filesArray1.length; i++){
-        fileContainer.push(filesArray1[i]);
-    }
-
-    for(let j=0; j < filesArray2.length; j++){
-        fileContainer.push(filesArray2[j]);
-    }
-
-
-    handleListFiles(fileContainer);
+  handleListFiles();
 
 });
-
-function handleListFiles(files) {
-
-    let div = '';
-
-    Object.values(files).forEach((k, v) => {
-        div += '<tr>';
-        div += '<td class="fileDetails">' + k.name + '</p>';
-        div += '<td class="fileDetails">' + formatSizeUnits(k.size) + '</p>';
-        div += '<td class="fileDetails">' + k.type + '</p>';
-        div += '</tr>';
-
-    });
-
-    $('#previewFile').html(div);
-
-}
 
 function SubmitUpload(e) {
     event.preventDefault();
@@ -204,8 +164,7 @@ function SubmitUpload(e) {
           element = $('#upload_errors');
           form = '#SelectionList';
           display_errors(form, element, e);
-    
-          console.log('Error:', e);
+          hide_loader();
         }
       });
     }
@@ -244,3 +203,62 @@ function acceptedFormat(file) {
         return false;
     }
 }
+
+
+
+function removeFileAndUpdateInput(fileName) {
+  event.preventDefault();
+  let filesArray1 = Array.from(fileInput1.files);
+  let filesArray2 = Array.from(fileInput2.files);
+  // let filesContainer = [];
+
+  // Remove file from filesArray1 if found
+  const updatedFilesArray1 = filesArray1.filter(file => file.name !== fileName);
+  //override array holder for input1
+  arr_holder = [];
+  if (updatedFilesArray1.length !== filesArray1.length) {
+      filesContainer = [...updatedFilesArray1, ...filesArray2];
+      fileInput1.files = createFileList(updatedFilesArray1);
+  } else {
+      // Remove file from filesArray2 if found
+      const updatedFilesArray2 = filesArray2.filter(file => file.name !== fileName);
+      if (updatedFilesArray2.length !== filesArray2.length) {
+          filesContainer = [...filesArray1, ...updatedFilesArray2];
+          fileInput2.files = createFileList(updatedFilesArray2);
+      }
+  }
+
+  handleListFiles(filesContainer);
+  
+}
+
+
+
+function createFileList(fileArray) {
+  const fileList = new ClipboardEvent('').clipboardData || new DataTransfer();
+  fileArray.forEach(file => fileList.items.add(file));
+  return fileList.files;
+}
+
+function handleListFiles() {
+  let filesArray1 = Array.from(fileInput1.files);
+  let filesArray2 = Array.from(fileInput2.files);
+  let files = filesArray1.concat(filesArray2);
+
+  console.log(files);
+  
+  let div = '';
+
+  files.forEach((file, index) => {
+    div += '<tr>';
+    div += '<td class="fileDetails">' + file.name + '</p>';
+    div += '<td class="fileDetails">' + formatSizeUnits(file.size) + '</p>';
+    div += '<td class="fileDetails">' + file.type + '</p>';
+    div += '<td class="fileDetails"><button class="btn btn-danger btn-sm" onclick="removeFileAndUpdateInput(\'' + file.name + '\')">Remove</button></p>';
+    div += '</tr>';
+  });
+
+  $('#previewFile').html(div);
+}
+
+
