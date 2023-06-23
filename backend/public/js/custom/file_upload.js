@@ -262,3 +262,13 @@ function handleListFiles() {
 }
 
 
+function sumFiles(files1, files2) {
+  var totalFiles = files1.length + files2.length;
+  
+  if (totalFiles > 100) {
+    let limit = parseInt("{{ env('ALLOWED_FILE_COUNT') }}");
+    alert("Files selected must not exceed "+limit+" documents!");
+    return;
+  }
+}
+

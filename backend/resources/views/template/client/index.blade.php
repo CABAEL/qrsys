@@ -78,8 +78,8 @@
                               
                                  
                                  <div class="col-xl-4 col-md-4">
-                                 <input type="file" id="fileInput1" class=" " name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
-                                 <input type="file" id="fileInput2" class=" " name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput1" class="hidden" name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput2" class="hidden" name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
                                  </div>
 
                                  <div class="col-xl-4 col-md-4">

@@ -113,6 +113,11 @@ Route::middleware(['auth','role'])->group(function(){
         });
 
 
+        Route::get('/accounts',function(Request $request){
+            return view('template.client.accounts');
+        });
+
+
         Route::get('/logout',function(Request $request){
             return redirect(route('logout'));
         });
