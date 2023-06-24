@@ -29,8 +29,29 @@ class UserController extends Controller
             ->select('users.id','users.status','clients.*')
             ->join("clients",'clients.user_id','=','users.id','inner')
             ->where('id', '!=' , $current_user)
-            //->where('users.status','!=',0)
             ->where('users.deleted_at','=',null)
+            ->orderBy('users.created_at','DESC')
+            ->get();
+            
+            $data = [
+                'response_time' => LARAVEL_START,
+                'count' => is_array($request)?count($request):0,
+                'data' => $request,
+            ];
+        }
+
+        if(Auth::user()->role == "client"){
+
+            $current_user = Auth::user()->id;
+
+
+            $request = DB::table('users')
+            ->select('users.id','users.status','client_users.*')
+            ->join("client_users",'client_users.client_user_id','=','users.id','inner')
+            ->where('id', '!=' , $current_user)
+            ->where('users.deleted_at','=',null)
+            ->where('users.role','=','user')
+            ->where('client_users.client_user_id','=',$current_user)
             ->orderBy('users.created_at','DESC')
             ->get();
             
@@ -206,6 +227,26 @@ class UserController extends Controller
     }
 
     public function activeClients(){
+
+        // $select = Client::with(['user' => function($query){
+        //     $query->where('status',1);
+        // }])
+        // //->where('user.status','=',1)
+        // ->get();
+
+
+        $clients = User::join('clients', 'users.id', '=', 'clients.user_id')
+        ->select('clients.*', 'users.id')
+        ->where('users.role','client')
+        ->where('users.status',1)
+        ->get();
+
+        return responseBuilder("Successfully loaded.",[],$clients);
+
+
+    }
+
+    public function activeClientUsers(){
 
         // $select = Client::with(['user' => function($query){
         //     $query->where('status',1);

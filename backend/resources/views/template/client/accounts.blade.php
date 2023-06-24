@@ -37,6 +37,6 @@
       </div>
       <!-- /.content-wrapper -->
       @include('template.footer')
-      @include('template.admin.segments.custom.script_index')
+      @include('template.client.segments.custom.script_accounts')
    </body>
 </html>

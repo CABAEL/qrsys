@@ -62,9 +62,7 @@
                         </div>
                         <br/>
                         <br/>
-
-
-                     <uploadSection id="SelectionList" class="">
+                     <div id="SelectionList" class="hidden">
                      <div class="alert alert-danger" id="upload_errors"></div>
                         <form onsubmit="SubmitUpload(this)">
                            <div class="container-fluid">
@@ -102,7 +100,7 @@
                                     <div class="form-group">
                                        <div class="form-row">
                                           <div class="col-md-12">
-                                          <button class="btn btn-default" style="float:right;">Cancel</button>
+                                          <!-- <button class="btn btn-default" style="float:right;">Cancel</button> -->
                                           <span style="float:right;" >&nbsp;</span>
                                           <button class="btn btn-primary" style="float:right;"><i class="fas fa fa-upload"></i> Upload</button>
                                           </div>
@@ -116,7 +114,7 @@
                               </div>
                            </div>
                         </form>
-                     </uploadSection><!--uploadSection list-->
+                  </div><!--uploadSection list-->
 
                      </div>
                   </div>
@@ -158,6 +156,9 @@
       <!-- /.content-wrapper -->
       @include('template.footer')
       @include('template.client.segments.custom.script_index')
+      <script>
+         const FILE_ALLOWED_COUNT = "{{ env('ALLOWED_FILE_COUNT') }}";
+      </script>
       <script src="{{asset('js/custom/file_upload.js')}}"></script>
    </body>
 </html>

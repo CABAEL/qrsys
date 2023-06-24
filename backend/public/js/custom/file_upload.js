@@ -245,7 +245,7 @@ function handleListFiles() {
   let filesArray2 = Array.from(fileInput2.files);
   let files = filesArray1.concat(filesArray2);
 
-  console.log(files);
+  showOrHideForm(files.length);
   
   let div = '';
 
@@ -262,13 +262,13 @@ function handleListFiles() {
 }
 
 
-function sumFiles(files1, files2) {
-  var totalFiles = files1.length + files2.length;
-  
-  if (totalFiles > 100) {
-    let limit = parseInt("{{ env('ALLOWED_FILE_COUNT') }}");
-    alert("Files selected must not exceed "+limit+" documents!");
-    return;
+function showOrHideForm(file_count){
+  if(file_count > 0){
+    $('#SelectionList').removeClass('hidden');
+  }
+  else{
+    $('#SelectionList').addClass('hidden');
+    $('#SelectionList .alert').css('visibility','hidden');
   }
 }
 

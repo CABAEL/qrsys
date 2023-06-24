@@ -136,6 +136,8 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/active_clients',[UserController::class,'activeClients']);
 
+        Route::get('/active_client_users',[UserController::class,'activeClientUsers']);
+
         Route::post('/file_upload',[FileUploadController::class,'uploadFile']);
     
     });

@@ -2,32 +2,34 @@
 $currentURL = url()->current();
 $exploded_url = explode('/',$currentURL);
 $user_dir = $exploded_url[4];
+
+
 ?>
 <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
 
-          <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Home">
+          <li class="nav-item <?php echo ($user_dir == "home")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
             <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-home"></i>
               <span class="nav-link-text">
               Home</span>
             </a>
           </li>
-          <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
+          <li class="nav-item <?php echo ($user_dir == "accounts")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
             <a class="nav-link" href="/client/accounts" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-user"></i>
               <span class="nav-link-text">
               Acounts Management</span>
             </a>
           </li>          
-          <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
-            <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
+          <li class="nav-item <?php echo ($user_dir == "filegroups")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
+            <a class="nav-link" href="/admin/filegroups" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-file"></i>
               <span class="nav-link-text">
               File Groups</span>
             </a>
           </li>          
-          <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
-            <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
+          <li class="nav-item <?php echo ($user_dir == "logs")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
+            <a class="nav-link" href="/admin/logs" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-history"></i>
               <span class="nav-link-text">
               Logs</span>
