@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Client_user;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Client;
@@ -30,6 +31,7 @@ class UserController extends Controller
             ->join("clients",'clients.user_id','=','users.id','inner')
             ->where('id', '!=' , $current_user)
             ->where('users.deleted_at','=',null)
+            ->where('users.role','=','client')
             ->orderBy('users.created_at','DESC')
             ->get();
             
@@ -127,12 +129,21 @@ class UserController extends Controller
 
     public function user_info($id) 
     {
-        $fetch = User::select('users.id','users.status','users.username','clients.*')
-        ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$id)
-        ->first();
+
+        $fetch_user = User::where('users.id','=',$id)->first();
+        $fetch = [];
+        if($fetch_user->role == 'client'){
+            $fetch = User::select('users.id','users.status','users.username','clients.*')
+            ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$id)
+            ->first();
+        }
+        if($fetch_user->role == 'user'){
+            $fetch = User::select('users.id','users.status','users.username','client_users.*')
+            ->join('client_users', 'users.id', '=', 'client_users.user_id')->where('users.id','=',$id)
+            ->first();
+        }
         
-        $user = $fetch;
-        return response()->json($user);
+        return response()->json($fetch);
     }
 
     public function storeClient(Request $request) 
@@ -215,6 +226,57 @@ class UserController extends Controller
 
     }
 
+    public function storeUser(Request $request) 
+    {
+
+        $current_client = Auth::user()->id;
+
+
+        $validated_user = $request->validate([
+            'name' => 'required',
+            'address' => 'required',
+            'email' => 'required|email|max:60',
+            'description' => 'nullable',
+            'contact_number' => 'required|numeric',
+            'username' => 'unique:users,username|required|max:60',
+            'password' => 'required|confirmed|max:60|min:8',
+        ]);
+
+        $merge_data = array();
+
+        $user_creds = User::create([
+            'username' => $validated_user['username'],
+            'password' => Hash::make($validated_user['password']),
+            'role' => 'user'
+        ]);
+
+        $user_id = $user_creds->id;
+        
+        if($user_creds){
+
+            $client_profile = Client_user::create([
+                'user_id' => $user_id,
+                'client_id' => $current_client,
+                'name' => $validated_user['name'],
+                'address' => $validated_user['address'],
+                'contact_no' => $validated_user['contact_number'],
+                'email' => $validated_user['email'],
+                'description' => $validated_user['description']
+            ]);
+            
+            $merge_data = [
+                'user' => $user_creds,
+                'user_profile' => $client_profile,
+            ];
+
+            return responseBuilder("User successfully added!",[],$merge_data);
+            
+        }
+
+        return responseBuilder("Invalid request.",array('User' => "Unable to add."),$merge_data);
+
+    }
+
     /**
      * Display the specified resource.
      *
@@ -227,13 +289,6 @@ class UserController extends Controller
     }
 
     public function activeClients(){
-
-        // $select = Client::with(['user' => function($query){
-        //     $query->where('status',1);
-        // }])
-        // //->where('user.status','=',1)
-        // ->get();
-
 
         $clients = User::join('clients', 'users.id', '=', 'clients.user_id')
         ->select('clients.*', 'users.id')
@@ -248,20 +303,17 @@ class UserController extends Controller
 
     public function activeClientUsers(){
 
-        // $select = Client::with(['user' => function($query){
-        //     $query->where('status',1);
-        // }])
-        // //->where('user.status','=',1)
-        // ->get();
+        $current_client_id = Auth::user()->id;
 
 
-        $clients = User::join('clients', 'users.id', '=', 'clients.user_id')
-        ->select('clients.*', 'users.id')
-        ->where('users.role','client')
+        $client_users = User::join('client_users', 'client_users.user_id', '=', 'users.id')
+        ->select('client_users.*', 'users.id','users.status')
+        ->where('users.role','user')
         ->where('users.status',1)
+        ->where('client_users.client_id',$current_client_id)
         ->get();
 
-        return responseBuilder("Successfully loaded.",[],$clients);
+        return responseBuilder("Successfully loaded.",[],$client_users);
 
 
     }
@@ -399,6 +451,72 @@ class UserController extends Controller
 
 
     }
+
+
+    public function updateUser(Request $request,$id)
+    {
+
+        $validated_user = $request->validate([
+            'address' => 'required',
+            'email' => 'required|email|max:60',
+            'description' => 'nullable',
+            'contact_number' => 'nullable|numeric|digits_between:7,13',
+            'name' => [
+                'required',
+                'max:100',
+                Rule::unique('client_users')->ignore($request['name'], 'name')
+            ],
+            'username' => 
+            [
+                'required',
+                'max:60',
+                Rule::unique('users')->ignore($request['username'], 'username')
+            ]
+            ,
+            'password' =>             [
+                'nullable',
+                'max:60',
+                'confirmed',
+                Rule::unique('users')->ignore($request['password'], 'password')
+            ],
+        ]);
+
+        $merge_data = array();
+
+        $user_creds = User::find($id);
+
+        if($validated_user['username'] != "" ){
+            $user_creds->username = $validated_user['username'];
+        }
+
+        if($validated_user['password'] !=""){
+            $user_creds->password = Hash::make($validated_user['password']);
+        }
+
+        $user_creds->save();
+
+        if($user_creds){
+
+            $client = Client_user::where('user_id', $id)->update([
+                'name' => $validated_user['name'],
+                'address' => $validated_user['address'],
+                'contact_no' => $validated_user['contact_number'],
+                'email' => $validated_user['email'],
+                'description' => $validated_user['description']
+            ]);
+
+            $merge_data = [
+                'user' => $user_creds,
+                'user_profile' => $client,
+            ];
+
+            return responseBuilder("User successfully added!",[],$merge_data);
+            
+        }
+
+        return responseBuilder("Invalid request.",array('User' => "Unable to update."),$merge_data);
+    }
+
 
     /**
      * Remove the specified resource from storage.

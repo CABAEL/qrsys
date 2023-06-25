@@ -37,8 +37,11 @@ class LoginController extends Controller
             if($role === 'admin'){
                 $rdr = '/admin/home';
             }
-            if($role === 'hr_head'){
-                $rdr = '/hr_head/home';
+            if($role === 'client'){
+                $rdr = '/client/home';
+            }
+            if($role === 'user'){
+                $rdr = '/user/home';
             }
 
             $data = [

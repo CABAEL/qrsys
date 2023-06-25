@@ -12,21 +12,20 @@
                </li>
             </ol>
             <hr/>
-            <button class="btn btn-sm" type="button" id="addclient_btn" data-toggle="modal" data-target="#addclient"> + User</button>
+            <button class="btn btn-sm" type="button" id="adduser_btn" data-toggle="modal" data-target="#adduser"> + User</button>
             <hr/>
-            <table cellspacing="0" class="display table table-bordered" width="100%" id="clients-table" style="width:100%">
+            <table cellspacing="0" class="display table table-bordered" width="100%" id="users-table" style="width:100%">
                <thead>
                   <tr>
-                     <th>CLIENT NAME</th>
-                     <th>DOCUMENT COUNT</th>
+                     <th>USER NAME</th>
                      <th>STATUS</th>
                      <th>DATE CREATED</th>
                      <th>---</th>
                   </tr>
                </thead>
-               <tbody id="ClientListBody">
+               <tbody id="ClientUserListBody">
                   <tr>
-                     <td colspan="4">
+                     <td colspan="3">
                         <center>Loading...</center>
                      </td>
                   </tr>
@@ -35,8 +34,11 @@
          </div>
          <!-- /.container-fluid -->
       </div>
+      @include('template.client.segments.modal.add_user_modal')
+      @include('template.client.segments.modal.view_user_modal')
       <!-- /.content-wrapper -->
       @include('template.footer')
       @include('template.client.segments.custom.script_accounts')
+
    </body>
 </html>

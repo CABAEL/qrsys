@@ -25,7 +25,7 @@
                         <div class="card bg-primary text-white mb-4">
                            <div class="card-body">Total Uploads</div>
                            <div class="card-footer d-flex align-items-center justify-content-between">
-                                 <h1>3000</h1>
+                                 <h1>0</h1>
                               <div class="small text-white">
                                  <svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg="">
                                     <path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path>
@@ -39,7 +39,7 @@
                         <div class="card bg-black text-black mb-4">
                            <div class="card-body">Active Users</div>
                            <div class="card-footer d-flex align-items-center justify-content-between">
-                              <h1 id="activeClients">3000</h1>
+                              <h1 id="activeClients">0</h1>
                               <div class="small text-white">
                                  <svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg="">
                                     <path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path>
@@ -68,7 +68,7 @@
                            <div class="container-fluid">
 
                               <div class="row">
-                              <table class="table" width="100%" style="overflow-y:scroll">
+                              <table class="table table-responsive" width="100%" style="overflow-y:scroll">
                                  <tbody id="previewFile"></tbody>
                                  </table> 
                               </div>
@@ -131,7 +131,7 @@
                </li>
             </ol>
             <hr/>
-            <table cellspacing="0" class="display table table-bordered" width="100%" id="clients-table" style="width:100%">
+            <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="clients-table" style="width:100%">
                <thead>
                   <tr>
                      <th>UPLOAD NAME</th>

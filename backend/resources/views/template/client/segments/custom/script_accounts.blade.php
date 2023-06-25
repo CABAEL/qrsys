@@ -1,9 +1,4 @@
-@include('template.client.segments.modal.add_user_modal')
-@include('template.client.segments.modal.view_user_modal')
-<script src="{{ asset('packages/chart.js/Chart.min.js') }}"></script>
 <script>
-   //upon load functions
-   activeClients();
   
     $('.logoContainer').on('click',function(){
         $('#logo').trigger('click');
@@ -51,20 +46,18 @@
     });
     
     $.ajax({
-    url: base_url('user_list'),
+    url: base_url('active_client_users'),
     type: 'GET',
     dataType: 'json',
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
     },
     success: function(ret) {
-      console.log(ret);
+      console.log(ret.responseJSON);
       var div = '';
     
    
-       $.each(ret.data, function( index, value ) {
-       // console.log( index + ": " + value.username );
-
+       $.each(ret.responseJSON.data, function( index, value ) {
        let date = getFormattedDate(value.created_at);
        let status = "";
        let color = "red";
@@ -78,18 +71,18 @@
        }
    
        div +='<tr>'; 
-       div +='<td>'+value.client_name+'</td>';
-       div +='<td>200</td>';
+       div +='<td>'+value.name+'</td>';
        div +='<td><em style="color:'+color+'">'+status+'</em></td>';
        div +='<td>'+date+'</td>';
-       div +='<td><button type="button" class="btn btn-sm btn-default viewclient" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
+       div +='<td><button type="button" class="btn btn-sm btn-default viewclientuser" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
        div +='</tr>';
        
      });
       
    
-     $('#ClientListBody').html(div);
-     $( "#clients-table" ).DataTable({
+     $('#ClientUserListBody').html(div);
+
+     $( "#users-table" ).DataTable({
       "order": [[ 3, "desc" ]], //or asc 
       "columnDefs" : [{"targets":3, "type":"date-eu"}],
      });
@@ -101,63 +94,7 @@
     });
     
     
-    var myLineChart1 = new Chart(document.getElementById('myBarChart'), {
-      type: 'bar',
-        data: {
-          labels: ['Monday', 'Tuesday' , 'Wednesday' , 'Thursday' , 'Friday' , 'Saturday' , 'Sunday '],
-          datasets: [
-            {
-              label: 'Client',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#36A2EB',
-              backgroundColor: '#035fae',
-            },
-            {
-              label: 'Users',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#36A2EB',
-              backgroundColor: '#777',
-            },
-            {
-              label: 'Uploads',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#16f4f0',
-              backgroundColor: '#ace4ee',
-            },
-          ],
-        },
-      // options: {
-      //   scales: {
-      //     xAxes: [{
-      //       time: {
-      //         unit: 'month'
-      //       },
-      //       gridLines: {
-      //         display: true
-      //       },
-      //       ticks: {
-      //         maxTicksLimit: 12
-      //       }
-      //     }],
-      //     yAxes: [{
-      //       ticks: {
-      //         min: 0,
-      //         max: 100,
-      //         maxTicksLimit: 10
-      //       },
-      //       gridLines: {
-      //         display: true
-      //       }
-      //     }],
-      //   },
-      //   legend: {
-      //     display: true
-      //   }
-      // }
-    });
-    
-    
-    $(document).on('click','.viewclient',function(event) {
+    $(document).on('click','.viewclientuser',function(event) {
     event.preventDefault();
     var id = $(this).data('id');
     //alert(base_url("user_info/"+id));
@@ -175,46 +112,35 @@
         $('.alert').css('overflow','hidden');
         $('.alert').css('visibility','hidden');
        
-       let logo = '/img/bg_logo.png';
-       
-       if(data.logo){
-         let hash_client_name = $.MD5(data.client_name);
-         let client_logo_path = '/'+'{{ env("CLIENT_DIR_PATH") }}'+hash_client_name+'/logo/'; 
-         logo = client_logo_path+data.logo;
-       }
-
        let Status_Btn_Toggle = "Deactivate";
        let toggle_class = "deactivate";
        if(data.status == 0){
         Status_Btn_Toggle = "Activate";
         toggle_class = "activate";
        }
-       
-        $('#viewclientmodal .updatelogoContainer').css('background-image','url('+logo+')');
+
+        $('#update_clientuser_form').attr('data-id',data.id);
+        $('#update_clientuser_form #name').val(data.name);
+        $('#update_clientuser_form #address').val(data.address);
+        $('#update_clientuser_form #email').val(data.email);
+        $('#update_clientuser_form #username').val(data.username);
+        $('#update_clientuser_form #contact_number').val(data.contact_no);
+        $('#update_clientuser_form #description').val(data.description);
+        $('#update_clientuser_form #password').val("");
+        $('#update_clientuser_form #password_confirmation').val("");
    
-        $('#update_client_form').attr('data-id',data.id);
-        $('#update_client_form #client_name').val(data.client_name);
-        $('#update_client_form #address').val(data.address);
-        $('#update_client_form #email').val(data.email);
-        $('#update_client_form #username').val(data.username);
-        $('#update_client_form #contact_number').val(data.contact_no);
-        $('#update_client_form #description').val(data.description);
-        $('#update_client_form #password').val("");
-        $('#update_client_form #password_confirmation').val("");
-   
-        $('#update_client_form #updatelogo').val("");
+        $('#update_clientuser_form #updatelogo').val("");
     
-        $("#viewclientmodal #updateAccount").attr('data-id',id);
+        $("#viewusermodal #updateAccount").attr('data-id',id);
         
-        $("#viewclientmodal .status_toggle").attr('data-id',id);
-        $("#viewclientmodal .status_toggle").addClass(toggle_class);
-        $("#viewclientmodal .status_toggle").html(Status_Btn_Toggle);
+        $("#viewusermodal .status_toggle").attr('data-id',id);
+        $("#viewusermodal .status_toggle").addClass(toggle_class);
+        $("#viewusermodal .status_toggle").html(Status_Btn_Toggle);
     
-        $("#viewclientmodal .delete").attr('data-id',id);
+        $("#viewusermodal .delete").attr('data-id',id);
    
         hide_loader();
-        $('#viewclientmodal').modal('toggle');
-        console.log(data);
+        $('#viewusermodal').modal('toggle');
       },
       error: function(e) {
         
@@ -227,21 +153,19 @@
    
    // form submit
    
-   addClientSubmit = (form) => {
+   function addUserSubmit(form){
+    event.preventDefault();
 
-   event.preventDefault();
     // Get form
-     var form = $('#add_client_form')[0];
+     var form = $('#add_user_form')[0];
      var element = $('#add_user_errors');
     // FormData object 
     var formData = new FormData(form);
-   
-    formData.append('image', $('input[type=file]')[0].files[0]);
     
-    //show_loader();
+    show_loader();
    
     $.ajax({
-    url: base_url("add_client"),
+    url: base_url("add_user"),
     type: 'POST', 
     dataType: 'json',
     contentType: false,
@@ -257,7 +181,7 @@
    
        alert('User added successfully!');
        hide_loader();
-       window.location.replace('/login');
+       window.location.replace('/client/accounts');
    
      }else{
 
@@ -290,7 +214,7 @@
    
    $(document).on("click","#generate_pass",function(event) {
    event.preventDefault();
-   element = $('#viewclientmodal #password');
+   element = $('#viewusermodal #password');
    random_text_generator(element);
    });
    
@@ -308,10 +232,10 @@
    }
    
    
-   $(document).on("click","#update_client_form #clear",function() {
+   $(document).on("click","#update_clientuser_form #clear",function() {
    event.preventDefault();
    
-   var pass = $('#update_client_form #password');
+   var pass = $('#update_clientuser_form #password');
    clear(pass);
    clear(pass);
    });
@@ -344,11 +268,11 @@
    });
    
    
-  $(document).on("click","#viewclientmodal .delete",function(e) {
+  $(document).on("click","#viewusermodal .delete",function(e) {
   event.preventDefault();
    var data_id = $(this).data('id');
-   var form = '#viewclientmodal';
-   var element = $('#viewclientmodal #update_client_errors');
+   var form = '#viewusermodal';
+   var element = $('#viewusermodal #update_clientuser_errors');
    var message = "Are you sure that you want to delete this user?";
    
    promt_warning_delete(form,element,message,data_id);
@@ -358,7 +282,7 @@
    });
    
    
-   $(document).on("click","#viewclientmodal .delete_yes",function(e) {
+   $(document).on("click","#viewusermodal .delete_yes",function(e) {
     event.preventDefault();
      var id = $(this).data('id');
      show_loader();
@@ -374,7 +298,7 @@
            alert('User deleted!');
            //promt_success(element,data)
            hide_loader();
-           window.location.replace('/login');
+           window.location.replace('/client/accounts');
          },
          error: function(e){
            console.log(e);
@@ -388,31 +312,16 @@
    });
    
    
-   function activeClients () {
-    //  fetch(base_url('active_clients'))
-    //    .then(response => response.json())
-    //    .then(data => {
-    //      let client_count = data.responseJSON.data.length;
-    //      $('#activeClients').html(client_count)
-    //    })
-    //    .catch(error => {
-    //      console.error(error);
-    //  });
-   }
-   
-   
-   updateClientSubmit = () => {
+   updateClientUserSubmit = () => {
     event.preventDefault();
 
      // Get form
-     var form = $('#update_client_form')[0];
+     var form = $('#update_clientuser_form')[0];
      // FormData object 
     //  var formData = form.serialize();
-     var client_id = $('#update_client_form').data('id');
+     var client_id = $('#update_clientuser_form').data('id');
 
     var formData = new FormData(form);
-   
-    formData.append('image', $('input[type=file]')[0].files[0]);
    
     $.ajax({
       url: base_url("update_user_data/"+client_id),
@@ -430,7 +339,7 @@
       
           alert('User updated successfully!');
           hide_loader();
-          window.location.replace('/login');
+          window.location.replace('/client/accounts');
       
         }else{
 
@@ -448,8 +357,8 @@
       },
       error: function(e) {
         //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
-        var element = $('#update_client_errors');
-        var form = '#viewclientmodal'; 
+        var element = $('#update_clientuser_errors');
+        var form = '#viewusermodal'; 
         promt_errors(form,element,e);
   
         hide_loader();
@@ -462,8 +371,8 @@
   e.preventDefault();
     var data_id = $(this).data('id');
 
-    var form = '#viewclientmodal';
-    var element = $('#update_client_form .alert');
+    var form = '#viewusermodal';
+    var element = $('#update_clientuser_form .alert');
     var message = "Are you sure that you want to deactivate this client?";
 
     promt_warning_deactivate(form,element,message,data_id);
@@ -491,8 +400,8 @@
         },
         error: function(e){
           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
-          var element = $('#update_client_errors');
-          var form = '#viewclientmodal'; 
+          var element = $('#update_clientuser_errors');
+          var form = '#viewusermodal'; 
           promt_errors(form,element,e);
           hide_loader();
         }

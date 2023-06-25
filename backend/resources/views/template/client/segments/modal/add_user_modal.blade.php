@@ -1,26 +1,22 @@
-<div class="modal fade" id="addclient" tabindex="-1" role="dialog" aria-labelledby="addclient" aria-hidden="true">
+<div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="adduser" aria-hidden="true">
    <div class="modal-dialog modal-lg">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title" id=""><b>Add New Client/Organization</b></h5>
+            <h5 class="modal-title" id=""><b>Add New User</b></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
          </div>
-         <form id="add_client_form" onSubmit="addClientSubmit(this.id)" enctype="multipart/form-data">
+         <form id="add_user_form" onSubmit="addUserSubmit(this.id)" enctype="multipart/form-data">
          <div class="modal-body">
             <center>
-               <div class="alert alert-danger" id="add_client_errors"></div>
+               <div class="alert alert-danger" id="add_user_errors"></div>
             </center>
             <div class="container-fluid">
-               <center>
-                  <div class="logoContainer"></div>
-               </center>
-                  <input type="file" id="logo" name="logo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg" autocomplete="off"/>
                   <div class="form-group">
                      <div class="form-row">
                         <div class="col-md-12">
-                           <label for="name">Client/Organization Name</label>
-                           <input type="text" class="form-control" id="client_name" name="client_name" autofocus autocomplete="off"/>
+                           <label for="name">Name</label>
+                           <input type="text" class="form-control" id="name" name="name" autofocus autocomplete="off"/>
                         </div>
                      </div>
                   </div>

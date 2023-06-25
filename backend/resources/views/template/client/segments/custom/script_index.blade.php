@@ -1,6 +1,3 @@
-@include('template.client.segments.modal.add_user_modal')
-@include('template.client.segments.modal.view_user_modal')
-<script src="{{ asset('packages/chart.js/Chart.min.js') }}"></script>
 <script>
    //upon load functions
    activeUsers();

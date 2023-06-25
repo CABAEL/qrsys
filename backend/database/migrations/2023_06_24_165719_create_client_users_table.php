@@ -18,6 +18,7 @@ class CreateClientUsersTable extends Migration
             $table->id('client_user_id')->unique();
             $table->integer('client_id');
             $table->integer('user_id');
+            $table->string('name',255);
             $table->string('contact_no',20)->nullable();
             $table->string('email',60)->nullable();
             $table->string('address',255)->nullable();

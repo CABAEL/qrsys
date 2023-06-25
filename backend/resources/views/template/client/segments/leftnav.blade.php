@@ -18,18 +18,18 @@ $user_dir = $exploded_url[4];
             <a class="nav-link" href="/client/accounts" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-user"></i>
               <span class="nav-link-text">
-              Acounts Management</span>
+              Acount Management</span>
             </a>
           </li>          
           <li class="nav-item <?php echo ($user_dir == "filegroups")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
-            <a class="nav-link" href="/admin/filegroups" data-parent="#exampleAccordion">
+            <a class="nav-link" href="/client/filegroups" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-file"></i>
               <span class="nav-link-text">
               File Groups</span>
             </a>
           </li>          
           <li class="nav-item <?php echo ($user_dir == "logs")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
-            <a class="nav-link" href="/admin/logs" data-parent="#exampleAccordion">
+            <a class="nav-link" href="/client/logs" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-history"></i>
               <span class="nav-link-text">
               Logs</span>

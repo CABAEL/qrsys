@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Applicant_experiences;
 use Illuminate\Http\Request;
 
-class ApplicantExperiencesController extends Controller
+class FilegroupsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +40,10 @@ class ApplicantExperiencesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Applicant_experiences  $applicant_experiences
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Applicant_experiences $applicant_experiences)
+    public function show($id)
     {
         //
     }
@@ -52,10 +51,10 @@ class ApplicantExperiencesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Applicant_experiences  $applicant_experiences
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Applicant_experiences $applicant_experiences)
+    public function edit($id)
     {
         //
     }
@@ -64,10 +63,10 @@ class ApplicantExperiencesController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Applicant_experiences  $applicant_experiences
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Applicant_experiences $applicant_experiences)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -75,10 +74,10 @@ class ApplicantExperiencesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Applicant_experiences  $applicant_experiences
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Applicant_experiences $applicant_experiences)
+    public function destroy($id)
     {
         //
     }

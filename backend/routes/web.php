@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\FilegroupsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ use GuzzleHttp\Middleware;
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
 Route::get('/', function (Request $request) {
-    return view('portal.index');
+    return view('login');
 })->name('portal');
 
 Route::get('/login', function (Request $request) {
@@ -122,7 +123,7 @@ Route::middleware(['auth','role'])->group(function(){
             return redirect(route('logout'));
         });
 
-        Route::post('/update_user_data/{id}',[UserController::class,'update']);
+        Route::post('/update_user_data/{id}',[UserController::class,'updateUser']);
 
         Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
@@ -132,255 +133,20 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/user_info/{id}',[UserController::class,'user_info']);
 
-        Route::post('add_client',[UserController::class,'storeClient']);
+        Route::post('add_user',[UserController::class,'storeUser']);
 
         Route::get('/active_clients',[UserController::class,'activeClients']);
 
         Route::get('/active_client_users',[UserController::class,'activeClientUsers']);
 
         Route::post('/file_upload',[FileUploadController::class,'uploadFile']);
-    
-    });
 
-    Route::group([
-        'prefix' => 'hr_head',
-        'as' => 'hr_head',
-        ],function(){
+        Route::get('/filegroups', function(){
+            return "404";
+        });
 
-            Route::resource('/chat',ChatController::class);
-
-            Route::get('/get_payslip/{id}',[EmployeeController::class,'getEmployeePayslip']);
-            
-            Route::post('/employee_get_dtr',[EmployeeController::class,'getEmployeeDTR']);
-
-            Route::get('/chat_support',function(Request $request){
-                return view('template.hr_head.chat_support');
-            });
-
-            Route::get('/employee_id/{id}',function(Request $request){
-                return view('template.hr_head.employee_page');
-            });
-
-            Route::get('/',function(Request $request){
-                return redirect('hr_head/home');
-            })->name('hr_head_home');
-    
-            Route::get('/home',function(Request $request){
-                return view('template.hr_head.index');
-            });
-    
-            Route::get('/deactivated_users',function(){
-                return view('template.hr_head.deactivated_users');
-            });
-    
-            Route::get('/logout',function(Request $request){
-                return redirect(route('logout'));
-            });
-    
-            Route::get('/users',function(){
-                return view('template.hr_head.users');
-            });
-
-            Route::get('/job_vacancies',function(){
-                return view('template.hr_head.job_vacancies');
-            });
-
-            Route::get('/applicants',function(){
-                return view('template.hr_head.applicant_list');
-            });
-
-            Route::get('/employees',function(){
-                return view('template.hr_head.employee_list');
-            });
-
-            Route::get('/events_announcements',function(){
-                return view('template.hr_head.events_announcement');
-            });
-    
-            Route::get('/activate_user/{id}',[UserController::class,'activate']);
-            
-            Route::get('/employee_list',[UserController::class,'employeeList']);
-
-            Route::get('/employee/{id}',[EmployeeController::class,'index']);
-    
-            Route::put('/update_user_data/{id}',[UserController::class,'update']);
-    
-            Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
-    
-            Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
-    
-            Route::get('/user_list',[UserController::class,'index']);
-    
-            Route::get('/deactivated_list',[UserController::class,'deactivatedUser']);
-    
-            Route::get('/user_info/{id}',[UserController::class,'user_info']);
-    
-            Route::post('add_user',[UserController::class,'store']);
         
-            Route::resource('/job',JobVacancyController::class);
-            
-            //Route::put('/job/{id}',[JobVacancyController::class,'update']);
-
-            Route::get('/applicant_details',[ApplicantController::class,'index']);
-
-            Route::get('/applicant_chart/{id}',[ApplicantController::class,'getApplicantChart']);
-            
-            Route::post('/accept_applicant',[ApplicantController::class,'acceptApplicant']);
-
-            Route::post('/decline_applicant',[ApplicantController::class,'declineApplicant']);
-
-            Route::post('/failed_applicant',[ApplicantController::class,'failedApplicant']);
-
-            Route::post('/hire_applicant',[ApplicantController::class,'hireApplicant']);
-            
-            Route::post('/add_payslip',[EmployeeController::class,'addPayslip']);
-
-            Route::get('active_employee/{id}',[EmployeeController::class,'activeEmployee']);
-
-            Route::get('/recommendedlist',[ApplicantController::class,'recommended']);
-
-            Route::resource('/event',EventController::class);
-
-            Route::resource('/announcement',AnnouncementController::class);
-
-    });
-
-
-
-    Route::group([
-        'prefix' => 'hr_assistant',
-        'as' => 'hr_assistant',
-        ],function(){
-            
-            Route::resource('/chat',ChatController::class);
-
-            Route::get('/get_payslip/{id}',[EmployeeController::class,'getEmployeePayslip']);
-            
-            Route::post('/employee_get_dtr',[EmployeeController::class,'getEmployeeDTR']);
-
-            Route::get('/chat_support',function(Request $request){
-                return view('template.hr_assistant.chat_support');
-            });
-
-            Route::get('/employee_id/{id}',function(Request $request){
-                return view('template.hr_assistant.employee_page');
-            });
-
-            Route::get('/',function(Request $request){
-                return redirect('hr_assistant/home');
-            })->name('hr_assistant_home');
     
-            Route::get('/home',function(Request $request){
-                return view('template.hr_assistant.index');
-            });
-    
-            Route::get('/deactivated_users',function(){
-                return view('template.hr_assistant.deactivated_users');
-            });
-    
-            Route::get('/logout',function(Request $request){
-                return redirect(route('logout'));
-            });
-    
-            Route::get('/users',function(){
-                return view('template.hr_assistant.users');
-            });
-
-            Route::get('/job_vacancies',function(){
-                return view('template.hr_assistant.job_vacancies');
-            });
-
-            Route::get('/applicants',function(){
-                return view('template.hr_assistant.applicant_list');
-            });
-
-            Route::get('/employees',function(){
-                return view('template.hr_assistant.employee_list');
-            });
-
-            Route::get('/events_announcements',function(){
-                return view('template.hr_assistant.events_announcement');
-            });
-    
-            Route::get('/activate_user/{id}',[UserController::class,'activate']);
-
-            //Route::resource('/employee_list',UserController::class);
-            
-            Route::get('/employee_list',[UserController::class,'employeeList']);
-
-            Route::get('/employee/{id}',[EmployeeController::class,'index']);
-    
-            Route::put('/update_user_data/{id}',[UserController::class,'update']);
-    
-            Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
-    
-            Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
-    
-            Route::get('/user_list',[UserController::class,'index']);
-    
-            Route::get('/deactivated_list',[UserController::class,'deactivatedUser']);
-    
-            Route::get('/user_info/{id}',[UserController::class,'user_info']);
-    
-            Route::post('add_user',[UserController::class,'store']);
-        
-            Route::resource('/job',JobVacancyController::class);
-            
-            //Route::put('/job/{id}',[JobVacancyController::class,'update']);
-
-            Route::get('/applicant_details',[ApplicantController::class,'index']);
-
-            Route::get('/applicant_chart/{id}',[ApplicantController::class,'getApplicantChart']);
-            
-            Route::post('/accept_applicant',[ApplicantController::class,'acceptApplicant']);
-
-            Route::post('/decline_applicant',[ApplicantController::class,'declineApplicant']);
-
-            Route::post('/failed_applicant',[ApplicantController::class,'failedApplicant']);
-
-            Route::post('/hire_applicant',[ApplicantController::class,'hireApplicant']);
-            
-            Route::post('/add_payslip',[EmployeeController::class,'addPayslip']);
-
-            Route::get('active_employee/{id}',[EmployeeController::class,'activeEmployee']);
-
-            Route::get('/recommendedlist',[ApplicantController::class,'recommended']);
-
-            Route::resource('/event',EventController::class);
-
-            Route::resource('/announcement',AnnouncementController::class);
-
-    });
-
-
-    Route::group([
-        'prefix' => 'applicant',
-        'as' => 'applicant',
-        ],function(){
-            
-            Route::get('/logout',function(Request $request){
-                return redirect(route('logout'));
-            });
-
-            Route::get('/',function(Request $request){
-                return redirect('hr_head/home');
-            })->name('hr_head_home');
-    
-            Route::get('/home',function(Request $request){
-                return view('template.applicant.index');
-            });
-
-            Route::resource('/job',JobVacancyController::class);
-
-            Route::post('/add_applicant_details',[ApplicantController::class,'applicantDetails']);
-
-            Route::get('/applicant_details',[ApplicantController::class,'index']);
-
-            Route::get('/user_applicant_details',[ApplicantController::class,'user']);
-
-            Route::post('/upload_resume',[FileUploadController::class,'uploadResume']);
-
-           
     });
 
     Route::group([
