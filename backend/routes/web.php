@@ -118,6 +118,10 @@ Route::middleware(['auth','role'])->group(function(){
             return view('template.client.accounts');
         });
 
+        Route::get('/filegroups', function(){
+            return view('template.client.filegroups');
+        });
+
 
         Route::get('/logout',function(Request $request){
             return redirect(route('logout'));
@@ -141,9 +145,15 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::post('/file_upload',[FileUploadController::class,'uploadFile']);
 
-        Route::get('/filegroups', function(){
-            return "404";
-        });
+        Route::get('/file_groups',[FilegroupsController::class,'index']);
+
+        Route::get('/show_filegroup/{id}',[FilegroupsController::class,'show']);
+
+        Route::post('/add_filegroup',[FilegroupsController::class,'store']);
+
+        Route::post('/update_filegroup',[FilegroupsController::class,'update']);
+
+
 
         
     
