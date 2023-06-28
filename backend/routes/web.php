@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\FilegroupsController;
+use App\Models\File_upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -61,6 +62,16 @@ Route::get('/logout',[LogoutController::class,'logout_user'])->name('logout');
 Route::get('/portal_event',[EventController::class,'index']);
 Route::get('/portal_announcement',[AnnouncementController::class,'index']);
 
+
+Route::get('/fileviewer/{id}', function($id) {
+    
+    $file = File_upload::find($id);
+    if(!$file){
+        return false;
+    }
+    return view('template.iframe_views.file_view', compact('file'));
+
+})->middleware(['auth']);
 
 Route::middleware(['auth','role'])->group(function(){
 
@@ -159,10 +170,8 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/all_filegroups',[FilegroupsController::class,'showFilegroups']);
 
+        Route::get('/clientfiles',[FileUploadController::class,'clientfileList']);
 
-
-        
-    
     });
 
     Route::group([

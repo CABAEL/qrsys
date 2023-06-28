@@ -15,6 +15,8 @@ class File_upload extends Model
         'file_group_id',
         'document_code',
         'file_name',
+        'password',
+        'description',
         'uploaded_by',
     ];
 

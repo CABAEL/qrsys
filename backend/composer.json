@@ -12,7 +12,8 @@
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "wildbit/swiftmailer-postmark": "^3.3"
+        "wildbit/swiftmailer-postmark": "^3.3",
+        "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

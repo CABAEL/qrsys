@@ -17,7 +17,7 @@
 
    
    $.ajax({
-    url: base_url('user_list'),
+    url: base_url('clientfiles'),
     type: 'GET',
     dataType: 'json',
     headers: {
@@ -27,35 +27,24 @@
       console.log(ret);
       var div = '';
     
-   
-       $.each(ret.data, function( index, value ) {
-       // console.log( index + ": " + value.username );
-
+      var count = 0;
+       $.each(ret.responseJSON.data, function( index, value ) {
        let date = getFormattedDate(value.created_at);
-       let status = "";
-       let color = "red";
-
-       if(value.status == 1){
-        status = "Active";
-        color = "green";
-       }else{
-        status = "Inactive";
-        color = "red";
-       }
    
        div +='<tr>'; 
-       div +='<td>'+value.client_name+'</td>';
-       div +='<td>200</td>';
-       div +='<td><em style="color:'+color+'">'+status+'</em></td>';
+       div +='<td><pre>'+value.file_name+'</pre></td>';
+       div +='<td>'+value.username+'</td>';
        div +='<td>'+date+'</td>';
-       div +='<td><button type="button" class="btn btn-sm btn-default viewclient" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
+       div +='<td><button type="button" class="btn btn-sm btn-default viewqr" data-id="'+value.id+'"><i class="fa fa-qrcode"></i></button></td>';
        div +='</tr>';
-       
+       count ++;
      });
       
    
-     $('#ClientListBody').html(div);
-     $( "#clients-table" ).DataTable({
+     $('#FileListBody').html(div);
+     $('#uploadcount').html(count);
+
+     $( "#files-table" ).DataTable({
       "order": [[ 3, "desc" ]], //or asc 
       "columnDefs" : [{"targets":3, "type":"date-eu"}],
      });
@@ -87,15 +76,12 @@
       data.responseJSON.data.forEach(filegroup => {
         div += '<option value="'+filegroup.id+'">'+filegroup.group_name+'</option>';
       });
-    console.log(div);
+
     selectElement.innerHTML = div;
 
       if(value != null){
         selectElement.value = value;
       }
-
-        // Handle the response data here
-        console.log(data);
       })
       .catch(error => {
         // Handle any errors that occur during the request
@@ -104,9 +90,16 @@
 
   }
 
-  $('#SelectionList #file_group').off();
+  // $('#SelectionList #file_group').off();
+
+$(document).on('click','.viewqr',function(){
+  let fileViewerUrl = url_host('fileviewer')
+
+  $('#viewfile').modal('show');
+
+  $('.iframe_viewfiles').attr('src', fileViewerUrl);
 
 
-    
+})
 </script>
 <script src="{{ asset('js/custom/general.js') }}"></script>

@@ -44,7 +44,9 @@ class FileUploadController extends Controller
 
             $validated_inputs = $request->validate([
                 'filegroups' => 'required',
-                'code' => 'required'
+                'code' => 'required',
+                'description' => 'nullable',
+                'password' => ['required', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
             ],[
                 'files1.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
                 'files2.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
@@ -54,6 +56,7 @@ class FileUploadController extends Controller
                 'files1.*.mimetypes' => 'Files selected must be in one of the following formats: PDF, JPEG, PNG, GIF, Word, Excel, PowerPoint, Publisher.',
                 'files2.*.max' => 'Selected files must not be greater than 2048 kilobytes.',
                 'files2.*.mimetypes' => 'Files selected must be in one of the following formats: PDF, JPEG, PNG, GIF, Word, Excel, PowerPoint, Publisher.',
+                'password' => 'File password must be composed of atleast 1 uppercase, 1 special character and 1 number with a character count of 6.'
             ]);
 
 
@@ -90,6 +93,8 @@ class FileUploadController extends Controller
                         'file_group_id' => $validated_inputs['filegroups'],
                         'document_code' => strtoupper($validated_inputs['code']),
                         'file_name' => strtoupper($validated_inputs['code'])."_".$formatted_name.".".$ext,
+                        'password' => $validated_inputs['password'],
+                        'description' => $validated_inputs['description'],
                         'uploaded_by' => $current_user_id,
                     ]);
 
@@ -125,6 +130,8 @@ class FileUploadController extends Controller
                         'file_group_id' => $validated_inputs['filegroups'],
                         'document_code' => strtoupper($validated_inputs['code']),
                         'file_name' => strtoupper($validated_inputs['code'])."_".$formatted_name2.".".$ext2,
+                        'password' => $validated_inputs['password'],
+                        'description' => $validated_inputs['description'],
                         'uploaded_by' => $current_user_id,
                     ]);
 
@@ -171,6 +178,18 @@ class FileUploadController extends Controller
 
         }
     
+    }
+
+    public function clientfileList(){
+       $current_user_id = Auth::user()->id;
+
+        $files = File_upload::select('file_uploads.*','users.username')->join('users','file_uploads.uploaded_by','=','users.id')
+        ->where('file_uploads.client_id',$current_user_id)->get();
+
+        if($files){
+            return responseBuilder('Successfully fetch!',[],$files);
+        }
+        return false;
     }
 
 }

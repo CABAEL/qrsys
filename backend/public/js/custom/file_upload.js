@@ -163,14 +163,11 @@ function SubmitUpload(e) {
         error: function(e) {
           element = $('#upload_errors');
           form = '#SelectionList';
-          display_errors(form, element, e);
+          promt_errors(form,element,e);
           hide_loader();
         }
       });
     }
-    
-
-
 }
 
 function acceptedFormat(file) {

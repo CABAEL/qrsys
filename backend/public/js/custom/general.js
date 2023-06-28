@@ -12,6 +12,14 @@ function base_url(append)
     }
 }
 
+function url_host(append)
+{
+    var base_url = window.location.origin;
+
+    return base_url+"/"+append;
+
+}
+
 function signOut() {
     //var auth2 = gapi.auth2.getAuthInstance();
     //auth2.disconnect().then(function () {
@@ -77,8 +85,11 @@ parseError = (response,form,element) => {
 }
 
 
-$(':input').on('keypress',function(){
+$(':input').on('keypress change',function(){
     $(this).css('border','1px solid rgba(0, 0, 0, .15)');
+    // $('.alert').css('visibility','hidden');
+    // $('.alert').css('height','0px');
+    // $('.alert').css('width','auto');
 });
 
 

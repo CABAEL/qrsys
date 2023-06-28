@@ -19,6 +19,8 @@ class CreateFileUploadsTable extends Migration
             $table->integer('file_group_id');
             $table->string('document_code');
             $table->string('file_name',255);
+            $table->string('password',60);
+            $table->text('description')->nullable();
             $table->integer('uploaded_by');
             $table->timestamps();
             $table->softDeletes();

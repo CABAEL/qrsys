@@ -12,6 +12,7 @@
          cursor:pointer;
       }
    </style>
+
    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
       @include('template.client.segments.navbar')
       <div class="content-wrapper">
@@ -25,7 +26,7 @@
                         <div class="card bg-primary text-white mb-4">
                            <div class="card-body">Total Uploads</div>
                            <div class="card-footer d-flex align-items-center justify-content-between">
-                                 <h1>0</h1>
+                                 <h1 id="uploadcount">0</h1>
                               <div class="small text-white">
                                  <svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg="">
                                     <path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path>
@@ -76,8 +77,8 @@
                               
                                  
                                  <div class="col-xl-4 col-md-4">
-                                 <input type="file" id="fileInput1" class="" name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
-                                 <input type="file" id="fileInput2" class="" name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput1" class="hidden" name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput2" class="hidden" name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
                                  </div>
 
                                  <div class="col-xl-4 col-md-4">
@@ -94,6 +95,14 @@
                                           <div class="col-md-12">
                                              <label for="username">Description</label>
                                              <textarea class="form-control" name="description" autocomplete="off"></textarea>  
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="form-group">
+                                       <div class="form-row">
+                                          <div class="col-md-12">
+                                             <label for="filegroups">File(s) Password:</label>
+                                             <input type="password" id="password" name="password" class="form-control" placeholder="Optional" autocomplete="off"/>
                                           </div>
                                        </div>
                                     </div>
@@ -131,18 +140,16 @@
                </li>
             </ol>
             <hr/>
-            <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="clients-table" style="width:100%">
+            <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="files-table" style="width:100%">
                <thead>
                   <tr>
                      <th>UPLOAD NAME</th>
-                     
-                     <th>TYPE</th>
                      <th>UPLOADED BY</th>
-                     <th>DATE CREATED</th>
+                     <th>DATE UPLOADED</th>
                      <th>---</th>
                   </tr>
                </thead>
-               <tbody id="ClientListBody">
+               <tbody id="FileListBody">
                   <tr>
                      <td colspan="5">
                         <center>Loading...</center>
@@ -156,6 +163,7 @@
       <!-- /.content-wrapper -->
       @include('template.footer')
       @include('template.client.segments.custom.script_index')
+      @include('template.client.segments.modal.view_file_modal')
       <script>
          const FILE_ALLOWED_COUNT = "{{ env('ALLOWED_FILE_COUNT') }}";
       </script>
