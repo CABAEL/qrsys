@@ -66,6 +66,47 @@
     }
     });
 
+
+    fetchAllFilegroups('#SelectionList',value = null)
+
+    function fetchAllFilegroups(form,value = null){
+    const url = base_url('all_filegroups');
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+
+      // Handle the response data here
+      const selectElement = $(form + ' #filegroups')[0] // Replace with the ID of your <select> element
+      let div = '';
+      div += '<option value="">-----------------</option>';
+      data.responseJSON.data.forEach(filegroup => {
+        div += '<option value="'+filegroup.id+'">'+filegroup.group_name+'</option>';
+      });
+    console.log(div);
+    selectElement.innerHTML = div;
+
+      if(value != null){
+        selectElement.value = value;
+      }
+
+        // Handle the response data here
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors that occur during the request
+        console.error(error);
+      });
+
+  }
+
+  $('#SelectionList #file_group').off();
+
+
     
 </script>
 <script src="{{ asset('js/custom/general.js') }}"></script>

@@ -35,9 +35,15 @@
                   </div>
                   <div class="form-group">
                      <div class="form-row">
-                        <div class="col-md-12">
+                        <div class="col-md-3">
+                           <label for="filegroups">File Group</label>
+                           <select id="filegroups" name="filegroups" class="form-control">
+                              <option value=""></option>
+                           </select>
+                        </div>
+                        <div class="col-md-9">
                            <label for="fname">Address</label>
-                           <input type="text" class="form-control" id="address" name="address" autofocus/>
+                           <input type="text" class="form-control" id="address" name="address" autofocus autocomplete="off"/>
                         </div>
                      </div>
                   </div>

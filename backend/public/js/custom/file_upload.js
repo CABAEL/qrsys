@@ -50,7 +50,7 @@ $(dropZone).on('click', function(event) {
 
 let arr_holder = [];
 // Change event on the fileInput element
-$(document).on('change',fileInput1, (e) => {
+$(fileInput1).on('change', (e) => {
   event.preventDefault();
 
   let existingFiles = fileInput1.files;

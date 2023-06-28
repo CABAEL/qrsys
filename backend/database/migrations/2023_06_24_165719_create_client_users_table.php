@@ -22,6 +22,7 @@ class CreateClientUsersTable extends Migration
             $table->string('fname',255);
             $table->string('mname',255)->nullable();
             $table->string('lname',255);
+            $table->integer('file_group_id');
             $table->string('contact_no',20)->nullable();
             $table->string('email',60)->nullable();
             $table->string('address',255)->nullable();

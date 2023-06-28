@@ -239,6 +239,7 @@ class UserController extends Controller
             'mname' => 'nullable|max:60',
             'lname' => 'required|max:60',
             'lastname' => 'nullable',
+            'filegroups' => 'required|not_in:null',
             'address' => 'required',
             'email' => 'required|email|max:60',
             'description' => 'nullable',
@@ -287,6 +288,7 @@ class UserController extends Controller
                 'fname' => $validated_user['fname'],
                 'mname' => $validated_user['mname'],
                 'lname' => $validated_user['lname'],
+                'file_group_id' => $validated_user['filegroups'],
                 'address' => $validated_user['address'],
                 'contact_no' => $validated_user['contact_number'],
                 'email' => $validated_user['email'],
@@ -513,6 +515,7 @@ class UserController extends Controller
                 Rule::unique('users')->ignore($request['username'], 'username')
             ]
             ,
+            'filegroups' => 'required',
             'password' => [
                 'nullable',
                 'max:60',
@@ -541,6 +544,7 @@ class UserController extends Controller
                 'fname' => $validated_user['fname'],
                 'mname' => $validated_user['mname'],
                 'lname' => $validated_user['lname'],
+                'file_group_id' => $validated_user['filegroups'],
                 'address' => $validated_user['address'],
                 'contact_no' => $validated_user['contact_number'],
                 'email' => $validated_user['email'],

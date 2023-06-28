@@ -94,6 +94,23 @@ class FilegroupsController extends Controller
         return false;
     }
 
+
+    public function showFilegroups(){
+        $user_id = Auth::user()->id;
+
+        $requestor = User::select('users.id','users.status','users.username','clients.client_id')
+        ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user_id)
+        ->first();
+
+        $filegroups = File_group::where('client_id',$requestor->client_id)->get();
+
+        if($filegroups){
+            return responseBuilder('Successfully fetch!',[],$filegroups);
+        }
+        return false;
+
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

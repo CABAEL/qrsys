@@ -128,7 +128,7 @@
         toggle_class = "activate";
        }
 
-      
+       fetchAllFilegroups('#update_clientuser_form',data.file_group_id);
        
         $('#update_clientuser_form .updatelogoContainer').css('background-image','url('+logo+')');
         $('#update_clientuser_form').attr('data-id',data.id);
@@ -424,7 +424,7 @@
 
 
 
-  $(document).on("click",".activate",function(e) {
+  $(document).on("click",".activate",function(e){
     event.preventDefault();
 
     show_loader();
@@ -450,6 +450,47 @@
     });
 })
 
+$(document).on('click','#adduser_btn',function(e){
+  event.preventDefault();
+  fetchAllFilegroups('#adduser');
+  $('#adduser').modal('show');
+
+})
+
+function fetchAllFilegroups(form,value = null) {
+    const url = base_url('all_filegroups');
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+
+      // Handle the response data here
+      const selectElement = $(form + ' #filegroups')[0] // Replace with the ID of your <select> element
+      let div = '';
+      div += '<option value="">-----------------</option>';
+      data.responseJSON.data.forEach(filegroup => {
+        div += '<option value="'+filegroup.id+'">'+filegroup.group_name+'</option>';
+      });
+    console.log(div);
+    selectElement.innerHTML = div;
+
+      if(value != null){
+        selectElement.value = value;
+      }
+
+        // Handle the response data here
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors that occur during the request
+        console.error(error);
+      });
+
+  }
     
 </script>
 <script src="{{ asset('js/custom/general.js') }}"></script>

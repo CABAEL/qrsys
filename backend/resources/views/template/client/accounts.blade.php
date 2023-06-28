@@ -12,7 +12,7 @@
                </li>
             </ol>
             <hr/>
-            <button class="btn btn-sm" type="button" id="adduser_btn" data-toggle="modal" data-target="#adduser"> + User</button>
+            <button class="btn btn-sm" type="button" id="adduser_btn"> + User</button>
             <hr/>
             <table cellspacing="0" class="display table table-bordered" width="100%" id="users-table" style="width:100%">
                <thead>

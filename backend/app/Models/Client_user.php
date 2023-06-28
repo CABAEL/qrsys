@@ -16,6 +16,7 @@ class Client_user extends Model
         'fname',
         'mname',
         'lname',
+        'file_group',
         'contact_no',
         'email',
         'address',

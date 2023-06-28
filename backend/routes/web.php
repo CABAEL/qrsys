@@ -157,6 +157,8 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
+        Route::get('/all_filegroups',[FilegroupsController::class,'showFilegroups']);
+
 
 
         

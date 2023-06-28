@@ -76,8 +76,8 @@
                               
                                  
                                  <div class="col-xl-4 col-md-4">
-                                 <input type="file" id="fileInput1" class="hidden" name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
-                                 <input type="file" id="fileInput2" class="hidden" name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput1" class="" name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput2" class="" name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
                                  </div>
 
                                  <div class="col-xl-4 col-md-4">
@@ -88,8 +88,8 @@
                                              <input type="text" class="form-control" id="code" name="code" aria-describedby="code" autocomplete="off">
                                           </div>
                                           <div class="col-md-6">
-                                             <label for="file_group">File Groups:</label>
-                                             <select class="form-control" id="file_group" name="file_group" aria-describedby="file_group" autocomplete="off"></select>
+                                             <label for="filegroups">File Groups:</label>
+                                             <select class="form-control" id="filegroups" name="filegroups" aria-describedby="filegroups" autocomplete="off"></select>
                                           </div>
                                           <div class="col-md-12">
                                              <label for="username">Description</label>

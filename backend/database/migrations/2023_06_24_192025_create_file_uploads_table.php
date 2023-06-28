@@ -15,7 +15,7 @@ class CreateFileUploadsTable extends Migration
     {
         Schema::create('file_uploads', function (Blueprint $table) {
             $table->id();
-            $table->integer('client_id')->unique();
+            $table->integer('client_id');
             $table->integer('file_group_id');
             $table->string('document_code');
             $table->string('file_name',255);

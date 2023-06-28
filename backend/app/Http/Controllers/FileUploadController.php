@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Applicant_data;
 use App\Models\Client;
+use App\Models\File_upload;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -14,6 +13,26 @@ class FileUploadController extends Controller
     public function uploadFile(Request $request){
 
         $current_user_id = Auth::user()->id;
+
+        $count_arr = [];
+        foreach($_FILES['files1']['name'] as $file_count1){
+            if($file_count1 != ''){
+                $count_arr [] = $file_count1;
+            }
+            
+        }
+        foreach($_FILES['files2']['name'] as $file_count2){
+            if($file_count2 != ''){
+                $count_arr [] = $file_count2;
+            }
+        }
+        $multiple_id = '';
+        if(count($count_arr) > 1){
+            $multiple_id = hash('sha256',$current_user_id.uniqid().time());
+        }
+
+        
+
         $current_user = Client::select('client_id','client_name')
         ->find($current_user_id);
 
@@ -23,7 +42,10 @@ class FileUploadController extends Controller
         // return $request->file_upload;
         if($request->has('file_upload')){
 
-            $request->validate([
+            $validated_inputs = $request->validate([
+                'filegroups' => 'required',
+                'code' => 'required'
+            ],[
                 'files1.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
                 'files2.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
             ],
@@ -57,13 +79,25 @@ class FileUploadController extends Controller
                 if ($file->isValid()) {
                     // Get the file name, size, and type
                     $filename = $file->getClientOriginalName();
+                    $file_explode1 = explode('.',$filename);
+                    $ext = end($file_explode1);
                     $filesize = $file->getSize();
                     $filetype = $file->getClientMimeType();
-                    
+                    $formatted_name = $current_user_id."_".time()."_".base64_encode($file_explode1[0]);
+
+                    File_upload::create([
+                        'client_id' => $current_user['client_id'],
+                        'file_group_id' => $validated_inputs['filegroups'],
+                        'document_code' => strtoupper($validated_inputs['code']),
+                        'file_name' => strtoupper($validated_inputs['code'])."_".$formatted_name.".".$ext,
+                        'uploaded_by' => $current_user_id,
+                    ]);
+
                     // Move the file to a desired location
-                    $file->move(public_path($uploaded_files_path), $filename);
+                    $file->move(public_path($uploaded_files_path), strtoupper($validated_inputs['code']).'_'.$formatted_name.".".$ext);
                     
                     // Store the file details in an array
+                    
                     $fileContainer[] = [
                         'name' => $filename,
                         'size' => $filesize,
@@ -80,11 +114,22 @@ class FileUploadController extends Controller
                 if ($file->isValid()) {
                     // Get the file name, size, and type
                     $filename = $file->getClientOriginalName();
+                    $file_explode2 = explode('.',$filename);
+                    $ext2 = end($file_explode2);
                     $filesize = $file->getSize();
                     $filetype = $file->getClientMimeType();
-                    
+                    $formatted_name2 = $current_user_id."_".time()."_".base64_encode($file_explode2[0]);
+
+                    File_upload::create([
+                        'client_id' => $current_user['client_id'],
+                        'file_group_id' => $validated_inputs['filegroups'],
+                        'document_code' => strtoupper($validated_inputs['code']),
+                        'file_name' => strtoupper($validated_inputs['code'])."_".$formatted_name2.".".$ext2,
+                        'uploaded_by' => $current_user_id,
+                    ]);
+
                     // Move the file to a desired location
-                    $file->move(public_path($uploaded_files_path), $filename);
+                    $file->move(public_path($uploaded_files_path), strtoupper($validated_inputs['code'])."_".$formatted_name2.".".$ext2);
                     
                     // Store the file details in an array
                     $fileContainer[] = [
