@@ -127,7 +127,7 @@ Route::middleware(['auth','role'])->group(function(){
             return redirect(route('logout'));
         });
 
-        Route::post('/update_user_data/{id}',[UserController::class,'updateUser']);
+        Route::post('/update_clientuser_data/{id}',[UserController::class,'updateClientUser']);
 
         Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
@@ -151,7 +151,11 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::post('/add_filegroup',[FilegroupsController::class,'store']);
 
-        Route::post('/update_filegroup',[FilegroupsController::class,'update']);
+        Route::post('/update_filegroup/{id}',[FilegroupsController::class,'update']);
+        
+        Route::delete('/delete_filegroup/{id}',[FilegroupsController::class,'destroy']);
+
+        Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
 
 

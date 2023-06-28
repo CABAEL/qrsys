@@ -13,11 +13,23 @@
                <div class="alert alert-danger" id="update_clientuser_errors"></div>
             </center>
             <div class="container-fluid">
+            <center>
+                  <div class="updatelogoContainer"></div>
+               </center>
+                  <input type="file" id="updatelogo" name="updatelogo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg" autocomplete="off"/>
                   <div class="form-group">
                      <div class="form-row">
-                        <div class="col-md-12">
-                           <label for="name">Name</label>
-                           <input type="text" class="form-control" id="name" name="name" autofocus/>
+                        <div class="col-md-4">
+                           <label for="name">First Name</label>
+                           <input type="text" class="form-control" id="fname" name="fname" autofocus autocomplete="off"/>
+                        </div>
+                        <div class="col-md-4">
+                           <label for="name">Middle Name</label>
+                           <input type="text" class="form-control" id="mname" name="mname" autofocus autocomplete="off"/>
+                        </div>
+                        <div class="col-md-4">
+                           <label for="name">Last Name</label>
+                           <input type="text" class="form-control" id="lname" name="lname" autofocus autocomplete="off"/>
                         </div>
                      </div>
                   </div>

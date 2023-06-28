@@ -71,7 +71,7 @@
        }
    
        div +='<tr>'; 
-       div +='<td>'+value.name+'</td>';
+       div +='<td>'+value.fname+' '+value.mname+' '+value.lname+'</td>';
        div +='<td><em style="color:'+color+'">'+status+'</em></td>';
        div +='<td>'+date+'</td>';
        div +='<td><button type="button" class="btn btn-sm btn-default viewclientuser" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
@@ -111,7 +111,16 @@
         $('.alert').css('height','0px');
         $('.alert').css('overflow','hidden');
         $('.alert').css('visibility','hidden');
-       
+
+
+        let logo = '/img/bg_logo.png';
+        
+       if(data.picture){
+         let hash_client_name = $.MD5(data.client_name);
+         let client_logo_path = '/'+'{{ env("CLIENT_DIR_PATH") }}'+hash_client_name+'/user_pictures/'; 
+         logo = client_logo_path+data.picture;
+       }
+
        let Status_Btn_Toggle = "Deactivate";
        let toggle_class = "deactivate";
        if(data.status == 0){
@@ -119,8 +128,13 @@
         toggle_class = "activate";
        }
 
+      
+       
+        $('#update_clientuser_form .updatelogoContainer').css('background-image','url('+logo+')');
         $('#update_clientuser_form').attr('data-id',data.id);
-        $('#update_clientuser_form #name').val(data.name);
+        $('#update_clientuser_form #fname').val(data.fname);
+        $('#update_clientuser_form #mname').val(data.mname);
+        $('#update_clientuser_form #lname').val(data.lname);
         $('#update_clientuser_form #address').val(data.address);
         $('#update_clientuser_form #email').val(data.email);
         $('#update_clientuser_form #username').val(data.username);
@@ -159,8 +173,9 @@
     // Get form
      var form = $('#add_user_form')[0];
      var element = $('#add_user_errors');
-    // FormData object 
+    // FormData object
     var formData = new FormData(form);
+    formData.append('image', $('input[type=file]')[0].files[0]);
     
     show_loader();
    
@@ -190,8 +205,8 @@
 
         let logo = '/img/bg_logo.png';
        
-        $('#addclient .logoContainer').css('background-image','url('+logo+')');
-        $('#addclient .logoContainer').css('border','solid 3px red');
+        $('#adduser .logoContainer').css('background-image','url('+logo+')');
+        $('#adduser .logoContainer').css('border','solid 3px red');
 
       }else{
         promt_errors(form,element,response);
@@ -203,8 +218,8 @@
    
     },
     error: function(e) {
-      element = $('#add_client_errors');
-      form = '#addclient'; 
+      element = $('#add_user_errors');
+      form = '#adduser'; 
       promt_errors(form,element,e);
       hide_loader();
     }
@@ -236,7 +251,6 @@
    event.preventDefault();
    
    var pass = $('#update_clientuser_form #password');
-   clear(pass);
    clear(pass);
    });
    
@@ -324,7 +338,7 @@
     var formData = new FormData(form);
    
     $.ajax({
-      url: base_url("update_user_data/"+client_id),
+      url: base_url("update_clientuser_data/"+client_id),
       type: 'post', 
       dataType: 'json',
       contentType: false,
@@ -396,7 +410,7 @@
           alert('User deactivated!');
           //promt_success(element,data)
           hide_loader();
-          window.location.replace('/login');
+          window.location.replace('/client/accounts');
         },
         error: function(e){
           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
@@ -428,7 +442,7 @@
             alert('Activated successfully!');
             //promt_success(element,data)
             hide_loader();
-            window.location.replace('/admin/home');
+            window.location.replace('/client/accounts');
         },
         error: function(e){
     

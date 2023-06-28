@@ -129,7 +129,7 @@ class UserController extends Controller
 
     public function user_info($id) 
     {
-
+        
         $fetch_user = User::where('users.id','=',$id)->first();
         $fetch = [];
         if($fetch_user->role == 'client'){
@@ -138,8 +138,9 @@ class UserController extends Controller
             ->first();
         }
         if($fetch_user->role == 'user'){
-            $fetch = User::select('users.id','users.status','users.username','client_users.*')
+            $fetch = User::select('clients.client_name','users.id','users.status','users.username','client_users.*')
             ->join('client_users', 'users.id', '=', 'client_users.user_id')->where('users.id','=',$id)
+            ->join('clients', 'clients.client_id', '=', 'client_users.client_id')
             ->first();
         }
         
@@ -154,7 +155,7 @@ class UserController extends Controller
             'address' => 'required',
             'email' => 'required|email|max:60',
             'description' => 'nullable',
-            'contact_number' => 'required|numeric',
+            'contact_number' => 'nullable|numeric|digits_between:7,13',
             'client_name' => 'unique:clients|required|max:100',
             'username' => 'unique:users,username|required|max:60',
             'password' => 'required|confirmed|max:60|min:8',
@@ -230,10 +231,14 @@ class UserController extends Controller
     {
 
         $current_client = Auth::user()->id;
+        $current_clientInfo = Client::where('user_id',$current_client)->first();
 
 
         $validated_user = $request->validate([
-            'name' => 'required',
+            'fname' => 'required|max:60',
+            'mname' => 'nullable|max:60',
+            'lname' => 'required|max:60',
+            'lastname' => 'nullable',
             'address' => 'required',
             'email' => 'required|email|max:60',
             'description' => 'nullable',
@@ -241,6 +246,28 @@ class UserController extends Controller
             'username' => 'unique:users,username|required|max:60',
             'password' => 'required|confirmed|max:60|min:8',
         ]);
+
+        $folder_name = md5($current_clientInfo->client_name);
+        $logo_path = env('CLIENT_DIR_PATH').$folder_name."/user_pictures/";
+
+        if (!file_exists($logo_path)) {
+            mkdir($logo_path, 0777, true);
+        }
+
+        if(isset($request->logo)){
+            $file_params [] = array(
+                'filename' => $_FILES['logo']['name'],
+                'location' => $logo_path,
+                'tmp_name' => $_FILES['logo']['tmp_name'],
+                'filesize' => $_FILES['logo']['size']
+            );
+    
+            $add_logo = Upload::fileUpload($file_params);
+    
+            if(!empty($add_logo['responseJSON']['errors'])){
+                return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+            }
+        }
 
         $merge_data = array();
 
@@ -257,16 +284,24 @@ class UserController extends Controller
             $client_profile = Client_user::create([
                 'user_id' => $user_id,
                 'client_id' => $current_client,
-                'name' => $validated_user['name'],
+                'fname' => $validated_user['fname'],
+                'mname' => $validated_user['mname'],
+                'lname' => $validated_user['lname'],
                 'address' => $validated_user['address'],
                 'contact_no' => $validated_user['contact_number'],
                 'email' => $validated_user['email'],
                 'description' => $validated_user['description']
             ]);
+
+            if(isset($request->logo)){
+                $select_client_user = Client_user::where('user_id',$user_id)
+                ->update(['picture' => $add_logo['responseJSON']['data'][0]]);
+            }
             
             $merge_data = [
                 'user' => $user_creds,
                 'user_profile' => $client_profile,
+                'picture' => isset($add_logo['responseJSON']['data'][0])?$add_logo['responseJSON']['data'][0]:""
             ];
 
             return responseBuilder("User successfully added!",[],$merge_data);
@@ -307,9 +342,9 @@ class UserController extends Controller
 
 
         $client_users = User::join('client_users', 'client_users.user_id', '=', 'users.id')
-        ->select('client_users.*', 'users.id','users.status')
+        ->select('client_users.*', 'users.id','users.username','users.status')
         ->where('users.role','user')
-        ->where('users.status',1)
+        //->where('users.status',1)
         ->where('client_users.client_id',$current_client_id)
         ->get();
 
@@ -390,11 +425,6 @@ class UserController extends Controller
         }
 
         $user_creds->save();
-
-        // ->update([
-        //     'username' => $validated_user['username'],
-        //     'password' => Hash::make($validated_user['password']),
-        // ]);
         
         if($user_creds){
 
@@ -411,29 +441,30 @@ class UserController extends Controller
             //return $logo_path;
             $logo_file = '';
             if(isset($request->updatelogo)){
-
-                $folder_name = md5($validated_user['client_name']);
-                $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
-
-                if (!file_exists($logo_path)) {
-                    mkdir($logo_path, 0777, true);
-                }
-                
-                $file_params [] = array(
-                    'filename' => $_FILES['updatelogo']['name'],
-                    'location' => $logo_path,
-                    'tmp_name' => $_FILES['updatelogo']['tmp_name'],
-                    'filesize' => $_FILES['updatelogo']['size']
-                );
+                if($request->updatelogo != ''){
+                    $folder_name = md5($validated_user['client_name']);
+                    $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
     
-                $add_logo = Upload::fileUpload($file_params);
-
-                if(!empty($add_logo['responseJSON']['errors'])){
-                    return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
-                }
+                    if (!file_exists($logo_path)) {
+                        mkdir($logo_path, 0777, true);
+                    }
+                    
+                    $file_params [] = array(
+                        'filename' => $_FILES['updatelogo']['name'],
+                        'location' => $logo_path,
+                        'tmp_name' => $_FILES['updatelogo']['tmp_name'],
+                        'filesize' => $_FILES['updatelogo']['size']
+                    );
+        
+                    $add_logo = Upload::fileUpload($file_params);
     
-                $client->update(['logo' => $add_logo['responseJSON']['data'][0]]);
-                $logo_file = $add_logo['responseJSON']['data'][0];
+                    if(!empty($add_logo['responseJSON']['errors'])){
+                        return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+                    }
+        
+                    $client->update(['logo' => $add_logo['responseJSON']['data'][0]]);
+                    $logo_file = $add_logo['responseJSON']['data'][0];
+                }
             }
 
             
@@ -453,18 +484,27 @@ class UserController extends Controller
     }
 
 
-    public function updateUser(Request $request,$id)
+    public function updateClientUser(Request $request,$id)
     {
+        $current_client = Auth::user()->id;
+        $current_clientInfo = Client::where('user_id',$current_client)->first();
 
         $validated_user = $request->validate([
             'address' => 'required',
             'email' => 'required|email|max:60',
             'description' => 'nullable',
             'contact_number' => 'nullable|numeric|digits_between:7,13',
-            'name' => [
+            'fname' => [
                 'required',
-                'max:100',
-                Rule::unique('client_users')->ignore($request['name'], 'name')
+                'max:60',
+            ],
+            'mname' => [
+                'nullable',
+                'max:60',
+            ],
+            'lname' => [
+                'required',
+                'max:60',
             ],
             'username' => 
             [
@@ -473,7 +513,7 @@ class UserController extends Controller
                 Rule::unique('users')->ignore($request['username'], 'username')
             ]
             ,
-            'password' =>             [
+            'password' => [
                 'nullable',
                 'max:60',
                 'confirmed',
@@ -498,16 +538,49 @@ class UserController extends Controller
         if($user_creds){
 
             $client = Client_user::where('user_id', $id)->update([
-                'name' => $validated_user['name'],
+                'fname' => $validated_user['fname'],
+                'mname' => $validated_user['mname'],
+                'lname' => $validated_user['lname'],
                 'address' => $validated_user['address'],
                 'contact_no' => $validated_user['contact_number'],
                 'email' => $validated_user['email'],
                 'description' => $validated_user['description']
             ]);
 
+            $client_user_pic = '';
+
+            if(isset($request->updatelogo)){
+                if($request->updatelogo != ''){
+                    $folder_name = md5($current_clientInfo->client_name);
+                    $logo_path = env('CLIENT_DIR_PATH').$folder_name."/user_pictures/";
+    
+                    if (!file_exists($logo_path)) {
+                        mkdir($logo_path, 0777, true);
+                    }
+                    
+                    $file_params [] = array(
+                        'filename' => $_FILES['updatelogo']['name'],
+                        'location' => $logo_path,
+                        'tmp_name' => $_FILES['updatelogo']['tmp_name'],
+                        'filesize' => $_FILES['updatelogo']['size']
+                    );
+        
+                    $add_logo = Upload::fileUpload($file_params);
+    
+                    if(!empty($add_logo['responseJSON']['errors'])){
+                        return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+                    }
+                    
+                    $client_user_pic = Client_user::where('user_id', $id)->update(['picture' => $add_logo['responseJSON']['data'][0]]);
+                    $logo_file = $add_logo['responseJSON']['data'][0];
+                }
+            }
+
+
             $merge_data = [
                 'user' => $user_creds,
                 'user_profile' => $client,
+                'picture' => $client_user_pic
             ];
 
             return responseBuilder("User successfully added!",[],$merge_data);

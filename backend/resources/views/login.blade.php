@@ -64,10 +64,8 @@
     <script src="{{ asset('packages/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('packages/popper/popper.min.js') }}"></script>
     <script src="{{ asset('packages/bootstrap/js/bootstrap.min.js') }}"></script>
-    <!--custom js-->
-    <script src="{{ asset('js/custom/custom.js') }}"></script>
 <script>
-$( document ).ready(function() {
+
 
   $('#loginForm').on('submit',function(event){
     event.preventDefault();
@@ -116,8 +114,6 @@ $( document ).ready(function() {
         }
     });
 
-
-});
 
 </script>
 <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader>

@@ -6,7 +6,7 @@ use App\Models\File_group;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
-
+use Illuminate\Validation\Rule;
 class FilegroupsController extends Controller
 {
 
@@ -114,8 +114,13 @@ class FilegroupsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validated_user = $request->validate([
-            'group_name' => 'unique:file_groups,group_name|required|max:60',
+
+        $validated_filegroups = $request->validate([
+            'group_name' => [
+                'required',
+                'max:60',
+                Rule::unique('file_groups', 'group_name')->ignore($id),
+            ],
             'description' => 'nullable',
         ]);
         
@@ -125,12 +130,17 @@ class FilegroupsController extends Controller
         ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user_id)
         ->first();
 
-        $update_filegroup = File_group::update([
+        $update_filegroup = File_group::where('id',$id)->update([
             'client_id' => $user_id,
-            'group_name' => $validated_user['group_name'],
-            'description' => $validated_user['description'],
+            'group_name' => $validated_filegroups['group_name'],
+            'description' => $validated_filegroups['description'],
             'created_by' => $requestor->client_id,
         ]);
+
+        if($update_filegroup){
+            return responseBuilder('Successfully updated!',[],$update_filegroup);
+        }
+        return false;
 
     }
 
@@ -142,6 +152,13 @@ class FilegroupsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = File_group::find($id);
+        $user->delete();
+        $data = [
+            'flag' => 1,
+            'message' => "File_group deleted!"
+        ];
+
+        return response()->json($data);
     }
 }

@@ -93,10 +93,47 @@
     
     });
    
+
+  updateFilegroupSubmit = () =>{
+    event.preventDefault();
+
+    // Get form
+     var form = $('#update_filegroup_form')[0];
+     var element = $('#update_filegroup_errors');
+    // FormData object 
+    var formData = new FormData(form);
+
+    var id = $('#update_filegroup_form').data('id');
+
+    show_loader();
    
-   // form submit
+    $.ajax({
+    url: base_url("update_filegroup/"+id),
+    type: 'POST', 
+    dataType: 'json',
+    contentType: false,
+    processData: false,
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+    },
+    data:formData,
+    success: function(response) {
+      
+      alert(response.responseJSON.message);
+       hide_loader();
+       window.location.replace('/client/filegroups');
    
-   function updateFilegroupSubmit(form){
+    },
+    error: function(e) {
+      element = $('#update_filegroup_errors');
+      form = '#viewfilegroup'; 
+      promt_errors(form,element,e);
+      hide_loader();
+    }
+    });
+  }
+   
+   function addFilegroupSubmit(form){
     event.preventDefault();
 
     // Get form
@@ -119,46 +156,48 @@
     data:formData,
     success: function(response) {
       
-     let error_check = response.responseJSON.errors;
-     if(error_check == null || error_check.length == 0){
-   
-       alert(response.responseJSON.message);
+      alert(response.responseJSON.message);
        hide_loader();
        window.location.replace('/client/filegroups');
    
-     }else{
-
-      if(error_check.image[0]){
-        alert(error_check.image[0]);
-
-        let logo = '/img/bg_logo.png';
-       
-        $('#addclient .logoContainer').css('background-image','url('+logo+')');
-        $('#addclient .logoContainer').css('border','solid 3px red');
-
-      }else{
-        promt_errors(form,element,response);
-      }
-
-      hide_loader();
-
-     }
-   
     },
     error: function(e) {
-      element = $('#add_client_errors');
-      form = '#addclient'; 
+      element = $('#add_filegroup_form');
+      form = '#addfilegroup'; 
       promt_errors(form,element,e);
       hide_loader();
     }
     });
+
    }
    
-   
-   $(document).on("click","#generate_pass",function(event) {
-   event.preventDefault();
-   element = $('#viewusermodal #password');
-   random_text_generator(element);
+   $(document).on("click","#viewfilegroup .delete_yes",function(event) {
+    event.preventDefault();
+     var id = $(this).data('id');
+     show_loader();
+     $.ajax({
+         url: base_url("delete_filegroup/"+id),
+         type: 'DELETE', 
+         dataType: 'json',
+         headers: {
+           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+         },
+         success: function(data) {
+           console.log(data);
+           alert('Filegroup deleted!');
+           //promt_success(element,data)
+           hide_loader();
+           window.location.replace('/client/filegroups');
+         },
+         error: function(e){
+           console.log(e);
+           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+           // var element = $('#add_user_errors');
+           // var form = '#addusermodal'; 
+           // promt_errors(form,element,e);
+           // hide_loader();
+         }
+     });
    });
    
    function copy_text(element) {
@@ -211,11 +250,11 @@
    });
    
    
-  $(document).on("click","#viewusermodal .delete",function(e) {
+  $(document).on("click","#viewfilegroup .delete",function(e) {
   event.preventDefault();
    var data_id = $(this).data('id');
-   var form = '#viewusermodal';
-   var element = $('#viewusermodal #update_clientuser_errors');
+   var form = '#viewfilegroup';
+   var element = $('#viewfilegroup #update_filegroup_errors');
    var message = "Are you sure that you want to delete this user?";
    
    promt_warning_delete(form,element,message,data_id);
@@ -223,92 +262,6 @@
   //  console.log(data_id);
    
    });
-   
-   
-   $(document).on("click","#viewusermodal .delete_yes",function(e) {
-    event.preventDefault();
-     var id = $(this).data('id');
-     show_loader();
-     $.ajax({
-         url: base_url("confirm_delete/"+id),
-         type: 'DELETE', 
-         dataType: 'json',
-         headers: {
-           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-         },
-         success: function(data) {
-           console.log(data);
-           alert('User deleted!');
-           //promt_success(element,data)
-           hide_loader();
-           window.location.replace('/client/accounts');
-         },
-         error: function(e){
-           console.log(e);
-           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
-           // var element = $('#add_user_errors');
-           // var form = '#addusermodal'; 
-           // promt_errors(form,element,e);
-           // hide_loader();
-         }
-     });
-   });
-   
-   
-   updateClientUserSubmit = () => {
-    event.preventDefault();
-
-     // Get form
-     var form = $('#update_clientuser_form')[0];
-     // FormData object 
-    //  var formData = form.serialize();
-     var client_id = $('#update_clientuser_form').data('id');
-
-    var formData = new FormData(form);
-   
-    $.ajax({
-      url: base_url("update_user_data/"+client_id),
-      type: 'post', 
-      dataType: 'json',
-      contentType: false,
-      processData: false,
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-      },
-      data:formData,
-      success: function(data) {
-        let error_check = data.responseJSON.errors;
-        if(error_check == null || error_check.length == 0){
-      
-          alert('User updated successfully!');
-          hide_loader();
-          window.location.replace('/client/accounts');
-      
-        }else{
-
-          if(error_check.image[0]){
-
-            alert(error_check.image[0]);
-
-          }else{
-            promt_errors(form,element,response);
-          }
-
-          hide_loader();
-
-        }
-      },
-      error: function(e) {
-        //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
-        var element = $('#update_clientuser_errors');
-        var form = '#viewusermodal'; 
-        promt_errors(form,element,e);
-  
-        hide_loader();
-      }
-    });
-
-  }
 
   $(document).on("click",".deactivate",function(e) {
   e.preventDefault();
