@@ -179,8 +179,8 @@
        let logo = '/img/bg_logo.png';
        
        if(data.logo){
-         let hash_client_name = $.MD5(data.client_name);
-         let client_logo_path = '/'+'{{ env("CLIENT_DIR_PATH") }}'+hash_client_name+'/logo/'; 
+        //  let hash_client_name = $.MD5(data.client_name);
+         let client_logo_path = '/'+'{{ env("CLIENT_DIR_PATH") }}'+'/logo/'; 
          logo = client_logo_path+data.logo;
        }
 
@@ -396,6 +396,20 @@
        .then(data => {
          let client_count = data.responseJSON.data.length;
          $('#activeClients').html(client_count)
+       })
+       .catch(error => {
+         console.error(error);
+     });
+   }
+
+   totaluploads();
+   function totaluploads() {
+     // alert("pasok");
+     fetch(base_url('totaluploads'))
+       .then(response => response.json())
+       .then(data => {
+         let uploadscount = data;
+         $('#totaluploads').html(uploadscount);
        })
        .catch(error => {
          console.error(error);

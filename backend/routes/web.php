@@ -72,6 +72,7 @@ Route::get('/fileviewer/{id}', function($id) {
     $data = array(
         'filename' => $file['file_name'],
         'client_folder' => md5($client->client_name),
+        'client_code' => $file->document_code,
         'logo' => $client->logo
     );
 
@@ -81,6 +82,12 @@ Route::get('/fileviewer/{id}', function($id) {
     return view('template.iframe_views.file_view', compact('data'));
 
 });
+
+Route::get('/verify_password', function() {
+    return view('file_password');
+});
+
+
 // ->middleware(['auth']);
 
 Route::middleware(['auth','role'])->group(function(){
@@ -103,7 +110,7 @@ Route::middleware(['auth','role'])->group(function(){
             return redirect(route('logout'));
         });
 
-        Route::post('/update_user_data/{id}',[UserController::class,'update']);
+        Route::post('/update_user_data/{id}',[UserController::class,'updateClient']);
 
         Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
@@ -118,6 +125,8 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/active_clients',[UserController::class,'activeClients']);
 
         Route::get('/activate_user/{id}',[UserController::class,'activate']);
+
+        Route::get('/totaluploads',[FileUploadController::class,'totalCount']);
     
     });
 
@@ -183,34 +192,6 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/clientfiles',[FileUploadController::class,'clientfileList']);
 
     });
-
-    Route::group([
-        'prefix' => 'employee',
-        'as' => 'employee',
-        ],function(){
-
-            Route::get('/get_payslip/{id}',[EmployeeController::class,'getEmployeePayslip']);
-            
-            Route::get('/logout',function(Request $request){
-                return redirect(route('logout'));
-            });
-
-            Route::get('/home',function(Request $request){
-                return view('template.employee.index');
-            });
-
-            Route::get('/payslip',function(Request $request){
-                return view('template.employee.payslip');
-            });
-
-            Route::post('/employee_dtr',[EmployeeController::class,'employeeDTR']);
-
-            Route::get('/get_dtr',[EmployeeController::class,'getEmployeeDTR']);
-
-            Route::get('/user_info/{id}',[UserController::class,'user_info']);
-
-    });
-
 
 });
 

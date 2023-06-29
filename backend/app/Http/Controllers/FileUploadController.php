@@ -46,7 +46,7 @@ class FileUploadController extends Controller
                 'filegroups' => 'required',
                 'code' => 'required',
                 'description' => 'nullable',
-                'password' => ['required', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
+                'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
             ],[
                 'files1.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
                 'files2.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
@@ -86,7 +86,7 @@ class FileUploadController extends Controller
                     $ext = end($file_explode1);
                     $filesize = $file->getSize();
                     $filetype = $file->getClientMimeType();
-                    $formatted_name = $current_user_id."_".time()."_".base64_encode($file_explode1[0]);
+                    $formatted_name = $current_user_id."_".time()."_".str_replace(" ","_",$file_explode1[0]);
 
                     File_upload::create([
                         'client_id' => $current_user['client_id'],
@@ -123,7 +123,7 @@ class FileUploadController extends Controller
                     $ext2 = end($file_explode2);
                     $filesize = $file->getSize();
                     $filetype = $file->getClientMimeType();
-                    $formatted_name2 = $current_user_id."_".time()."_".base64_encode($file_explode2[0]);
+                    $formatted_name2 = $current_user_id."_".time()."_".str_replace(" ","_",$file_explode2[0]);
 
                     File_upload::create([
                         'client_id' => $current_user['client_id'],
@@ -178,6 +178,11 @@ class FileUploadController extends Controller
 
         }
     
+    }
+
+
+    public function totalCount(){
+        return File_upload::all()->count();
     }
 
     public function clientfileList(){

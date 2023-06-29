@@ -17,7 +17,7 @@ class CreateFileGroupsTable extends Migration
             $table->id();
             $table->integer('client_id');
             $table->string('group_name',60);
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->integer('created_by');
             $table->timestamps();
             $table->softDeletes();

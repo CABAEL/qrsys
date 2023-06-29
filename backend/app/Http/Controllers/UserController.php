@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -163,8 +164,8 @@ class UserController extends Controller
 
         
 
-        $folder_name = md5($validated_user['client_name']);
-        $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
+        //$folder_name = md5($validated_user['client_name']);
+        $logo_path = env('CLIENT_DIR_PATH')."/logo/";
 
         if (!file_exists($logo_path)) {
             mkdir($logo_path, 0777, true);
@@ -386,7 +387,7 @@ class UserController extends Controller
 
     }
 
-    public function update(Request $request,$id)
+    public function updateClient(Request $request,$id)
     {
 
         $validated_user = $request->validate([
@@ -444,8 +445,8 @@ class UserController extends Controller
             $logo_file = '';
             if(isset($request->updatelogo)){
                 if($request->updatelogo != ''){
-                    $folder_name = md5($validated_user['client_name']);
-                    $logo_path = env('CLIENT_DIR_PATH').$folder_name."/logo/";
+                    // $folder_name = md5($validated_user['client_name']);
+                    $logo_path = env('CLIENT_DIR_PATH')."logo/";
     
                     if (!file_exists($logo_path)) {
                         mkdir($logo_path, 0777, true);
@@ -463,7 +464,13 @@ class UserController extends Controller
                     if(!empty($add_logo['responseJSON']['errors'])){
                         return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
                     }
-        
+
+                    // Storage::delete(url_host($logo_path.$client->logo));
+                    // // Storage::disk('public')->delete($logo_path.$client->logo);
+                    if (File::exists($logo_path.$client->logo)) {
+                        File::delete($logo_path.$client->logo);
+                    }
+
                     $client->update(['logo' => $add_logo['responseJSON']['data'][0]]);
                     $logo_file = $add_logo['responseJSON']['data'][0];
                 }

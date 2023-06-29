@@ -28,6 +28,13 @@ $user_dir = $exploded_url[4];
               File Groups</span>
             </a>
           </li>          
+          <li class="nav-item <?php echo ($user_dir == "filecollections")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
+            <a class="nav-link" href="/client/filecollections" data-parent="#exampleAccordion">
+              <i class="fa fa-files-o"></i>
+              <span class="nav-link-text">
+              File Collections</span>
+            </a>
+          </li>          
           <li class="nav-item <?php echo ($user_dir == "logs")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Home">
             <a class="nav-link" href="/client/logs" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-history"></i>

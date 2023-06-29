@@ -34,6 +34,7 @@
        div +='<tr>'; 
        div +='<td><pre>'+value.file_name+'</pre></td>';
        div +='<td>'+value.username+'</td>';
+       div +='<td>'+value.document_code+'</td>';
        div +='<td>'+date+'</td>';
        div +='<td><button type="button" class="btn btn-sm btn-default viewqr" data-id="'+value.id+'"><i class="fa fa-qrcode"></i></button></td>';
        div +='</tr>';

@@ -145,6 +145,7 @@
                   <tr>
                      <th>UPLOAD NAME</th>
                      <th>UPLOADED BY</th>
+                     <th>DOCUMENT CODE</th>
                      <th>DATE UPLOADED</th>
                      <th>---</th>
                   </tr>

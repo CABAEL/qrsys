@@ -8,22 +8,22 @@
             <!-- Breadcrumbs -->
             <ol class="breadcrumb">
                <li class="breadcrumb-item">
-                  <b>USER LIST</b>
+                  <b>FILEGROUP LIST</b>
                </li>
             </ol>
-            <hr/> 
-            <button class="btn btn-sm" type="button" id="adduser_btn"> + User</button>
             <hr/>
-            <table cellspacing="0" class="display table table-bordered" width="100%" id="users-table" style="width:100%">
+            <button class="btn btn-sm" type="button" id="addfilegroup_btn" data-toggle="modal" data-target="#addfilegroup"> + File Group</button>
+            <hr/>
+            <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="filegroup-table" style="width:100%">
                <thead>
                   <tr>
-                     <th>USER NAME</th>
-                     <th>STATUS</th>
+                     <th>DOCUMENT CODE</th>
+                     <th>DESCRIPTION</th>
                      <th>DATE CREATED</th>
                      <th>---</th>
                   </tr>
                </thead>
-               <tbody id="ClientUserListBody">
+               <tbody id="FilegroupListBody">
                   <tr>
                      <td colspan="3">
                         <center>Loading...</center>
@@ -34,11 +34,11 @@
          </div>
          <!-- /.container-fluid -->
       </div>
-      @include('template.client.segments.modal.add_user_modal')
-      @include('template.client.segments.modal.view_user_modal')
+      @include('template.client.segments.modal.add_filegroup_modal')
+      @include('template.client.segments.modal.view_filegroup_modal')
       <!-- /.content-wrapper -->
       @include('template.footer')
-      @include('template.client.segments.custom.script_accounts')
+      @include('template.client.segments.custom.script_filegroups')
 
    </body>
 </html>

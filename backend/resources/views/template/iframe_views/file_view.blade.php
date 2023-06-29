@@ -26,7 +26,11 @@
     </head>
     <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader>
 
-
+    <style>
+        .qrwrapper{
+            text-align:center;
+        }
+    </style>
     </head>
     <body>
     <div class="container">
@@ -37,12 +41,12 @@
                 <?php
                 
                 $download_link = url_host('uploads/system_files/clients_directory/').$data['client_folder']."/file_uploads"."/".$data['filename'];
-                $logo_link = url_host('uploads/system_files/clients_directory/').$data['client_folder']."/logo"."/".$data['logo'];
+                $logo_link = url_host('uploads/system_files/clients_directory/')."/logo"."/".$data['logo'];
                 // print_r($download_link);
                 ?>
             </div>
-            <div class="col-md-4"><h4>SCAN QR CODE OR CLICK HERE TO DOWNLOAD</h4> <a href="">
-                <center><a href="{{$download_link}}" target="_blank"><button class="btn btn-default">Download</button></a><center>
+            <div class="col-md-4"><h4 style="text-align:center;">SCAN QR CODE</h4> <a href="">
+                <!-- <center><a href="{{$download_link}}" target="_blank"><button class="btn btn-default">Download</button></a><center> -->
             </div>
             <div class="col-md-4"></div>
         </div>
@@ -52,10 +56,15 @@
         <div class="col-md-4">
         </div>
         <div class="col-md-4">
-        <div class="qrcodeContainer">
-            <div id="qrcodeCanvas"></div>
-            <img src="{{$logo_link}}" width="65px" height="65px" class="center qr_logo"/>
+
+        <div class="qrwrapper">   
+            <div class="qrcodeContainer">
+                <div id="qrcodeCanvas"></div>
+                <img src="{{$logo_link}}" width="65px" height="65px" class="center qr_logo"/>
+            </div>
+            <pre style="position:relative;top:0px;">Document Code: {{$data['client_code']}}</pre>
         </div>
+        
         </div>
         <div class="col-md-4">
         </div>
@@ -89,5 +98,15 @@
             text	: "{{$download_link}}"
         }); 
     </script>
+
+    <!-- <script>
+        show_loader();
+
+        $( document ).ready(function() {
+            hide_loader();
+        });
+
+    </script> -->
+
     </body>
 </html>
