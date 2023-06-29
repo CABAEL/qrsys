@@ -93,7 +93,8 @@
   // $('#SelectionList #file_group').off();
 
 $(document).on('click','.viewqr',function(){
-  let fileViewerUrl = url_host('fileviewer')
+  let file_id = $(this).data('id');
+  let fileViewerUrl = url_host('fileviewer')+'/'+file_id;
 
   $('#viewfile').modal('show');
 

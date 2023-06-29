@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\FilegroupsController;
+use App\Models\Client;
 use App\Models\File_upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -64,14 +65,23 @@ Route::get('/portal_announcement',[AnnouncementController::class,'index']);
 
 
 Route::get('/fileviewer/{id}', function($id) {
-    
+
     $file = File_upload::find($id);
+    $client = Client::where('client_id',$file['client_id'])->first();
+
+    $data = array(
+        'filename' => $file['file_name'],
+        'client_folder' => md5($client->client_name),
+        'logo' => $client->logo
+    );
+
     if(!$file){
         return false;
     }
-    return view('template.iframe_views.file_view', compact('file'));
+    return view('template.iframe_views.file_view', compact('data'));
 
-})->middleware(['auth']);
+});
+// ->middleware(['auth']);
 
 Route::middleware(['auth','role'])->group(function(){
 

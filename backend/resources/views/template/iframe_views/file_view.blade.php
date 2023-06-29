@@ -35,12 +35,14 @@
         <div class="form-row">
             <div class="col-md-4">
                 <?php
-                echo "<pre>";
-                print_r($file);
+                
+                $download_link = url_host('uploads/system_files/clients_directory/').$data['client_folder']."/file_uploads"."/".$data['filename'];
+                $logo_link = url_host('uploads/system_files/clients_directory/').$data['client_folder']."/logo"."/".$data['logo'];
+                // print_r($download_link);
                 ?>
             </div>
             <div class="col-md-4"><h4>SCAN QR CODE OR CLICK HERE TO DOWNLOAD</h4> <a href="">
-                <center><button class="btn btn-default">Download</button></a><center>
+                <center><a href="{{$download_link}}" target="_blank"><button class="btn btn-default">Download</button></a><center>
             </div>
             <div class="col-md-4"></div>
         </div>
@@ -52,7 +54,7 @@
         <div class="col-md-4">
         <div class="qrcodeContainer">
             <div id="qrcodeCanvas"></div>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTA_QZPhoNcOfydTjaDvIfADYfVRrOlpdrEA&usqp=CAU" width="65px" height="65px" class="center qr_logo"/>
+            <img src="{{$logo_link}}" width="65px" height="65px" class="center qr_logo"/>
         </div>
         </div>
         <div class="col-md-4">
@@ -60,7 +62,7 @@
         </div>
     </div>    
     <br>
-    <iframe src="https://docs.google.com/viewer?url=youtube.com&embedded=true" style="width:100vw; height:100vh;" frameborder="0"></iframe>
+    <iframe src="https://docs.google.com/viewer?url={{$download_link}}&embedded=true" style="width:100vw; height:100vh;" frameborder="0"></iframe>
     
 
     <script src="{{ asset('packages/jquery/jquery.min.js') }}"></script>
@@ -84,7 +86,7 @@
     <script src="{{ asset('packages/qrcode/qrcode.js') }}"></script>
     <script>
         jQuery('#qrcodeCanvas').qrcode({
-            text	: "youtube.com"
+            text	: "{{$download_link}}"
         }); 
     </script>
     </body>
