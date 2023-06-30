@@ -13,12 +13,19 @@ $user_dir = $exploded_url[4];
             </a>
           </li>
           <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
-            <a class="nav-link" href="/admin/home" data-parent="#exampleAccordion">
+            <a class="nav-link" href="/admin/adminaccounts" data-parent="#exampleAccordion">
+              <i class="fa fa-fw fa-user"></i>
+              <span class="nav-link-text">
+              Admin Accounts</span>
+            </a>
+          </li>  
+          <li class="nav-item inactive" data-toggle="tooltip" data-placement="right" title="Home">
+            <a class="nav-link" href="/admin/logs" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-history"></i>
               <span class="nav-link-text">
               Logs</span>
             </a>
-          </li>          
+          </li>                  
           <!-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Client Accounts">
             <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
               <i class="fa fa-fw fa-database"></i>

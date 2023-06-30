@@ -45,7 +45,6 @@
                 // print_r($download_link);
                 ?>
             </div>
-            <div class="col-md-4"><h4 style="text-align:center;">SCAN QR CODE</h4> <a href="">
                 <!-- <center><a href="{{$download_link}}" target="_blank"><button class="btn btn-default">Download</button></a><center> -->
             </div>
             <div class="col-md-4"></div>
@@ -57,12 +56,20 @@
         </div>
         <div class="col-md-4">
 
-        <div class="qrwrapper">   
+        <div class="qrwrapper">
+            <br>   
             <div class="qrcodeContainer">
                 <div id="qrcodeCanvas"></div>
                 <img src="{{$logo_link}}" width="65px" height="65px" class="center qr_logo"/>
             </div>
             <pre style="position:relative;top:0px;">Document Code: {{$data['client_code']}}</pre>
+            <br>
+        </div>
+        <div id="qrdetails">
+            Filename: {{$data['filename']}}
+            <br>
+            <br>
+            <center><button id="btndownload">Download QRcode</button></center>
         </div>
         
         </div>
@@ -93,10 +100,30 @@
 
     <script src="{{asset('packages/qrcode/jquery.qrcode.js')}}"></script>
     <script src="{{ asset('packages/qrcode/qrcode.js') }}"></script>
+    <script src="{{ asset('packages/htmltocanvas/html2canvas.min.js') }}"></script>
     <script>
         jQuery('#qrcodeCanvas').qrcode({
             text	: "{{$download_link}}"
-        }); 
+        });
+
+        
+        // Get the division element and the download button
+        const division = document.getElementsByClassName('qrwrapper')[0];
+        const downloadBtn = document.getElementById('btndownload');
+
+        // Add a click event listener to the download button
+        downloadBtn.addEventListener('click', () => {
+        // Use html2canvas to capture the division element and convert it to an image
+        html2canvas(division, { allowTaint: true }).then(function(canvas) {
+            // Create a temporary link element to trigger the download
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = "{{$data['filename']}}"+'_QR.png';
+            link.click();
+        });
+        });
+
+
     </script>
 
     <!-- <script>
