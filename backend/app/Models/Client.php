@@ -21,6 +21,7 @@ class Client extends Model
         'email',
         'description',
         'logo',
+        'created_by'
     ];
 
     public function user () : BelongsTo{

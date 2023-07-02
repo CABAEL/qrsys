@@ -130,15 +130,23 @@ class UserController extends Controller
 
     public function user_info($id) 
     {
-        
-        $fetch_user = User::where('users.id','=',$id)->first();
+
+        $fetch_user = User::where('id','=',$id)->first();
+
         $fetch = [];
+        if($fetch_user->role == 'admin'){
+            $fetch = User::select('users.id','users.status','users.username','admin_users.*')
+            ->join('admin_users', 'users.id', '=', 'admin_users.user_id')->where('users.id','=',$id)
+            ->first();
+        }
         if($fetch_user->role == 'client'){
+            
             $fetch = User::select('users.id','users.status','users.username','clients.*')
             ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$id)
             ->first();
         }
         if($fetch_user->role == 'user'){
+            
             $fetch = User::select('clients.client_name','users.id','users.status','users.username','client_users.*')
             ->join('client_users', 'users.id', '=', 'client_users.user_id')->where('users.id','=',$id)
             ->join('clients', 'clients.client_id', '=', 'client_users.client_id')
@@ -150,6 +158,7 @@ class UserController extends Controller
 
     public function storeClient(Request $request) 
     {
+        $current_user = Auth::user();
 
 
         $validated_user = $request->validate([
@@ -194,6 +203,7 @@ class UserController extends Controller
         $user_creds = User::create([
             'username' => $validated_user['username'],
             'password' => Hash::make($validated_user['password']),
+            'created_by' => $current_user->id
         ]);
 
         $user_id = $user_creds->id;
@@ -206,7 +216,8 @@ class UserController extends Controller
                 'address' => $validated_user['address'],
                 'contact_no' => $validated_user['contact_number'],
                 'email' => $validated_user['email'],
-                'description' => $validated_user['description']
+                'description' => $validated_user['description'],
+                'created_by' => $current_user->id
             ]);
 
             if(isset($request->logo)){
@@ -276,7 +287,8 @@ class UserController extends Controller
         $user_creds = User::create([
             'username' => $validated_user['username'],
             'password' => Hash::make($validated_user['password']),
-            'role' => 'user'
+            'role' => 'user',
+            'created_by' => $current_client
         ]);
 
         $user_id = $user_creds->id;
@@ -293,7 +305,8 @@ class UserController extends Controller
                 'address' => $validated_user['address'],
                 'contact_no' => $validated_user['contact_number'],
                 'email' => $validated_user['email'],
-                'description' => $validated_user['description']
+                'description' => $validated_user['description'],
+                'created_by' => $current_client
             ]);
 
             if(isset($request->logo)){

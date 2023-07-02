@@ -224,7 +224,7 @@
       hide_loader();
     }
     });
-   }
+  }
    
    
    $(document).on("click","#generate_pass",function(event) {

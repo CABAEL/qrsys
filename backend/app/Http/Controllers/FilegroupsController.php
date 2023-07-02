@@ -17,13 +17,11 @@ class FilegroupsController extends Controller
      */
     public function index()
     {
-        $user_id = Auth::user()->id;
+        $user_id = Auth::user();
         
-        $requestor = User::select('users.id','users.status','users.username','clients.client_id')
-        ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user_id)
-        ->first();
+        $requestor_client = $user_id->client_data;
 
-        $file_groups = File_group::where('client_id',$requestor->client_id)->get();
+        $file_groups = File_group::where('client_id',$requestor_client->client_id)->get();
 
 
         if($file_groups){
@@ -52,11 +50,9 @@ class FilegroupsController extends Controller
     public function store(Request $request)
     {
 
-        $user_id = Auth::user()->id;
+        $user_id = Auth::user();
 
-        $requestor = User::select('users.id','users.status','users.username','clients.client_id')
-        ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user_id)
-        ->first();
+        $requestor_client = $user_id->client_data;
         
         $validated_user = $request->validate([
             'group_name' => 'unique:file_groups,group_name|required|max:60',
@@ -65,10 +61,10 @@ class FilegroupsController extends Controller
 
 
         $user_creds = File_group::create([
-            'client_id' => $user_id,
+            'client_id' => $requestor_client->client_id,
             'group_name' => $validated_user['group_name'],
             'description' => $validated_user['description'],
-            'created_by' => $requestor->client_id,
+            'created_by' => $requestor_client->client_id,
         ]);
 
         if($user_creds){

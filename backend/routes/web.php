@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\FilegroupsController;
 use App\Models\Client;
@@ -35,18 +36,14 @@ use GuzzleHttp\Middleware;
 //login routes
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
-Route::get('/', function (Request $request) {
-    return view('login');
-})->name('portal');
-
-Route::get('/login', function (Request $request) {
-    return view('login');
-})->middleware('role')->name('login');
-
-Route::get('/register', function (Request $request) {
-    return view('register');
+Route::get('/test', function (Request $request) {
+    $user = Auth::user();
+    return $user;
 });
 
+Route::get('/', function (Request $request) {
+    return view('/login');
+})->middleware('check_login')->name('base');
 
 Route::get('/login', function (Request $request) {
     return view('/login');
@@ -59,11 +56,8 @@ Route::resource('/register/add_user',ApplicantController::class);
 
 Route::get('/logout',[LogoutController::class,'logout_user'])->name('logout');
 
-//portal get routes
-Route::get('/portal_event',[EventController::class,'index']);
-Route::get('/portal_announcement',[AnnouncementController::class,'index']);
 
-
+//file Viewer Routes
 Route::get('/fileviewer/{id}', function($id) {
 
     $file = File_upload::find($id);
@@ -87,9 +81,6 @@ Route::get('/verify_password', function() {
     return view('file_password');
 });
 
-
-// ->middleware(['auth']);
-
 Route::middleware(['auth','role'])->group(function(){
 
     Route::group([                                           
@@ -100,6 +91,10 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/',function(Request $request){
             return redirect('admin/home');
         })->name('admin_home');
+
+        Route::get('/adminaccounts',function(Request $request){
+            return view('template.admin.admin_accounts');
+        });
 
         Route::get('/home',function(Request $request){
             return view('template.admin.index');
@@ -118,6 +113,8 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/user_list',[UserController::class,'index']);
 
+        Route::get('/admin_list',[AdminUsersController::class,'adminList']);
+
         Route::get('/user_info/{id}',[UserController::class,'user_info']);
 
         Route::post('add_client',[UserController::class,'storeClient']);
@@ -127,6 +124,8 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
         Route::get('/totaluploads',[FileUploadController::class,'totalCount']);
+
+        Route::post('add_admin',[AdminUsersController::class,'store']);
     
     });
 
