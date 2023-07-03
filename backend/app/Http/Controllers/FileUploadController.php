@@ -12,29 +12,20 @@ class FileUploadController extends Controller
     //
     public function uploadFile(Request $request){
 
-        $current_user_id = Auth::user()->id;
+        $current_user_auth = Auth::user();
+        $current_user = '';
 
-        $count_arr = [];
-        foreach($_FILES['files1']['name'] as $file_count1){
-            if($file_count1 != ''){
-                $count_arr [] = $file_count1;
-            }
-            
-        }
-        foreach($_FILES['files2']['name'] as $file_count2){
-            if($file_count2 != ''){
-                $count_arr [] = $file_count2;
-            }
-        }
-        $multiple_id = '';
-        if(count($count_arr) > 1){
-            $multiple_id = hash('sha256',$current_user_id.uniqid().time());
+        if($current_user_auth->role = 'client'){
+            $current_user = $current_user_auth->client_data;
+        }else if($current_user_auth->role = 'user'){
+            $current_user = $current_user_auth->client_users_data;
+        }else{
+            return abort('404','You are not a User or Client!');
         }
 
-        
-
-        $current_user = Client::select('client_id','client_name')
-        ->find($current_user_id);
+        return $current_user;
+        // $current_user = Client::select('client_id','client_name')
+        // ->find('user_id',$current_user_id);
 
         $folder_name = md5($current_user['client_name']);
 

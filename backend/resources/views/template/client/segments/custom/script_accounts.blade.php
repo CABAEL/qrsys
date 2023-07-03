@@ -97,7 +97,7 @@
     $(document).on('click','.viewclientuser',function(event) {
     event.preventDefault();
     var id = $(this).data('id');
-    //alert(base_url("user_info/"+id));
+
     show_loader();
     $.ajax({
       url: base_url("user_info/"+id),
@@ -107,7 +107,7 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
       },
       success: function(data){
-
+        console.log(data);
         $('.alert').css('height','0px');
         $('.alert').css('overflow','hidden');
         $('.alert').css('visibility','hidden');
@@ -116,7 +116,7 @@
         let logo = '/img/bg_logo.png';
         
        if(data.picture){
-         let hash_client_name = $.MD5(data.client_name);
+        let hash_client_name = $.MD5(data.client_name);
          let client_logo_path = '/'+'{{ env("CLIENT_DIR_PATH") }}'+hash_client_name+'/user_pictures/'; 
          logo = client_logo_path+data.picture;
        }

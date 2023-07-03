@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientUsersController;
 use App\Http\Controllers\FilegroupsController;
 use App\Models\Client;
 use App\Models\File_upload;
@@ -11,15 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
-use App\Http\Controllers\EmailController;
-use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\JobVacancyController;
 use App\Http\Controllers\FileUploadController;
-use App\Http\Controllers\ChatController;
-use App\Models\Employee;
-use GuzzleHttp\Middleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,10 +30,10 @@ use GuzzleHttp\Middleware;
 //login routes
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
-Route::get('/test', function (Request $request) {
-    $user = Auth::user();
-    return $user;
-});
+// Route::get('/test', function (Request $request) {
+//     $user = Auth::user();
+//     return $user;
+// });
 
 Route::get('/', function (Request $request) {
     return view('/login');
@@ -117,9 +111,9 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/user_info/{id}',[UserController::class,'user_info']);
 
-        Route::post('add_client',[UserController::class,'storeClient']);
+        Route::post('add_client',[ClientController::class,'storeClient']);
 
-        Route::get('/active_clients',[UserController::class,'activeClients']);
+        Route::get('/active_clients',[ClientController::class,'activeClients']);
 
         Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
@@ -156,7 +150,7 @@ Route::middleware(['auth','role'])->group(function(){
             return redirect(route('logout'));
         });
 
-        Route::post('/update_clientuser_data/{id}',[UserController::class,'updateClientUser']);
+        Route::post('/update_clientuser_data/{id}',[ClientUsersController::class,'updateClientUser']);
 
         Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
 
@@ -164,13 +158,13 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/user_list',[UserController::class,'index']);
 
-        Route::get('/user_info/{id}',[UserController::class,'user_info']);
+        Route::get('/user_info/{id}',[ClientUsersController::class,'show']);
 
         Route::post('add_user',[UserController::class,'storeUser']);
 
-        Route::get('/active_clients',[UserController::class,'activeClients']);
+        Route::get('/active_clients',[ClientController::class,'activeClients']);
 
-        Route::get('/active_client_users',[UserController::class,'activeClientUsers']);
+        Route::get('/active_client_users',[ClientUsersController::class,'activeClientUsers']);
 
         Route::post('/file_upload',[FileUploadController::class,'uploadFile']);
 
@@ -189,6 +183,10 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/all_filegroups',[FilegroupsController::class,'showFilegroups']);
 
         Route::get('/clientfiles',[FileUploadController::class,'clientfileList']);
+
+        Route::get('/filecollections',function(){
+            return view('template.client.filecollections');
+        });
 
     });
 
