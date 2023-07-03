@@ -16,3 +16,4 @@ backend/yarn-error.log
 /.idea
 /.vscode
 backend/public/uploads
+backend/database
