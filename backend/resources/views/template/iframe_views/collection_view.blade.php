@@ -38,12 +38,21 @@
         <br>
         <div class="form-row">
             <div class="col-md-4">
-                <?php
+            <?php
                 
-                $download_link = url_host('uploads/system_files/clients_directory/').$data['client_folder']."/file_uploads"."/".$data['filename'];
-                $logo_link = url_host('uploads/system_files/clients_directory/')."/logo"."/".$data['logo'];
+                $download_link = url_host('uploads/system_files/clients_directory/')."/file_uploads"."/";
+                $logo_link = url_host('uploads/system_files/clients_directory/')."/logo"."/";
                 // print_r($download_link);
                 ?>
+            <ul id="sortable">
+                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
+                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
+                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>
+                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>
+                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>
+                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>
+                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>
+                </ul>
             </div>
                 <!-- <center><a href="{{$download_link}}" target="_blank"><button class="btn btn-default">Download</button></a><center> -->
             </div>
@@ -62,11 +71,11 @@
                 <div id="qrcodeCanvas"></div>
                 <img src="{{$logo_link}}" width="75px" height="75px" style="border-radius:50%;" class="center qr_logo"/>
             </div>
-            <pre style="position:relative;top:0px;">Document Code: {{$data['client_code']}}</pre>
+            <pre style="position:relative;top:0px;">Document Code: </pre>
             <br>
         </div>
         <div id="qrdetails">
-            Filename: {{$data['filename']}}
+            Filename: 
             <br>
             <br>
             <center><button id="btndownload">Download QRcode</button></center>
@@ -83,6 +92,7 @@
 
     <script src="{{ asset('packages/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('packages/popper/popper.min.js') }}"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script src="{{ asset('packages/bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- Plugin JavaScript -->
     <script src="{{ asset('packages/jquery-easing/jquery.easing.min.js') }}"></script>
@@ -102,38 +112,10 @@
     <script src="{{ asset('packages/qrcode/qrcode.js') }}"></script>
     <script src="{{ asset('packages/htmltocanvas/html2canvas.min.js') }}"></script>
     <script>
-        jQuery('#qrcodeCanvas').qrcode({
-            text	: "{{$download_link}}"
-        });
-
-        
-        // Get the division element and the download button
-        const division = document.getElementsByClassName('qrwrapper')[0];
-        const downloadBtn = document.getElementById('btndownload');
-
-        // Add a click event listener to the download button
-        downloadBtn.addEventListener('click', () => {
-        // Use html2canvas to capture the division element and convert it to an image
-        html2canvas(division, { allowTaint: true }).then(function(canvas) {
-            // Create a temporary link element to trigger the download
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = "{{$data['filename']}}"+'_QR.png';
-            link.click();
-        });
-        });
-
-
-    </script>
-
-    <!-- <script>
-        show_loader();
-
-        $( document ).ready(function() {
-            hide_loader();
-        });
-
-    </script> -->
+    $( function() {
+        $( "#sortable" ).sortable();
+    } );
+  </script>
 
     </body>
 </html>

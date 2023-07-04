@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Client;
+use App\Models\Document_code;
 use App\Models\File_upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,23 +15,26 @@ class FileUploadController extends Controller
 
         $current_user_auth = Auth::user();
         $current_user = '';
-
-        if($current_user_auth->role = 'client'){
+        $folder_name = '';
+        if($current_user_auth->role == 'client'){
+            // identifying client
             $current_user = $current_user_auth->client_data;
-        }else if($current_user_auth->role = 'user'){
+            $current_user_id = $current_user['user_id'];
+            $folder_name = md5($current_user['client_name']);
+
+        }else if($current_user_auth->role == 'user'){
+            // identifying user
             $current_user = $current_user_auth->client_users_data;
+            $current_user_id = $current_user['user_id'];
+            $select_client = Client::find( $current_user['client_id']);
+            $folder_name = md5($select_client['client_name']);
+
         }else{
+
             return abort('404','You are not a User or Client!');
+
         }
 
-        return $current_user;
-        // $current_user = Client::select('client_id','client_name')
-        // ->find('user_id',$current_user_id);
-
-        $folder_name = md5($current_user['client_name']);
-
-        
-        // return $request->file_upload;
         if($request->has('file_upload')){
 
             $validated_inputs = $request->validate([
@@ -68,6 +72,26 @@ class FileUploadController extends Controller
                 mkdir($uploaded_files_path, 0777, true);
             }
 
+            //check document code if exist
+            $check_code_exist = Document_code::where('code',strtoupper($validated_inputs['code']))->first();
+
+            if($check_code_exist){
+                //code exist
+                $code_id = $check_code_exist->id;
+
+            }else{
+
+                //code not exist, Create.
+                $created_code = Document_code::create([
+                    'client_id' => $current_user['client_id'],
+                    'code' => strtoupper($validated_inputs['code']),
+                    'description' => $validated_inputs['description'],
+                    'created_by' => $current_user_id
+                ]);
+
+                $code_id = $created_code->id;
+            }
+
             foreach ($files1 as $file) {
                 // Process each uploaded file
                 if ($file->isValid()) {
@@ -82,10 +106,9 @@ class FileUploadController extends Controller
                     File_upload::create([
                         'client_id' => $current_user['client_id'],
                         'file_group_id' => $validated_inputs['filegroups'],
-                        'document_code' => strtoupper($validated_inputs['code']),
+                        'document_code_id' => $code_id,
                         'file_name' => strtoupper($validated_inputs['code'])."_".$formatted_name.".".$ext,
                         'password' => $validated_inputs['password'],
-                        'description' => $validated_inputs['description'],
                         'uploaded_by' => $current_user_id,
                     ]);
 
@@ -177,7 +200,22 @@ class FileUploadController extends Controller
     }
 
     public function clientfileList(){
-       $current_user_id = Auth::user()->id;
+        
+        $current_user_auth = Auth::user();
+
+        if($current_user_auth->role == 'client'){
+
+            // identifying client
+            $current_user = $current_user_auth->client_data;
+            $current_user_id = $current_user['client_id'];
+
+        }else if($current_user_auth->role == 'user'){
+
+            // identifying user
+            $current_user = $current_user_auth->client_users_data;
+            $current_user_id = $current_user['client_id'];
+
+        }
 
         $files = File_upload::select('file_uploads.*','users.username')->join('users','file_uploads.uploaded_by','=','users.id')
         ->where('file_uploads.client_id',$current_user_id)->get();

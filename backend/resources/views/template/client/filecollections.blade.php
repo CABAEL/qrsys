@@ -8,12 +8,9 @@
             <!-- Breadcrumbs -->
             <ol class="breadcrumb">
                <li class="breadcrumb-item">
-                  <b>FILEGROUP LIST</b>
+                  <b>FILEGROUP COLLECTIONS</b>
                </li>
-            </ol>
-            <hr/>
-            <button class="btn btn-sm" type="button" id="addfilegroup_btn" data-toggle="modal" data-target="#addfilegroup"> + File Group</button>
-            <hr/>
+            </ol><hr/>
             <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="filegroup-table" style="width:100%">
                <thead>
                   <tr>
@@ -38,7 +35,7 @@
       @include('template.client.segments.modal.view_filegroup_modal')
       <!-- /.content-wrapper -->
       @include('template.footer')
-      @include('template.client.segments.custom.script_filegroups')
+      @include('template.client.segments.custom.script_filecollections')
 
    </body>
 </html>

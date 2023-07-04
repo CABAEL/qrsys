@@ -192,7 +192,7 @@ class ClientUsersController extends Controller
             $merge_data = [
                 'user' => $user_creds,
                 'user_profile' => $client_user,
-                'picture' => $logo_file
+                'picture' => $client_user->picture
             ];
 
             return responseBuilder("User successfully added!",[],$merge_data);

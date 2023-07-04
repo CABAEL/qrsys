@@ -85,7 +85,7 @@
                                     <div class="form-group">
                                        <div class="form-row">
                                           <div class="col-md-6">
-                                             <label for="contact_number">Document Code:</label>
+                                             <label for="code">Code:</label>
                                              <input type="text" class="form-control" id="code" name="code" aria-describedby="code" autocomplete="off">
                                           </div>
                                           <div class="col-md-6">

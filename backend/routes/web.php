@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
+use App\Http\Controllers\Document_CodeController;
 use App\Http\Controllers\FilegroupsController;
 use App\Models\Client;
 use App\Models\File_upload;
@@ -30,10 +31,11 @@ use App\Http\Controllers\FileUploadController;
 //login routes
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
-// Route::get('/test', function (Request $request) {
-//     $user = Auth::user();
-//     return $user;
-// });
+Route::get('/test', function (Request $request) {
+    return view('template/iframe_views/collection_view');
+    // $user = Auth::user();
+    // return $user->client_users_data;
+});
 
 Route::get('/', function (Request $request) {
     return view('/login');
@@ -74,6 +76,7 @@ Route::get('/fileviewer/{id}', function($id) {
 Route::get('/verify_password', function() {
     return view('file_password');
 });
+
 
 Route::middleware(['auth','role'])->group(function(){
 
@@ -191,6 +194,14 @@ Route::middleware(['auth','role'])->group(function(){
     });
 
 });
+
+Route::get('/document_code/{id}',[Document_CodeController::class,'CodeDocuments'])
+->middleware('auth')
+->name('code_document_list');
+
+Route::get('/code_list',[Document_CodeController::class,'list'])
+->middleware('auth')
+->name('code_list');
 
 
 
