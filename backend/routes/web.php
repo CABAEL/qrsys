@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
 use App\Http\Controllers\Document_CodeController;
 use App\Http\Controllers\FilegroupsController;
+use App\Http\Controllers\PDFController;
 use App\Models\Client;
 use App\Models\File_upload;
 use Illuminate\Http\Request;
@@ -76,6 +77,8 @@ Route::get('/fileviewer/{id}', function($id) {
 Route::get('/verify_password', function() {
     return view('file_password');
 });
+
+Route::POST('/upload-pdf', [PDFController::class, 'generateQrCode'])->name('upload.pdf');
 
 
 Route::middleware(['auth','role'])->group(function(){

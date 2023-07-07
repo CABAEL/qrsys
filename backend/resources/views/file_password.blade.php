@@ -57,6 +57,13 @@
                         <button type="submit" class="btn btn-primary">Verify</button>
                     </div>
                 </form>
+
+                <form method="POST" action="{{ route('upload.pdf') }}" enctype="multipart/form-data">
+                    @csrf
+                    <input type="file" name="pdf_file">
+                    <input type="submit" value="Upload and Add QR Code">
+                </form>
+
             </div>
         </div>
     </div>
