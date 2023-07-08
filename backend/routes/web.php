@@ -78,7 +78,7 @@ Route::get('/verify_password', function() {
     return view('file_password');
 });
 
-Route::POST('/upload-pdf', [PDFController::class, 'generateQrCode'])->name('upload.pdf');
+Route::get('/upload-pdf', [PDFController::class, 'showPdfQr'])->name('upload.pdf');
 
 
 Route::middleware(['auth','role'])->group(function(){

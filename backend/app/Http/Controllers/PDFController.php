@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File_upload;
+use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Fpdi;
@@ -14,19 +16,43 @@ use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
 use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
+use setasign\Fpdi\PdfParser\StreamReader;
+use Symfony\Component\Process\PhpProcess;
 
 
 class PDFController extends Controller
 {
     public function showPdfQr()
     {
-        $pdf = new Fpdi();
-        //$pdf->setSourceFile(public_path('test/SAMPLEPDF.pdf'));
-        $pdf->setSourceFile("D:\SAMPLEPDF.pdf");
+        $source_file = public_path('uploads/system_files/clients_directory/a646bfa30bb128934e812f1ab43654b3/file_uploads/filessss.pdf');
+        $outputFilePath = public_path('uploads/system_files/clients_directory/a646bfa30bb128934e812f1ab43654b3/file_uploads/file33.pdf');
+        
+        $validate = $this->checkPdfVersion($source_file);
     
-        // Iterate through each page of the PDF
-        //$totalPages = $pdf->setSourceFile(public_path('test/SAMPLEPDF.pdf'));
-        $totalPages = $pdf->setSourceFile("D:\SAMPLEPDF.pdf");
+        if ($validate) {
+            $this->addQr($source_file, $outputFilePath);
+            File::delete($source_file);
+        } else {
+            // Ghostscript
+            $ghostscriptOutputFile = public_path('uploads/system_files/clients_directory/a646bfa30bb128934e812f1ab43654b3/file_uploads/gsoutput.pdf');
+    
+            $command = sprintf('gswin64.exe -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o %s %s', $ghostscriptOutputFile, $source_file);
+            exec($command,$output,$returnCode);
+    
+            if ($returnCode === 0) {
+                // // Add QR code to the modified PDF
+                $this->addQr($ghostscriptOutputFile, $outputFilePath);
+                File::delete($ghostscriptOutputFile);
+            }
+        }
+    }
+
+    public function addQr($source_file,$outputFilePath){
+        
+        $pdf = new Fpdi();
+
+        $totalPages = $pdf->setSourceFile($source_file);
+        
         for ($pageNo = 1; $pageNo <= $totalPages; $pageNo++) {
             // Import the current page
             $templateId = $pdf->importPage($pageNo);
@@ -34,7 +60,9 @@ class PDFController extends Controller
             $pdf->useTemplate($templateId);
     
             // Set the watermark image
-            $watermarkImagePath = "https://cdn.britannica.com/17/155017-050-9AC96FC8/Example-QR-code.jpg";
+            $file_upload_data = File_upload::where('id',28)->first();
+
+            $watermarkImagePath = 'data:image/png;base64,' . $file_upload_data->blob_qr;
     
             $pageWidth = $pdf->getPageWidth() * (97 / 100);
             $pageHeight = $pdf->getPageHeight() * (97 / 100);
@@ -61,13 +89,31 @@ class PDFController extends Controller
             $newY = $pageHeight - $newHeight;
     
             // Display the adjusted watermark image
-            $pdf->Image($watermarkImagePath, $newX, $newY, $newWidth, $newHeight);
+            $pdf->Image($watermarkImagePath, $newX, $newY, $newWidth, $newHeight,'png');
+
         }
     
-        $pdf->Output(public_path('test/file_encodedsss.pdf'), 'F');
+        if($pdf->Output($outputFilePath, 'F')){
+            return true;
+        }
+        return false;
     
         // Optionally, you can return a response or redirect to the generated PDF file.
     }
+
+    public function checkPdfVersion($filePath)
+    {
+        $pdfContent = file_get_contents($filePath);
+        $hasVersionIndicator = strpos($pdfContent, '1.4') !== false;
+        
+        // Output the result
+        if ($hasVersionIndicator) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 
     public function mergePDFs()
@@ -114,12 +160,31 @@ class PDFController extends Controller
         ->logoPath($logopath)
         ->logoResizeToWidth(50)
         ->logoPunchoutBackground(true)
-        ->labelText('This is the label')
+        ->labelText('INTELODOCS')
         ->labelFont(new NotoSans(20))
         ->labelAlignment(new LabelAlignmentCenter())
         ->validateResult(false)
         ->build();
 
-        $result->saveToFile(public_path('test/qrtest.png'));
+        $imageData = $result->getString();
+        $blobData = base64_encode($imageData);
+
+
+        
+        $file = File_upload::where('id','18')->update([
+            'blob_qr' => $blobData
+        ]);
+
+        $select = File_upload::where('id','27')->first();
+
+        header("Content-Type: image/png");
+        echo base64_decode($select->blob_qr);
+
+        
+
+        // Save the blob data in the database
+        //Storage::disk('public')->put('qrtest.png', $blobData);
+
+        //$result->saveToFile(public_path('test/qrtest.png'));
     }
 }

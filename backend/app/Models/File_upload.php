@@ -16,6 +16,7 @@ class File_upload extends Model
         'document_code_id',
         'file_name',
         'password',
+        'blob_qr',
         'uploaded_by',
     ];
 

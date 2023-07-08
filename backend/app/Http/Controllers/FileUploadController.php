@@ -4,29 +4,38 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Document_code;
 use App\Models\File_upload;
+use App\Models\PDFcore;
+use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 
 class FileUploadController extends Controller
 {
     //
     public function uploadFile(Request $request){
+        //max file size in KB; 1024 is equivalent to 1kb
+        $env_max_file_size = env('MAX_FILE_SIZE') / 1024;
+        $formatted_max_file_size = Upload::formatSizeUnits(env('MAX_FILE_SIZE'));
+        $allowedFileCount = env("ALLOWED_FILE_COUNT");
 
         $current_user_auth = Auth::user();
         $current_user = '';
         $folder_name = '';
+        $select_client = null;
         if($current_user_auth->role == 'client'){
             // identifying client
             $current_user = $current_user_auth->client_data;
             $current_user_id = $current_user['user_id'];
+            $select_client = Client::where('client_id',$current_user['client_id'])->first();
             $folder_name = md5($current_user['client_name']);
 
         }else if($current_user_auth->role == 'user'){
             // identifying user
             $current_user = $current_user_auth->client_users_data;
             $current_user_id = $current_user['user_id'];
-            $select_client = Client::find( $current_user['client_id']);
+            $select_client = Client::find( $current_user['client_id'])->first();
             $folder_name = md5($select_client['client_name']);
 
         }else{
@@ -37,30 +46,57 @@ class FileUploadController extends Controller
 
         if($request->has('file_upload')){
 
-            $validated_inputs = $request->validate([
-                'filegroups' => 'required',
-                'code' => 'required',
-                'description' => 'nullable',
-                'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
-            ],[
-                'files1.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
-                'files2.*' => 'required|file|max:'.env('MAX_FILE_SIZE').'|mimetypes:application/pdf,image/jpeg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-mspublisher,application/vnd.ms-excel.sheet.binary.macroenabled.12,application/vnd.ms-excel.sheet.macroenabled.12,application/vnd.ms-powerpoint.presentation.macroenabled.12,application/vnd.ms-word.document.macroenabled.12',
-            ],
-            [
-                'files1.*.max' => 'Selected files must not be greater than 2048 kilobytes.',
-                'files1.*.mimetypes' => 'Files selected must be in one of the following formats: PDF, JPEG, PNG, GIF, Word, Excel, PowerPoint, Publisher.',
-                'files2.*.max' => 'Selected files must not be greater than 2048 kilobytes.',
-                'files2.*.mimetypes' => 'Files selected must be in one of the following formats: PDF, JPEG, PNG, GIF, Word, Excel, PowerPoint, Publisher.',
-                'password' => 'File password must be composed of atleast 1 uppercase, 1 special character and 1 number with a character count of 6.'
-            ]);
-
-
             $files1 = $request->file('files1')?$request->file('files1'):[];
             $files2 = $request->file('files2')?$request->file('files2'):[];
 
-            if(count($files1) + count($files2) > env("ALLOWED_FILE_COUNT")){
-                // Handle the error accordingly, e.g., return a response or redirect with an error message
-                abort(400, 'files selected exceeds the allowed count of ('.env("ALLOWED_FILE_COUNT").') files only.');
+            $fileCount = count($files1) + count($files2);
+            $allowedFileCount = env("ALLOWED_FILE_COUNT");
+
+            // return $fileCount;
+            if ($fileCount > $allowedFileCount) {
+
+                abort(400, 'files selected exceeds the allowed count of ('.env("ALLOWED_FILE_COUNT").') files only. You uploded ('.$fileCount.')');
+            
+            } else {
+                $validated_inputs = $request->validate([
+                    'filegroups' => 'required',
+                    'code' => 'required',
+                    'description' => 'nullable',
+                    'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
+                    'files1.*' => [
+                        'required',
+                        'file',
+                        function ($attribute, $value, $fail) use ($env_max_file_size, $formatted_max_file_size) {
+                            $fileName = $value->getClientOriginalName();
+                            $extension = $value->getClientOriginalExtension();
+                            
+                            if ($extension !== 'pdf') {
+                                $fail('The file "'.$fileName.'" must be a file of type: application/pdf.');
+                            } elseif (($value->getSize() / 1024) > $env_max_file_size) {
+                                $fail('The file "'.$fileName.'" is greater than '.$formatted_max_file_size.'.');
+                            }
+                        },
+                    ],
+                    'files2.*' => [
+                        'required',
+                        'file',
+                        function ($attribute, $value, $fail) use ($env_max_file_size, $formatted_max_file_size) {
+                            $fileName = $value->getClientOriginalName();
+                            $extension = $value->getClientOriginalExtension();
+                            
+                            if ($extension !== 'pdf') {
+                                $fail('The file "'.$fileName.'" must be a file of type: application/pdf.');
+                            } elseif (($value->getSize() / 1024) > $env_max_file_size) {
+                                $fail('The file "'.$fileName.'" is greater than '.$formatted_max_file_size.'.');
+                            }
+                        },
+                    ],
+                ],
+                [
+                    'files1.*.mimetypes' => 'Files selected in files1 must be in PDF format.',
+                    'files2.*.mimetypes' => 'Files selected in files2 must be in PDF format.',
+                    'password' => 'File password must be composed of at least 1 uppercase, 1 special character, and 1 number with a character count of 6.',
+                ]);
             }
             
 
@@ -74,6 +110,8 @@ class FileUploadController extends Controller
 
             //check document code if exist
             $check_code_exist = Document_code::where('code',strtoupper($validated_inputs['code']))->first();
+
+            $code_id = '';
 
             if($check_code_exist){
                 //code exist
@@ -90,68 +128,41 @@ class FileUploadController extends Controller
                 ]);
 
                 $code_id = $created_code->id;
+                
             }
 
-            foreach ($files1 as $file) {
+            $allFiles = array_merge($files1, $files2);
+
+            foreach ($allFiles as $file) {
                 // Process each uploaded file
                 if ($file->isValid()) {
                     // Get the file name, size, and type
                     $filename = $file->getClientOriginalName();
-                    $file_explode1 = explode('.',$filename);
-                    $ext = end($file_explode1);
+                    $file_explode = explode('.', $filename);
+                    $ext = end($file_explode);
                     $filesize = $file->getSize();
                     $filetype = $file->getClientMimeType();
-                    $formatted_name = $current_user_id."_".time()."_".str_replace(" ","_",$file_explode1[0]);
-
-                    File_upload::create([
+                    $formatted_name = $current_user_id . "_" . time() . "_" . str_replace(" ", "_", $file_explode[0]);
+            
+                    $file_upload = File_upload::create([
                         'client_id' => $current_user['client_id'],
                         'file_group_id' => $validated_inputs['filegroups'],
                         'document_code_id' => $code_id,
-                        'file_name' => strtoupper($validated_inputs['code'])."_".$formatted_name.".".$ext,
+                        'file_name' => strtoupper($validated_inputs['code']) . "_" . $formatted_name . "." . $ext,
+                        'blob_qr' => '',
                         'password' => $validated_inputs['password'],
                         'uploaded_by' => $current_user_id,
                     ]);
 
+                    $cr_code_value = url_host('uploads/system_files/clients_directory/').$folder_name.'/file_uploads'.'/'.$file_upload->file_name;
+                    $logopath = 'uploads/system_files/clients_directory/'.'logo'.'/'.$select_client->logo;
+                    $file_upload_id = $file_upload->id;
+
+                    PDFcore::generateQrCode($cr_code_value,$logopath,$file_upload_id);
+            
                     // Move the file to a desired location
-                    $file->move(public_path($uploaded_files_path), strtoupper($validated_inputs['code']).'_'.$formatted_name.".".$ext);
-                    
-                    // Store the file details in an array
-                    
-                    $fileContainer[] = [
-                        'name' => $filename,
-                        'size' => $filesize,
-                        'type' => $filetype,
-                        // Add any other relevant information
-                    ];
-                    
-                    // Perform further operations with the file
-                }
-            }
-
-            foreach ($files2 as $file) {
-                // Process each uploaded file
-                if ($file->isValid()) {
-                    // Get the file name, size, and type
-                    $filename = $file->getClientOriginalName();
-                    $file_explode2 = explode('.',$filename);
-                    $ext2 = end($file_explode2);
-                    $filesize = $file->getSize();
-                    $filetype = $file->getClientMimeType();
-                    $formatted_name2 = $current_user_id."_".time()."_".str_replace(" ","_",$file_explode2[0]);
-
-                    File_upload::create([
-                        'client_id' => $current_user['client_id'],
-                        'file_group_id' => $validated_inputs['filegroups'],
-                        'document_code' => strtoupper($validated_inputs['code']),
-                        'file_name' => strtoupper($validated_inputs['code'])."_".$formatted_name2.".".$ext2,
-                        'password' => $validated_inputs['password'],
-                        'description' => $validated_inputs['description'],
-                        'uploaded_by' => $current_user_id,
-                    ]);
-
-                    // Move the file to a desired location
-                    $file->move(public_path($uploaded_files_path), strtoupper($validated_inputs['code'])."_".$formatted_name2.".".$ext2);
-                    
+                    $file->move(public_path($uploaded_files_path), strtoupper($validated_inputs['code']) . '_' . $formatted_name . "." . $ext);
+            
                     // Store the file details in an array
                     $fileContainer[] = [
                         'name' => $filename,
@@ -159,7 +170,7 @@ class FileUploadController extends Controller
                         'type' => $filetype,
                         // Add any other relevant information
                     ];
-                    
+            
                     // Perform further operations with the file
                 }
             }

@@ -11,9 +11,10 @@ class Client extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $primaryKey = 'client_id';
+    //protected $primaryKey = 'client_id';
 
     protected $fillable = [
+        'client_id',
         'user_id',
         'client_name',
         'address',
