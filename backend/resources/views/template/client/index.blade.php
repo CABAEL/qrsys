@@ -58,14 +58,19 @@
                <div class="col-xl-12">
                   <div class="card mb-4">
                      <div class="card-body">
-                        <div class="center" id="dropArea">
-                           <h4 style="text-align:center;">Click/Drag and drop files here.</h4>
+                        <!-- <div class="center" id="dropArea">
+                           <h4 style="text-align:center;">Click/Drag and drop file here.</h4>
                         </div>
                         <br/>
-                        <br/>
-                     <div id="SelectionList" class="hidden">
-                     <div class="alert alert-danger" id="upload_errors"></div>
-                        <form onsubmit="SubmitUpload(this)">
+                        <br/> -->
+                        <div id="uploaded_list" class="">
+                           <div class="alert alert-danger" id="upload_errors">
+                     
+                           </div>
+                           
+                        </div><!--uploadSection list-->   
+                        
+                        <form onsubmit="SubmitUpload(this)" id="uploadForm">
                            <div class="container-fluid">
 
                               <div class="row">
@@ -77,11 +82,22 @@
                               
                                  
                                  <div class="col-xl-4 col-md-4">
-                                 <input type="file" id="fileInput1" class="hidden" name="files1[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
-                                 <input type="file" id="fileInput2" class="hidden" name="files2[]" accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pub, .xlsb, .xlsm, .pptm, .docm" autocomplete="off" multiple/>
+                                 
+                                 <!-- <input type="file" id="fileInput1" class="hidden" name="files1[]" accept=".pdf" autocomplete="off" multiple/>
+                                 <input type="file" id="fileInput2" class="hidden" name="files2[]" accept=".pdf" autocomplete="off" multiple/> -->
                                  </div>
 
                                  <div class="col-xl-4 col-md-4">
+
+                                    <div class="form-group">
+                                       <div class="col-md-12">
+                                       <div class="progress">
+                                       <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                       </div>
+                                       <br/>
+                                          <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" autocomplete="off"/>
+                                       </div>
+                                    </div>
                                     <div class="form-group">
                                        <div class="form-row">
                                           <div class="col-md-6">
@@ -111,7 +127,8 @@
                                           <div class="col-md-12">
                                           <!-- <button class="btn btn-default" style="float:right;">Cancel</button> -->
                                           <span style="float:right;" >&nbsp;</span>
-                                          <button class="btn btn-primary" style="float:right;"><i class="fas fa fa-upload"></i> Upload</button>
+                                          <button id="uploadBtn" class="btn btn-primary" style="float:right;"><i class="fas fa fa-upload"></i> Upload</button>
+                                          <a href="" id="refreshBtn" class="btn btn-default hidden" style="float:right;"><i class="fa fa-refresh"></i></a>
                                           </div>
                                        </div>
                                     </div>
@@ -123,7 +140,6 @@
                               </div>
                            </div>
                         </form>
-                  </div><!--uploadSection list-->
 
                      </div>
                   </div>

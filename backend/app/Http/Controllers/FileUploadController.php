@@ -5,6 +5,7 @@ use App\Models\Client;
 use App\Models\Document_code;
 use App\Models\File_upload;
 use App\Models\PDFcore;
+use App\Models\RedisModel;
 use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,6 @@ class FileUploadController extends Controller
         //max file size in KB; 1024 is equivalent to 1kb
         $env_max_file_size = env('MAX_FILE_SIZE') / 1024;
         $formatted_max_file_size = Upload::formatSizeUnits(env('MAX_FILE_SIZE'));
-        $allowedFileCount = env("ALLOWED_FILE_COUNT");
 
         $current_user_auth = Auth::user();
         $current_user = '';
@@ -46,38 +46,15 @@ class FileUploadController extends Controller
 
         if($request->has('file_upload')){
 
-            $files1 = $request->file('files1')?$request->file('files1'):[];
-            $files2 = $request->file('files2')?$request->file('files2'):[];
+            $pdf_file = $request->file('pdf_file')?$request->file('pdf_file'):[];
+            //$files2 = $request->file('files2')?$request->file('files2'):[];
 
-            $fileCount = count($files1) + count($files2);
-            $allowedFileCount = env("ALLOWED_FILE_COUNT");
-
-            // return $fileCount;
-            if ($fileCount > $allowedFileCount) {
-
-                abort(400, 'files selected exceeds the allowed count of ('.env("ALLOWED_FILE_COUNT").') files only. You uploded ('.$fileCount.')');
-            
-            } else {
                 $validated_inputs = $request->validate([
                     'filegroups' => 'required',
                     'code' => 'required',
                     'description' => 'nullable',
                     'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
-                    'files1.*' => [
-                        'required',
-                        'file',
-                        function ($attribute, $value, $fail) use ($env_max_file_size, $formatted_max_file_size) {
-                            $fileName = $value->getClientOriginalName();
-                            $extension = $value->getClientOriginalExtension();
-                            
-                            if ($extension !== 'pdf') {
-                                $fail('The file "'.$fileName.'" must be a file of type: application/pdf.');
-                            } elseif (($value->getSize() / 1024) > $env_max_file_size) {
-                                $fail('The file "'.$fileName.'" is greater than '.$formatted_max_file_size.'.');
-                            }
-                        },
-                    ],
-                    'files2.*' => [
+                    'pdf_file' => [
                         'required',
                         'file',
                         function ($attribute, $value, $fail) use ($env_max_file_size, $formatted_max_file_size) {
@@ -93,20 +70,18 @@ class FileUploadController extends Controller
                     ],
                 ],
                 [
-                    'files1.*.mimetypes' => 'Files selected in files1 must be in PDF format.',
-                    'files2.*.mimetypes' => 'Files selected in files2 must be in PDF format.',
+                    'pdf_file.mimetypes' => 'Files selected in files1 must be in PDF format.',
                     'password' => 'File password must be composed of at least 1 uppercase, 1 special character, and 1 number with a character count of 6.',
                 ]);
-            }
             
 
             $fileContainer = array();
 
-            $uploaded_files_path = env('CLIENT_DIR_PATH').$folder_name."/file_uploads/";
+            // $uploaded_files_path = env('CLIENT_DIR_PATH').$folder_name."/file_uploads/";
 
-            if (!file_exists($uploaded_files_path)) {
-                mkdir($uploaded_files_path, 0777, true);
-            }
+            // if (!file_exists($uploaded_files_path)) {
+            //     mkdir($uploaded_files_path, 0777, true);
+            // }
 
             //check document code if exist
             $check_code_exist = Document_code::where('code',strtoupper($validated_inputs['code']))->first();
@@ -116,7 +91,6 @@ class FileUploadController extends Controller
             if($check_code_exist){
                 //code exist
                 $code_id = $check_code_exist->id;
-
             }else{
 
                 //code not exist, Create.
@@ -131,17 +105,15 @@ class FileUploadController extends Controller
                 
             }
 
-            $allFiles = array_merge($files1, $files2);
-
-            foreach ($allFiles as $file) {
+            //foreach ($pdf_file as $file) {
                 // Process each uploaded file
-                if ($file->isValid()) {
+                if ($pdf_file->isValid()) {
                     // Get the file name, size, and type
-                    $filename = $file->getClientOriginalName();
+                    $filename = $pdf_file->getClientOriginalName();
                     $file_explode = explode('.', $filename);
                     $ext = end($file_explode);
-                    $filesize = $file->getSize();
-                    $filetype = $file->getClientMimeType();
+                    $filesize = $pdf_file->getSize();
+                    $filetype = $pdf_file->getClientMimeType();
                     $formatted_name = $current_user_id . "_" . time() . "_" . str_replace(" ", "_", $file_explode[0]);
             
                     $file_upload = File_upload::create([
@@ -161,7 +133,8 @@ class FileUploadController extends Controller
                     PDFcore::generateQrCode($cr_code_value,$logopath,$file_upload_id);
             
                     // Move the file to a desired location
-                    $file->move(public_path($uploaded_files_path), strtoupper($validated_inputs['code']) . '_' . $formatted_name . "." . $ext);
+                    $pdf_file->move(storage_path('tmp'), strtoupper($validated_inputs['code']) . '_' . $formatted_name . "." . $ext);
+                    // RedisModel::addData('file_list',[$file_upload->id][storage_path('tmp').'/'.strtoupper($validated_inputs['code']) . '_' . $formatted_name . "." . $ext]);
             
                     // Store the file details in an array
                     $fileContainer[] = [
@@ -173,7 +146,7 @@ class FileUploadController extends Controller
             
                     // Perform further operations with the file
                 }
-            }
+            //}
 
             return $fileContainer;
 
@@ -200,6 +173,8 @@ class FileUploadController extends Controller
                     'filesize' => $_FILES['file']['size']
                 );
             }
+
+            return $file_params;
 
         }
     

@@ -1,6 +1,7 @@
 backend/node_modules
 backend/public/hot
 backend/public/storage
+backend/storage/
 backend/storage/*.key
 backend/vendor
 backend/vendor/laravel/framework/src/Illuminate/Foundation/*

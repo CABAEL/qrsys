@@ -9,6 +9,7 @@ use App\Http\Controllers\FilegroupsController;
 use App\Http\Controllers\PDFController;
 use App\Models\Client;
 use App\Models\File_upload;
+use App\Models\RedisModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -32,10 +33,9 @@ use App\Http\Controllers\FileUploadController;
 //login routes
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
-Route::get('/test', function (Request $request) {
-    return view('template/iframe_views/collection_view');
-    // $user = Auth::user();
-    // return $user->client_users_data;
+Route::get('/test_redis', function (Request $request) {
+    // echo "pre";
+    return RedisModel::addData('key',"awwwwit");
 });
 
 Route::get('/', function (Request $request) {

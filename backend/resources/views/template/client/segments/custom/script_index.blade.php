@@ -57,7 +57,7 @@
     });
 
 
-    fetchAllFilegroups('#SelectionList',value = null)
+    fetchAllFilegroups('#uploadForm',value = null)
 
     function fetchAllFilegroups(form,value = null){
     const url = base_url('all_filegroups');

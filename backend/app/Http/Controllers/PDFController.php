@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\File_upload;
+use Exception;
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -24,25 +25,26 @@ class PDFController extends Controller
 {
     public function showPdfQr()
     {
-        $source_file = public_path('uploads/system_files/clients_directory/a646bfa30bb128934e812f1ab43654b3/file_uploads/filessss.pdf');
-        $outputFilePath = public_path('uploads/system_files/clients_directory/a646bfa30bb128934e812f1ab43654b3/file_uploads/file33.pdf');
+        $filename = "3123_6_1688927000_filessss.pdf";
+        $source_file = storage_path('tmp').'/'.$filename;
+        $output_file = storage_path('app/public/'.env('CLIENT_DIR_PATH').'').$filename;
         
         $validate = $this->checkPdfVersion($source_file);
     
         if ($validate) {
-            $this->addQr($source_file, $outputFilePath);
+            $this->addQr($source_file, $output_file);
             File::delete($source_file);
         } else {
             // Ghostscript
-            $ghostscriptOutputFile = public_path('uploads/system_files/clients_directory/a646bfa30bb128934e812f1ab43654b3/file_uploads/gsoutput.pdf');
+            $sc_output_file = storage_path('app/public/'.env('CLIENT_DIR_PATH').'').'SC_'.time().'_'.$filename;
     
-            $command = sprintf('gswin64.exe -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o %s %s', $ghostscriptOutputFile, $source_file);
+            $command = sprintf('gswin64.exe -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o %s %s', $sc_output_file, $source_file);
             exec($command,$output,$returnCode);
     
             if ($returnCode === 0) {
                 // // Add QR code to the modified PDF
-                $this->addQr($ghostscriptOutputFile, $outputFilePath);
-                File::delete($ghostscriptOutputFile);
+                $this->addQr($sc_output_file, $output_file);
+               
             }
         }
     }
@@ -60,7 +62,7 @@ class PDFController extends Controller
             $pdf->useTemplate($templateId);
     
             // Set the watermark image
-            $file_upload_data = File_upload::where('id',28)->first();
+            $file_upload_data = File_upload::where('id',9)->first();
 
             $watermarkImagePath = 'data:image/png;base64,' . $file_upload_data->blob_qr;
     
@@ -103,17 +105,15 @@ class PDFController extends Controller
 
     public function checkPdfVersion($filePath)
     {
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            throw new Exception("File does not exist or cannot be read.");
+        }
+
         $pdfContent = file_get_contents($filePath);
         $hasVersionIndicator = strpos($pdfContent, '1.4') !== false;
-        
-        // Output the result
-        if ($hasVersionIndicator) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
+        return !$hasVersionIndicator;
+    }
 
 
     public function mergePDFs()
