@@ -126,6 +126,12 @@ class FileUploadController extends Controller
                         'uploaded_by' => $current_user_id,
                     ]);
 
+                    RedisModel::updateQueueData(array([
+                        'id' => $file_upload['id'],
+                        'file_name' => $file_upload['file_name']
+                    ]));
+                    
+
                     $cr_code_value = url_host('uploads/system_files/clients_directory/').$folder_name.'/file_uploads'.'/'.$file_upload->file_name;
                     $logopath = 'uploads/system_files/clients_directory/'.'logo'.'/'.$select_client->logo;
                     $file_upload_id = $file_upload->id;

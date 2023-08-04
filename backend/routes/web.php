@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
 use App\Http\Controllers\Document_CodeController;
 use App\Http\Controllers\FilegroupsController;
+use App\Http\Controllers\JobsDispatcherController;
 use App\Http\Controllers\PDFController;
 use App\Models\Client;
 use App\Models\File_upload;
@@ -34,8 +35,7 @@ use App\Http\Controllers\FileUploadController;
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
 Route::get('/test_redis', function (Request $request) {
-    // echo "pre";
-    return RedisModel::addData('key',"awwwwit");
+    return RedisModel::updateQueueData(array(['id'=>'test2','file_name'=>'test']));
 });
 
 Route::get('/', function (Request $request) {
@@ -209,7 +209,9 @@ Route::get('/code_list',[Document_CodeController::class,'list'])
 
 
 
+//dispatch routes for job
 
+Route::get('dispatch_job',[JobsDispatcherController::class,'dispatchFiles']);
 
 
 
