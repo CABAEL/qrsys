@@ -55,15 +55,12 @@ class PDFcore extends Model
     }
     
 
-    public function convertPDFwithQR()
-    {
+    public static function addQrToPdf($source_file,$outputFilePath,$file_upload_qr){
+        
         $pdf = new Fpdi();
-        //$pdf->setSourceFile(public_path('test/SAMPLEPDF.pdf'));
-        $pdf->setSourceFile("D:\SAMPLEPDF.pdf");
-    
-        // Iterate through each page of the PDF
-        //$totalPages = $pdf->setSourceFile(public_path('test/SAMPLEPDF.pdf'));
-        $totalPages = $pdf->setSourceFile("D:\SAMPLEPDF.pdf");
+
+        $totalPages = $pdf->setSourceFile($source_file);
+        
         for ($pageNo = 1; $pageNo <= $totalPages; $pageNo++) {
             // Import the current page
             $templateId = $pdf->importPage($pageNo);
@@ -71,7 +68,9 @@ class PDFcore extends Model
             $pdf->useTemplate($templateId);
     
             // Set the watermark image
-            $watermarkImagePath = "https://cdn.britannica.com/17/155017-050-9AC96FC8/Example-QR-code.jpg";
+            //$file_upload_data = File_upload::where('id',9)->first();
+
+            $watermarkImagePath = 'data:image/png;base64,' . $file_upload_qr;
     
             $pageWidth = $pdf->getPageWidth() * (97 / 100);
             $pageHeight = $pdf->getPageHeight() * (97 / 100);
@@ -98,11 +97,17 @@ class PDFcore extends Model
             $newY = $pageHeight - $newHeight;
     
             // Display the adjusted watermark image
-            $pdf->Image($watermarkImagePath, $newX, $newY, $newWidth, $newHeight);
+            $pdf->Image($watermarkImagePath, $newX, $newY, $newWidth, $newHeight,'png');
+
         }
     
-        $pdf->Output(public_path('test/file_encodedsss.pdf'), 'F');
-    
+        $pdf->Output($outputFilePath, 'F');
+        
+        if($pdf){
+            return true;
+        }
+        return false;
+        
         // Optionally, you can return a response or redirect to the generated PDF file.
     }
 

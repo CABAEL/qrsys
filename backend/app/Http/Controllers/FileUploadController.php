@@ -128,6 +128,7 @@ class FileUploadController extends Controller
 
                     RedisModel::updateQueueData(array([
                         'id' => $file_upload['id'],
+                        'client_id' => $file_upload['client_id'],
                         'file_name' => $file_upload['file_name']
                     ]));
                     
@@ -210,7 +211,9 @@ class FileUploadController extends Controller
         }
 
         $files = File_upload::select('file_uploads.*','users.username')->join('users','file_uploads.uploaded_by','=','users.id')
-        ->where('file_uploads.client_id',$current_user_id)->get();
+        ->where('file_uploads.client_id',$current_user_id)
+        ->where('file_uploads.status',1)
+        ->get();
 
         if($files){
             return responseBuilder('Successfully fetch!',[],$files);

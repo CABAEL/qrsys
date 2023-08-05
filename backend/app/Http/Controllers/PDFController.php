@@ -49,6 +49,62 @@ class PDFController extends Controller
         }
     }
 
+    public function addQrDummy(){
+        
+        $source_file = "D:\projects\qrsys\backend\storage"."\\"."tmp\AWS_6_1691251921_test.pdf";
+        $outputFilePath = "uploads/system_files/clients_directory/a646bfa30bb128934e812f1ab43654b3/file_uploads/AWS_6_1691251921_test.pdf";
+        $pdf = new Fpdi();
+
+        $totalPages = $pdf->setSourceFile($source_file);
+        
+        for ($pageNo = 1; $pageNo <= $totalPages; $pageNo++) {
+            // Import the current page
+            $templateId = $pdf->importPage($pageNo);
+            $pdf->addPage();
+            $pdf->useTemplate($templateId);
+    
+            // Set the watermark image
+            $file_upload_data = File_upload::where('id',23)->first();
+
+            $watermarkImagePath = 'data:image/png;base64,' . $file_upload_data->blob_qr;
+    
+            $pageWidth = $pdf->getPageWidth() * (97 / 100);
+            $pageHeight = $pdf->getPageHeight() * (97 / 100);
+    
+            // Determine the available width and height of the PDF viewer's layout
+            $availableWidth = $pageWidth;
+            $availableHeight = $pageHeight;
+    
+            // Define the maximum width and height for the watermark image
+            $maxWidth = 15;
+            $maxHeight = 15;
+    
+            // Calculate the scale factor for resizing the watermark image
+            $scaleWidth = $availableWidth / $maxWidth;
+            $scaleHeight = $availableHeight / $maxHeight;
+            $scaleFactor = min($scaleWidth, $scaleHeight);
+    
+            // Calculate the new width and height for the watermark image
+            $newWidth = $maxWidth;
+            $newHeight = $maxHeight;
+    
+            // Calculate the new position for the watermark image
+            $newX = $pageWidth - $newWidth;
+            $newY = $pageHeight - $newHeight;
+    
+            // Display the adjusted watermark image
+            $pdf->Image($watermarkImagePath, $newX, $newY, $newWidth, $newHeight,'png');
+
+        }
+    
+        if($pdf->Output($outputFilePath, 'F')){
+            return true;
+        }
+        return false;
+    
+        // Optionally, you can return a response or redirect to the generated PDF file.
+    }    
+
     public function addQr($source_file,$outputFilePath){
         
         $pdf = new Fpdi();
@@ -62,7 +118,7 @@ class PDFController extends Controller
             $pdf->useTemplate($templateId);
     
             // Set the watermark image
-            $file_upload_data = File_upload::where('id',9)->first();
+            $file_upload_data = File_upload::where('id',28)->first();
 
             $watermarkImagePath = 'data:image/png;base64,' . $file_upload_data->blob_qr;
     

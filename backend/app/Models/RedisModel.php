@@ -11,7 +11,7 @@ class RedisModel extends Model
     use HasFactory;
 
 
-    public static function addData($value){
+    public static function setData($value){
 
         $key = 'file_queue';
 
@@ -52,6 +52,31 @@ class RedisModel extends Model
         
         Redis::set('file_queue', json_encode($updatedData));
         return json_encode($updatedData);
+    }
+
+    public static function fetchFormattedData(){
+
+        $existingData = Redis::get('file_queue');
+        $file_container = array();
+
+        if($existingData){
+
+            $data = json_decode($existingData,true);
+    
+            foreach($data as $file){
+                $file_container[$file['id']] = array(
+                    'id' => $file['id'],
+                    'client_id' => $file['client_id'],
+                    'file_name' => $file['file_name']
+                );
+            }
+    
+            return $file_container;
+
+        }
+
+        return [];
+
     }
 
 }

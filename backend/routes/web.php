@@ -35,7 +35,8 @@ use App\Http\Controllers\FileUploadController;
 Route::post('login/login_post',[LoginController::class,'authenticate'])->name('login_post');
 
 Route::get('/test_redis', function (Request $request) {
-    return RedisModel::updateQueueData(array(['id'=>'test2','file_name'=>'test']));
+    return storage_path('tmp');
+    //return RedisModel::updateQueueData(array(['id'=>'test2','file_name'=>'test']));
 });
 
 Route::get('/', function (Request $request) {
@@ -78,7 +79,7 @@ Route::get('/verify_password', function() {
     return view('file_password');
 });
 
-Route::get('/upload-pdf', [PDFController::class, 'showPdfQr'])->name('upload.pdf');
+Route::get('/upload-pdf', [PDFController::class, 'addQrDummy'])->name('upload.pdf');
 
 
 Route::middleware(['auth','role'])->group(function(){
