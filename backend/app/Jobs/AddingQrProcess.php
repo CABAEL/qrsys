@@ -53,7 +53,7 @@ class AddingQrProcess implements ShouldQueue
 
                     try{
                         $embedder = PDFcore::addQrToPdf($source_file,$outputFilePath,$file_upload_data->blob_qr);
-                        echo "embedder!".$embedder;
+                        //echo "embedder!".$embedder;
                         if($embedder){
                             
                             $update = File_upload::where('id',$file_data_value['id'])->update(['status' => 1]);

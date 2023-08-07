@@ -117,10 +117,6 @@ function SubmitUpload(e) {
     } else {
       // Proceed with AJAX request
       //show_loader();
-
-      $("#uploadForm :input").prop("disabled", true);
-      $("#uploadForm :button").prop("disabled", true);
-      $("#uploadForm #refreshBtn").prop("disabled", false);
       
       $.ajax({
         url: base_url('file_upload'),
@@ -135,7 +131,7 @@ function SubmitUpload(e) {
         xhr: function() {
           var xhr = new window.XMLHttpRequest();
           xhr.upload.addEventListener("progress", function(e) {
-            if (e.lengthComputable) {
+            if (e.lengthComputable){
               var progress = (e.loaded / e.total) * 100;
               var roundedProgress = Math.round(progress);
               $(".progress-bar").html(roundedProgress+'%');
@@ -146,12 +142,23 @@ function SubmitUpload(e) {
           return xhr;
         },
         success: function(response) {
-            alert('Your file is currently being processed. Once the processing is complete, you will find it listed.');
-            $('#uploadBtn').remove();
-            $('#refreshBtn').removeClass('hidden');
-            //hide_loader();
-            //window.location.replace('/login');
-          // Handle success response
+           
+          //console.log(response.errors);
+            if(response.responseJSON.message == "Success"){
+
+              $("#uploadForm :input").prop("disabled", true);
+              $("#uploadForm :button").prop("disabled", true);
+              $("#uploadForm #refreshBtn").prop("disabled", false);
+              $("#upload_errors").css("width",'0px');
+              $("#upload_errors").css("height",'0px');
+              $("#upload_errors").css("visibility",'hidden');
+
+              alert('Your file is currently being processed. Once the processing is complete, you will find it listed.');
+              $('#uploadBtn').remove();
+              $('#refreshBtn').removeClass('hidden');
+
+            }
+
         },
         error: function(e) {
           element = $('#upload_errors');

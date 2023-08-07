@@ -13,8 +13,9 @@ class File_upload extends Model
     protected $fillable = [
         'client_id',
         'file_group_id',
-        'document_code_id',
+        'document_code',
         'file_name',
+        'description',
         'password',
         'blob_qr',
         'uploaded_by',
