@@ -14,7 +14,7 @@
       var div = '';
     
    
-       $.each(ret.responseJSON.data, function( index, value ) {
+       $.each(ret.data, function( index, value ) {
 
        let date = getFormattedDate(value.created_at);
        let status = "";
@@ -80,7 +80,7 @@
     data:formData,
     success: function(response) {
    
-     let error_check = response.responseJSON.errors;
+     let error_check = response.errors;
      if(error_check == null || error_check.length == 0){
    
        alert('Administrator added successfully!');
@@ -180,20 +180,20 @@
         toggle_class = "activate";
        }
        
-        $('#update_clientuser_form .updatelogoContainer').css('background-image','url('+logo+')');
-        $('#update_clientuser_form').attr('data-id',data.id);
-        $('#update_clientuser_form #fname').val(data.fname);
-        $('#update_clientuser_form #mname').val(data.mname);
-        $('#update_clientuser_form #lname').val(data.lname);
-        $('#update_clientuser_form #address').val(data.address);
-        $('#update_clientuser_form #email').val(data.email);
-        $('#update_clientuser_form #username').val(data.username);
-        $('#update_clientuser_form #contact_number').val(data.contact_no);
-        $('#update_clientuser_form #description').val(data.description);
-        $('#update_clientuser_form #password').val("");
-        $('#update_clientuser_form #password_confirmation').val("");
+        $('#update_adminuser_form .updatelogoContainer').css('background-image','url('+logo+')');
+        $('#update_adminuser_form').attr('data-id',data.id);
+        $('#update_adminuser_form #fname').val(data.fname);
+        $('#update_adminuser_form #mname').val(data.mname);
+        $('#update_adminuser_form #lname').val(data.lname);
+        $('#update_adminuser_form #address').val(data.address);
+        $('#update_adminuser_form #email').val(data.email);
+        $('#update_adminuser_form #username').val(data.username);
+        $('#update_adminuser_form #contact_number').val(data.contact_no);
+        $('#update_adminuser_form #description').val(data.description);
+        $('#update_adminuser_form #password').val("");
+        $('#update_adminuser_form #password_confirmation').val("");
    
-        $('#update_clientuser_form #updatelogo').val("");
+        $('#update_adminuser_form #updatelogo').val("");
     
         $("#viewadminmodal #updateAccount").attr('data-id',id);
         
@@ -213,5 +213,64 @@
     });
     
     });
+
+
+    function updateAdminUserSubmit (){
+    event.preventDefault();
+
+     // Get form
+     var form = $('#update_adminuser_form')[0];
+     // FormData object 
+    //  var formData = form.serialize();
+     var client_id = $('#update_adminuser_form').data('id');
+
+    var formData = new FormData(form);
+
+
+    $.ajax({
+      url: base_url("update_adminuser_data/"+client_id),
+      type: 'post', 
+      dataType: 'json',
+      contentType: false,
+      processData: false,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+      },
+      data:formData,
+      success: function(data) {
+        let error_check = data.errors;
+        if(error_check == null || error_check.length == 0){
+      
+          alert('User updated successfully!');
+          hide_loader();
+          window.location.replace('/admin/adminaccounts');
+      
+        }else{
+
+          if(error_check.image[0]){
+
+            alert(error_check.image[0]);
+
+          }else{
+            promt_errors(form,element,response);
+          }
+
+          hide_loader();
+
+        }
+      },
+      error: function(e) {
+        //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+        var element = $('#update_adminuser_errors');
+        var form = '#viewadminmodal'; 
+        promt_errors(form,element,e);
+  
+        hide_loader();
+      }
+    });
+
+  }
+
+
 </script>
 <script src="{{ asset('js/custom/general.js') }}"></script>

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\File;
 class AdminUsersController extends Controller
 {
     /**
@@ -69,10 +71,10 @@ class AdminUsersController extends Controller
                 'filesize' => $_FILES['logo']['size']
             );
     
-            $add_logo = Upload::fileUpload($file_params);
+            $add_logo = Upload::fileUpload($file_params)->getData();
     
-            if(!empty($add_logo['responseJSON']['errors'])){
-                return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+            if(!empty($add_logo->errors)){
+                return responseBuilder("Error",$add_logo->message,$add_logo->errors,[]);
             }
         }
 
@@ -103,21 +105,21 @@ class AdminUsersController extends Controller
             ]);
 
             if(isset($request->logo)){
-                $select_client_user = Admin_user::where('user_id',$user_id)
-                ->update(['picture' => $add_logo['responseJSON']['data'][0]]);
+                $select_admin_user = Admin_user::where('user_id',$user_id)
+                ->update(['picture' => $add_logo->data[0]]);
             }
             
             $merge_data = [
                 'user' => $user_creds,
                 'user_profile' => $admin_profile,
-                'picture' => isset($add_logo['responseJSON']['data'][0])?$add_logo['responseJSON']['data'][0]:""
+                'picture' => isset($add_logo->data[0])?$add_logo->data[0]:""
             ];
 
-            return responseBuilder("User successfully added!",[],$merge_data);
+            return responseBuilder("Success","User successfully added!",[],$merge_data);
             
         }
 
-        return responseBuilder("Invalid request.",array('User' => "Unable to add."),$merge_data);
+        return responseBuilder("Error","Invalid request.",array('User' => "Unable to add."),$merge_data);
 
     }
 
@@ -150,9 +152,114 @@ class AdminUsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function updateAdminUser(Request $request, $id)
     {
-        //
+        // $current_client = Auth::user()->id;
+        // // $current_clientInfo = Admin_user::where('user_id',$current_client)->first();
+
+        $validated_user = $request->validate([
+            'address' => 'required',
+            'email' => 'required|email|max:60',
+            'description' => 'nullable',
+            'contact_number' => 'nullable|numeric|digits_between:7,13',
+            'fname' => [
+                'required',
+                'max:60',
+            ],
+            'mname' => [
+                'nullable',
+                'max:60',
+            ],
+            'lname' => [
+                'required',
+                'max:60',
+            ],
+            'username' => 
+            [
+                'required',
+                'max:60',
+                Rule::unique('users')->ignore($request['username'], 'username')
+            ]
+            ,
+            'password' => [
+                'nullable',
+                'max:60',
+                'confirmed',
+                Rule::unique('users')->ignore($request['password'], 'password')
+            ],
+        ]);
+
+        $merge_data = array();
+
+        $user_creds = User::find($id);
+
+        if($validated_user['username'] != "" ){
+            $user_creds->username = $validated_user['username'];
+        }
+
+        if($validated_user['password'] !=""){
+            $user_creds->password = Hash::make($validated_user['password']);
+        }
+
+        $user_creds->save();
+
+        if($user_creds){
+
+            $admin_user = Admin_user::where('user_id', $id)->first();
+
+            $admin_user->where('user_id',$id)->update([
+                'fname' => $validated_user['fname'],
+                'mname' => $validated_user['mname'],
+                'lname' => $validated_user['lname'],
+                'address' => $validated_user['address'],
+                'contact_no' => $validated_user['contact_number'],
+                'email' => $validated_user['email'],
+                'description' => $validated_user['description']
+            ]);
+
+            $admin_user_pic = '';
+
+            if(isset($request->updatelogo)){
+                if($request->updatelogo != ''){
+                    $logo_path = env('ADMIN_DIR_PATH')."admin_pictures/";
+    
+                    if (!file_exists($logo_path)) {
+                        mkdir($logo_path, 0777, true);
+                    }
+                    
+                    $file_params [] = array(
+                        'filename' => $_FILES['updatelogo']['name'],
+                        'location' => $logo_path,
+                        'tmp_name' => $_FILES['updatelogo']['tmp_name'],
+                        'filesize' => $_FILES['updatelogo']['size']
+                    );
+        
+                    $add_logo = Upload::fileUpload($file_params)->getData();
+    
+                    if(!empty($add_logo->errors)){
+                        return responseBuilder("Error",$add_logo->message,$add_logo->errors,[]);
+                    }
+
+                    if (File::exists($logo_path.$admin_user->picture)) {
+                        File::delete($logo_path.$admin_user->picture);
+                    }
+                
+                    $admin_user_pic = Admin_user::where('user_id', $id)->update(['picture' => $add_logo->data[0]]);
+                }
+            }
+
+
+            $merge_data = [
+                'user' => $user_creds,
+                'user_profile' => $admin_user,
+                'picture' => $admin_user->picture
+            ];
+
+            return responseBuilder("Success","User successfully added!",[],$merge_data);
+            
+        }
+
+        return responseBuilder("Error","Invalid request.",array('User' => "Unable to update."),$merge_data);
     }
 
     /**
@@ -178,7 +285,7 @@ class AdminUsersController extends Controller
         ->get();
         
         if($data){
-            return responseBuilder('Successfully fetch!',[],$data);
+            return responseBuilder('Success','Successfully fetch!',[],$data);
         }
 
         return false;

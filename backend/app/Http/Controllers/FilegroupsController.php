@@ -101,7 +101,7 @@ class FilegroupsController extends Controller
         $filegroups = File_group::where('client_id',$requestor->client_id)->get();
 
         if($filegroups){
-            return responseBuilder('Successfully fetch!',[],$filegroups);
+            return responseBuilder('Success','Successfully fetch!',[],$filegroups);
         }
         return false;
 

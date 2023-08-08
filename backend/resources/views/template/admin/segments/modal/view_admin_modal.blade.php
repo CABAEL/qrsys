@@ -2,15 +2,15 @@
    <div class="modal-dialog modal-lg">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title" id=""><b>Update User</b></h5>
+            <h5 class="modal-title" id=""><b>Update Admin</b></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
          </div>
-         <form id="update_clientuser_form" onSubmit="updateClientUserSubmit(this.id)" enctype="multipart/form-data">
+         <form id="update_adminuser_form" onSubmit="updateAdminUserSubmit(this.id)" enctype="multipart/form-data">
             <div class="modal-body">
          
             <center>
-               <div class="alert alert-danger" id="update_clientuser_errors"></div>
+               <div class="alert alert-danger" id="update_adminuser_errors"></div>
             </center>
             <div class="container-fluid">
             <center>
@@ -87,7 +87,7 @@
                         </div>
                         <div class="container">
                            <button class="btn btn-sm" id="generate_pass"><i class="fa fa-recycle"></i> Generate</button>
-                           <button class="btn btn-sm btn-default" id="copy" onclick="copy_text('#update_clientuser_form #password')"><i class="fa fa-copy"></i> Copy</button> 
+                           <button class="btn btn-sm btn-default" id="copy" onclick="copy_text('#update_adminuser_form #password')"><i class="fa fa-copy"></i> Copy</button> 
                            <button class="btn btn-sm btn-info" id="clear"><i class="fa fa-clear"></i> Clear</button>
                         </div>
                      </div>

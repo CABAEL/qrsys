@@ -253,10 +253,10 @@
     data:formData,
     success: function(response) {
    
-     let error_check = response.responseJSON.errors;
+     let error_check = response.errors;
      if(error_check == null || error_check.length == 0){
    
-       alert('User added successfully!');
+       alert(response.message);
        hide_loader();
        window.location.replace('/login');
    
@@ -393,8 +393,8 @@
      // alert("pasok");
      fetch(base_url('active_clients'))
        .then(response => response.json())
-       .then(data => {
-         let client_count = data.responseJSON.data.length;
+       .then(response_data => {
+         let client_count = response_data.data.length;
          $('#activeClients').html(client_count)
        })
        .catch(error => {
@@ -441,7 +441,7 @@
       },
       data:formData,
       success: function(data) {
-        let error_check = data.responseJSON.errors;
+        let error_check = data.errors;
         if(error_check == null || error_check.length == 0){
       
           alert('User updated successfully!');

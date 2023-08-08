@@ -45,7 +45,7 @@ class Upload extends Model
 
         }
 
-        return responseBuilder($success_count." file(s) successfully Uploaded!",$upload_error,$data);
+        return responseBuilder('Success',$success_count." file(s) successfully Uploaded!",$upload_error,$data);
 
     }
 
@@ -78,7 +78,7 @@ class Upload extends Model
         }
 
         if(!empty($errors)){
-            return responseBuilder("Invalid file size.",$errors,$raw_filename);
+            return responseBuilder("Error","Invalid file size.",$errors,$raw_filename);
         }
 
         return false;

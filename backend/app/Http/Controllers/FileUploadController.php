@@ -123,12 +123,12 @@ class FileUploadController extends Controller
                             'type' => $filetype
                         ];
                     }else{
-                        return responseBuilder("Error",['File upload error'],[]);
+                        return responseBuilder("Error",'File upload error',['File upload error'],[]);
                     }
 
                 }
 
-            return responseBuilder("Success",[],$fileContainer);
+            return responseBuilder("Success","Successfully uploaded!",[],$fileContainer);
 
 
         }else{
@@ -342,7 +342,7 @@ class FileUploadController extends Controller
         ->get();
 
         if($files){
-            return responseBuilder('Successfully fetch!',[],$files);
+            return responseBuilder('Success','Successfully fetch!',[],$files);
         }
         return false;
     }

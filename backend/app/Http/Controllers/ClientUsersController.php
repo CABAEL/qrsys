@@ -80,7 +80,7 @@ class ClientUsersController extends Controller
         ->get();
 
         if($client_users){
-            return responseBuilder("Successfully loaded.",[],$client_users);
+            return responseBuilder("Success","Successfully loaded.",[],$client_users);
         }
 
         return false;

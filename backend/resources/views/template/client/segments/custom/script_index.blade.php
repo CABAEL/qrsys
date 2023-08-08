@@ -7,7 +7,7 @@
      fetch(base_url('active_client_users'))
        .then(response => response.json())
        .then(data => {
-         let client_count = data.responseJSON.data.length;
+         let client_count = data.data.length;
          $('#activeClients').html(client_count)
        })
        .catch(error => {
@@ -25,10 +25,11 @@
     },
     success: function(ret) {
       console.log(ret);
+      //let ret = JSON.parse(data_ret);
       var div = '';
     
       var count = 0;
-       $.each(ret.responseJSON.data, function( index, value ) {
+       $.each(ret.data, function( index, value ) {
        let date = getFormattedDate(value.created_at);
    
        div +='<tr>'; 
@@ -68,13 +69,13 @@
         }
         return response.json();
       })
-      .then(data => {
+      .then(response => {
 
       // Handle the response data here
       const selectElement = $(form + ' #filegroups')[0] // Replace with the ID of your <select> element
       let div = '';
       div += '<option value="">-----------------</option>';
-      data.responseJSON.data.forEach(filegroup => {
+      response.data.forEach(filegroup => {
         div += '<option value="'+filegroup.id+'">'+filegroup.group_name+'</option>';
       });
 

@@ -1,74 +1,74 @@
 // const fileInput = $("#fileInput");  
-const dropZone = document.getElementById('dropArea');
-const fileInput1 = document.getElementById('fileInput1');
-const fileInput2 = document.getElementById('fileInput2');
+// const dropZone = document.getElementById('dropArea');
+// const fileInput1 = document.getElementById('fileInput1');
+// const fileInput2 = document.getElementById('fileInput2');
 
 
 
-// Prevent default drag behaviors
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  dropZone.addEventListener(eventName, preventDefaults, false);
-  document.body.addEventListener(eventName, preventDefaults, false);
-});
+// // Prevent default drag behaviors
+// ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+//   dropZone.addEventListener(eventName, preventDefaults, false);
+//   document.body.addEventListener(eventName, preventDefaults, false);
+// });
 
-// Handle dropped files
-dropZone.addEventListener('drop', handleDrop, false);
-dropZone.addEventListener('change', handleDrop, false);
+// // Handle dropped files
+// dropZone.addEventListener('drop', handleDrop, false);
+// dropZone.addEventListener('change', handleDrop, false);
 
-function preventDefaults(e) {
-  e.preventDefault();
-  e.stopPropagation();
-}
+// function preventDefaults(e) {
+//   e.preventDefault();
+//   e.stopPropagation();
+// }
 
-function handleDrop(e) {
-  let files = e.dataTransfer.files;
-  // Append dropped files to existing input value
+// function handleDrop(e) {
+//   let files = e.dataTransfer.files;
+//   // Append dropped files to existing input value
 
-  let existingFiles = fileInput2.files;
-  let allFiles = new DataTransfer();
+//   let existingFiles = fileInput2.files;
+//   let allFiles = new DataTransfer();
 
-  for (const existingFile of existingFiles) {
-    allFiles.items.add(existingFile);
-  }
+//   for (const existingFile of existingFiles) {
+//     allFiles.items.add(existingFile);
+//   }
 
-  for (const file of files) {
-      allFiles.items.add(file);
-  }
+//   for (const file of files) {
+//       allFiles.items.add(file);
+//   }
 
-  fileInput2.files = allFiles.files;
+//   fileInput2.files = allFiles.files;
 
-  handleListFiles();
+//   handleListFiles();
 
-}
-
-
-$(dropZone).on('click', function(event) {
-    event.preventDefault();
-    fileInput1.click();
-});
+// }
 
 
-let arr_holder = [];
-// Change event on the fileInput element
-$(fileInput1).on('change', (e) => {
-  event.preventDefault();
+// $(dropZone).on('click', function(event) {
+//     event.preventDefault();
+//     fileInput1.click();
+// });
 
-  let existingFiles = fileInput1.files;
-  let input1allFiles = new DataTransfer();
+
+// let arr_holder = [];
+// // Change event on the fileInput element
+// $(fileInput1).on('change', (e) => {
+//   event.preventDefault();
+
+//   let existingFiles = fileInput1.files;
+//   let input1allFiles = new DataTransfer();
   
-  for(let input1_count = 0; input1_count < existingFiles.length; input1_count++){
-    arr_holder.push(existingFiles[input1_count])
-  }
+//   for(let input1_count = 0; input1_count < existingFiles.length; input1_count++){
+//     arr_holder.push(existingFiles[input1_count])
+//   }
 
-  for(let arr_holder_count = 0; arr_holder_count < arr_holder.length; arr_holder_count++){
-    input1allFiles.items.add(arr_holder[arr_holder_count]);
-  }
+//   for(let arr_holder_count = 0; arr_holder_count < arr_holder.length; arr_holder_count++){
+//     input1allFiles.items.add(arr_holder[arr_holder_count]);
+//   }
 
-  fileInput1.files = input1allFiles.files;
+//   fileInput1.files = input1allFiles.files;
 
-  handleListFiles();
+//   handleListFiles();
 
-});
+// });
 
 function SubmitUpload(e) {
     event.preventDefault();
@@ -141,10 +141,11 @@ function SubmitUpload(e) {
           });
           return xhr;
         },
-        success: function(response) {
+        success: function(data_response) {
+          let response = JSON.parse(data_response);
            
           //console.log(response.errors);
-            if(response.responseJSON.message == "Success"){
+            if(response.status == "Success"){
 
               $("#uploadForm :input").prop("disabled", true);
               $("#uploadForm :button").prop("disabled", true);

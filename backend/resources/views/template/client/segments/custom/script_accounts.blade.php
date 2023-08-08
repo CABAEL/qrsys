@@ -326,7 +326,7 @@
    });
    
    
-   updateClientUserSubmit = () => {
+   updateClientUserSubmit = (event) => {
     event.preventDefault();
 
      // Get form

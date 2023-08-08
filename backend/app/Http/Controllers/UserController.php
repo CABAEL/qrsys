@@ -319,7 +319,7 @@ class UserController extends Controller
         if($user_creds){
 
             $client = Client::where('user_id', $id)->first();
-            
+
             $client->update([
                 'client_name' => $validated_user['client_name'],
                 'address' => $validated_user['address'],
@@ -346,20 +346,19 @@ class UserController extends Controller
                         'filesize' => $_FILES['updatelogo']['size']
                     );
         
-                    $add_logo = Upload::fileUpload($file_params);
+                    $add_logo = Upload::fileUpload($file_params)->getData();
     
-                    if(!empty($add_logo['responseJSON']['errors'])){
-                        return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+                    if(!empty($add_logo->errors)){
+                        return responseBuilder("Error",$add_logo->message,$add_logo->errors,[]);
                     }
 
-                    // Storage::delete(url_host($logo_path.$client->logo));
-                    // // Storage::disk('public')->delete($logo_path.$client->logo);
                     if (File::exists($logo_path.$client->logo)) {
                         File::delete($logo_path.$client->logo);
                     }
 
-                    $client->update(['logo' => $add_logo['responseJSON']['data'][0]]);
-                    $logo_file = $add_logo['responseJSON']['data'][0];
+                    $client->where('user_id',$id)->update(['logo' => $add_logo->data[0]]);
+
+                    $logo_file = $add_logo->data[0];
                 }
             }
 
@@ -370,11 +369,11 @@ class UserController extends Controller
                 'logo' => $logo_file
             ];
 
-            return responseBuilder("User successfully added!",[],$merge_data);
+            return responseBuilder("Success","User successfully added!",[],$merge_data);
             
         }
 
-        return responseBuilder("Invalid request.",array('User' => "Unable to update."),$merge_data);
+        return responseBuilder("Error","Invalid request.",array('User' => "Unable to update."),$merge_data);
 
 
     }

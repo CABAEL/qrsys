@@ -127,6 +127,8 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/totaluploads',[FileUploadController::class,'totalCount']);
 
         Route::post('add_admin',[AdminUsersController::class,'store']);
+
+        Route::post('/update_adminuser_data/{id}',[AdminUsersController::class,'updateAdminUser']);
     
     });
 
