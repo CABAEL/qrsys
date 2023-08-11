@@ -48,36 +48,41 @@ class AddingQrProcess implements ShouldQueue
     
                     $source_file = storage_path('tmp').'\\'.$file_data_value['file_name'];
                     $get_client = Client::where('client_id',$file_data_value['client_id'])->first();
-                    $outputFilePath = public_path(env('CLIENT_DIR_PATH').MD5($get_client->client_name).'/file_uploads/'.$file_data_value['file_name']);
-                    $file_upload_data = File_upload::where('id',$file_data_value['id'])->first();
 
-                    try{
-                        $embedder = PDFcore::addQrToPdf($source_file,$outputFilePath,$file_upload_data->blob_qr);
-                        //echo "embedder!".$embedder;
-                        if($embedder){
-                            
-                            $update = File_upload::where('id',$file_data_value['id'])->update(['status' => 1]);
-                            
-                            if($update){
-        
-                                //get array redis data
-                                $re_fetch_redis_data = RedisModel::fetchFormattedData();
-                                unset($re_fetch_redis_data[$file_data_value['id']]);
-        
-                                //set Redis
-                                if(RedisModel::setData(json_encode($re_fetch_redis_data))){
-                                    if (File::exists($source_file)) {
-                                        File::delete($source_file);
+                    if($get_client){
+                        $outputFilePath = public_path(env('CLIENT_DIR_PATH').MD5($get_client->client_name).'/file_uploads/'.$file_data_value['file_name']);
+                        $file_upload_data = File_upload::where('id',$file_data_value['id'])->first();
+
+
+                        try{
+                            $embedder = PDFcore::addQrToPdf($source_file,$outputFilePath,$file_upload_data->blob_qr);
+                            //echo "embedder!".$embedder;
+                            if($embedder){
+                                
+                                $update = File_upload::where('id',$file_data_value['id'])->update(['status' => 1]);
+                                
+                                if($update){
+            
+                                    //get array redis data
+                                    $re_fetch_redis_data = RedisModel::fetchFormattedData();
+                                    unset($re_fetch_redis_data[$file_data_value['id']]);
+            
+                                    //set Redis
+                                    if(RedisModel::setData(json_encode($re_fetch_redis_data))){
+                                        if (File::exists($source_file)) {
+                                            File::delete($source_file);
+                                        }
                                     }
+    
                                 }
-
+                                //do some logging
+                            }else{
+                                //do some logging
                             }
-                            //do some logging
-                        }else{
-                            //do some logging
+                        }catch(\Exception $e){
+                            echo $e;
                         }
-                    }catch(\Exception $e){
-                        echo $e;
+                        // do some logging
                     }
 
                 }

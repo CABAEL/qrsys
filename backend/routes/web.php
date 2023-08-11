@@ -210,6 +210,17 @@ Route::get('/code_list',[Document_CodeController::class,'list'])
 ->name('code_list');
 
 
+Route::get('/file_list',function(){
+
+    $file_list_controller = new FileUploadController();
+    return $file_list = $file_list_controller->clientfileList();
+
+    return view('template.iframe_views.file_list');
+})
+->middleware('auth')
+->name('file_list');
+
+
 
 
 //dispatch routes for job

@@ -260,7 +260,7 @@
         }
       },
       error: function(e) {
-        //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+        //alert(emessage +"<br>"+eerrors);
         var element = $('#update_adminuser_errors');
         var form = '#viewadminmodal'; 
         promt_errors(form,element,e);
@@ -270,6 +270,117 @@
     });
 
   }
+
+  $(document).on("click",".deactivate",function(e) {
+  e.preventDefault();
+    var data_id = $(this).data('id');
+
+    var form = '#viewadminmodal';
+    var element = $('#update_adminuser_form .alert');
+    var message = "Are you sure that you want to deactivate this admin?";
+
+    promt_warning_deactivate(form,element,message,data_id);
+    console.log(data_id);
+
+  });
+
+  $(document).on("click",".deactivate_yes",function(e) {
+    event.preventDefault();
+    var id = $(this).data('id');
+    show_loader();
+    $.ajax({
+        url: base_url("confirm_deactivate/"+id),
+        type: 'PUT', 
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function(data) {
+          console.log(data);
+          alert('User deactivated!');
+          //promt_success(element,data)
+          hide_loader();
+          window.location.replace('/admin/adminaccounts');
+        },
+        error: function(e){
+          //alert(emessage +"<br>"+eerrors);
+          var element = $('#update_adminuser_errors');
+          var form = '#viewadminmodal'; 
+          promt_errors(form,element,e);
+          hide_loader();
+        }
+    });
+  });
+
+  $(document).on("click",".activate",function(e){
+    event.preventDefault();
+
+    show_loader();
+    var data_id = $(this).data('id');
+
+    $.ajax({
+        url: base_url('activate_user/'+data_id),
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function(ret) {
+            console.log(ret);
+            alert('Activated successfully!');
+            //promt_success(element,data)
+            hide_loader();
+            window.location.replace('/admin/adminaccounts');
+        },
+        error: function(e){
+    
+        }
+    });
+})
+
+
+
+$(document).on("click","#viewadminmodal .delete",function(e) {
+
+    event.preventDefault();
+    var data_id = $(this).data('id');
+    var form = '#viewadminmodal';
+    var element = $('#viewadminmodal #update_adminuser_errors');
+    var message = "Are you sure that you want to delete this admin?";
+   
+   promt_warning_delete(form,element,message,data_id);
+   
+   });
+   
+   
+$(document).on("click","#viewadminmodal .delete_yes",function(e){
+event.preventDefault();
+  var id = $(this).data('id');
+  show_loader();
+  $.ajax({
+      url: base_url("confirm_delete/"+id),
+      type: 'DELETE', 
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+      },
+      success: function(data) {
+        console.log(data);
+        alert('Admin deleted!');
+        //promt_success(element,data)
+        hide_loader();
+        window.location.replace('/admin/adminaccounts');
+      },
+      error: function(e){
+        console.log(e);
+        //alert(emessage +"<br>"+eerrors);
+        // var element = $('#add_user_errors');
+        // var form = '#addusermodal'; 
+        // promt_errors(form,element,e);
+        // hide_loader();
+      }
+  });
+});
 
 
 </script>

@@ -25,7 +25,7 @@ class FilegroupsController extends Controller
 
 
         if($file_groups){
-            return responseBuilder('Successfully fetch!',[],$file_groups);
+            return responseBuilder('Success','Successfully fetch!',[],$file_groups);
         }
 
         return false;
@@ -68,7 +68,7 @@ class FilegroupsController extends Controller
         ]);
 
         if($user_creds){
-            return responseBuilder('Successfully added!',[],$user_creds);
+            return responseBuilder('Success','Successfully added!',[],$user_creds);
         }
 
         
@@ -85,7 +85,7 @@ class FilegroupsController extends Controller
     {
         $filegroup = File_group::where('id',$id)->first();
         if($filegroup){
-            return responseBuilder('Successfully added!',[],$filegroup);
+            return responseBuilder('Success','Successfully added!',[],$filegroup);
         }
         return false;
     }
@@ -144,14 +144,14 @@ class FilegroupsController extends Controller
         ->first();
 
         $update_filegroup = File_group::where('id',$id)->update([
-            'client_id' => $user_id,
+            'client_id' => $requestor->client_id,
             'group_name' => $validated_filegroups['group_name'],
             'description' => $validated_filegroups['description'],
-            'created_by' => $requestor->client_id,
+            'created_by' => $user_id,
         ]);
 
         if($update_filegroup){
-            return responseBuilder('Successfully updated!',[],$update_filegroup);
+            return responseBuilder('Success','Successfully updated!',[],$update_filegroup);
         }
         return false;
 

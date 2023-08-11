@@ -379,7 +379,7 @@
          },
          error: function(e){
            console.log(e);
-           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+           //alert(emessage +"<br>"+eerrors);
            // var element = $('#add_user_errors');
            // var form = '#addusermodal'; 
            // promt_errors(form,element,e);
@@ -463,7 +463,7 @@
         }
       },
       error: function(e) {
-        //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+        //alert(emessage +"<br>"+eerrors);
         var element = $('#update_client_errors');
         var form = '#viewclientmodal'; 
         promt_errors(form,element,e);
@@ -506,7 +506,7 @@
           window.location.replace('/login');
         },
         error: function(e){
-          //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+          //alert(emessage +"<br>"+eerrors);
           var element = $('#update_client_errors');
           var form = '#viewclientmodal'; 
           promt_errors(form,element,e);

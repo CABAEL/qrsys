@@ -75,7 +75,7 @@ class ClientUsersController extends Controller
         $client_users = User::select('client_users.*', 'users.id','users.username','users.status')
         ->join('client_users', 'client_users.user_id', '=', 'users.id')
         ->where('users.role','user')
-        ->where('users.status',1)
+        //->where('users.status',1)
         ->where('client_users.client_id',$client->client_id)
         ->get();
 
@@ -144,7 +144,8 @@ class ClientUsersController extends Controller
 
             $client_user = Client_user::where('user_id', $id)->first();
 
-            $client_user->update([
+            $client_user->where('user_id', $id)
+            ->update([
                 'fname' => $validated_user['fname'],
                 'mname' => $validated_user['mname'],
                 'lname' => $validated_user['lname'],
@@ -195,11 +196,11 @@ class ClientUsersController extends Controller
                 'picture' => $client_user->picture
             ];
 
-            return responseBuilder("User successfully added!",[],$merge_data);
+            return responseBuilder("Success","User successfully added!",[],$merge_data);
             
         }
 
-        return responseBuilder("Invalid request.",array('User' => "Unable to update."),$merge_data);
+        return responseBuilder("Error","Invalid request.",array('User' => "Unable to update."),$merge_data);
     }
 
 

@@ -141,8 +141,7 @@ function SubmitUpload(e) {
           });
           return xhr;
         },
-        success: function(data_response) {
-          let response = JSON.parse(data_response);
+        success: function(response) {
            
           //console.log(response.errors);
             if(response.status == "Success"){

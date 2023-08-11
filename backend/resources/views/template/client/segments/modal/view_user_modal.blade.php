@@ -6,7 +6,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
          </div>
-         <form id="update_clientuser_form" onSubmit="updateClientUserSubmit(this.id)" enctype="multipart/form-data">
+         <form id="update_clientuser_form" onSubmit="updateClientUserSubmit()" enctype="multipart/form-data">
             <div class="modal-body">
          
             <center>

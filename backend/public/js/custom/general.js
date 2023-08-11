@@ -33,8 +33,8 @@ function signOut() {
 function promt_errors(form='',element,e){
   
     div = '';
-    div += '<h6><b>'+e.responseJSON.message+'</b></h6>';
-    $.each(e.responseJSON.errors,function(k,v) {
+    div += '<h6><b>'+e.message+'</b></h6>';
+    $.each(e.errors,function(k,v) {
     $(form+' #'+k).css('border','solid 1px red');
       div += '<i>* </i>'+v+'<br>';
     });
@@ -55,8 +55,8 @@ function promt_errors(form='',element,e){
 function display_errors(form='',element,e){
   
     div = '';
-    div += '<h6><b>'+e.responseJSON.message+'</b></h6>';
-    $.each(e.responseJSON.errors,function(k,v) {
+    div += '<h6><b>'+e.message+'</b></h6>';
+    $.each(e.errors,function(k,v) {
       div += '<i>* </i>'+v+'<br>';
     });
   
@@ -76,7 +76,7 @@ function display_errors(form='',element,e){
 
 parseError = (response,form,element) => {
 
-    if(response.responseJSON.errors.length > 0){ 
+    if(response.errors.length > 0){ 
 
         promt_errors(form,element,response);
 
@@ -203,4 +203,16 @@ function getFormattedDate(date) {
   
     return bytes;
   }
+
+
+  // Function to clear password input fields on page load
+  // function clearPasswordInputs() {
+  //   const passwordInputs = document.querySelectorAll('input[type="password"]');
+  //   passwordInputs.forEach(input => {
+  //       input.value = null;
+  //   });
+  // }
+
+  // // Call the function when the page loads
+  // window.addEventListener('DOMContentLoaded', clearPasswordInputs);
 

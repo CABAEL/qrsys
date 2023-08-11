@@ -53,11 +53,11 @@
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
     },
     success: function(ret) {
-      console.log(ret.responseJSON);
+
       var div = '';
     
    
-       $.each(ret.responseJSON.data, function( index, value ) {
+       $.each(ret.data, function( index, value ) {
        let date = getFormattedDate(value.created_at);
        let status = "";
        let color = "red";
@@ -190,8 +190,8 @@
     },
     data:formData,
     success: function(response) {
-   
-     let error_check = response.responseJSON.errors;
+      
+     let error_check = response.errors;
      if(error_check == null || error_check.length == 0){
    
        alert('User added successfully!');
@@ -316,7 +316,7 @@
          },
          error: function(e){
            console.log(e);
-           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+           //alert(emessage +"<br>"+eerrors);
            // var element = $('#add_user_errors');
            // var form = '#addusermodal'; 
            // promt_errors(form,element,e);
@@ -326,7 +326,7 @@
    });
    
    
-   updateClientUserSubmit = (event) => {
+   function updateClientUserSubmit (){
     event.preventDefault();
 
      // Get form
@@ -348,7 +348,8 @@
       },
       data:formData,
       success: function(data) {
-        let error_check = data.responseJSON.errors;
+
+        let error_check = data.errors;
         if(error_check == null || error_check.length == 0){
       
           alert('User updated successfully!');
@@ -370,7 +371,7 @@
         }
       },
       error: function(e) {
-        //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+        //alert(emessage +"<br>"+eerrors);
         var element = $('#update_clientuser_errors');
         var form = '#viewusermodal'; 
         promt_errors(form,element,e);
@@ -413,7 +414,7 @@
           window.location.replace('/client/accounts');
         },
         error: function(e){
-          //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+          //alert(emessage +"<br>"+eerrors);
           var element = $('#update_clientuser_errors');
           var form = '#viewusermodal'; 
           promt_errors(form,element,e);
@@ -472,7 +473,7 @@ function fetchAllFilegroups(form,value = null) {
       const selectElement = $(form + ' #filegroups')[0] // Replace with the ID of your <select> element
       let div = '';
       div += '<option value="">-----------------</option>';
-      data.responseJSON.data.forEach(filegroup => {
+      data.data.forEach(filegroup => {
         div += '<option value="'+filegroup.id+'">'+filegroup.group_name+'</option>';
       });
     console.log(div);

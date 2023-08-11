@@ -8,11 +8,11 @@
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
     },
     success: function(ret) {
-      console.log(ret.responseJSON);
+      console.log(ret);
       var div = '';
     
    
-       $.each(ret.responseJSON.data, function( index, value ) {
+       $.each(ret.data, function( index, value ) {
        let date = getFormattedDate(value.created_at);
        let status = "";
        let color = "red";
@@ -62,8 +62,6 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
       },
       success: function(data){
-
-        let response = data.responseJSON;
         console.log(data);
         $('.alert').css('height','0px');
         $('.alert').css('overflow','hidden');
@@ -76,11 +74,11 @@
         toggle_class = "activate";
        }
 
-        $('#update_filegroup_form').attr('data-id',response.data.id);
-        $('#update_filegroup_form #group_name').val(response.data.group_name);
-        $('#update_filegroup_form #description').val(response.data.description);
+        $('#update_filegroup_form').attr('data-id',data.data.id);
+        $('#update_filegroup_form #group_name').val(data.data.group_name);
+        $('#update_filegroup_form #description').val(data.data.description);
     
-        $("#viewfilegroup .delete").attr('data-id',response.data.id);
+        $("#viewfilegroup .delete").attr('data-id',data.data.id);
    
         hide_loader();
         $('#viewfilegroup').modal('toggle');
@@ -119,7 +117,7 @@
     data:formData,
     success: function(response) {
       
-      alert(response.responseJSON.message);
+      alert(response.message);
        hide_loader();
        window.location.replace('/client/filegroups');
    
@@ -155,8 +153,9 @@
     },
     data:formData,
     success: function(response) {
-      
-      alert(response.responseJSON.message);
+
+      console.log(response);
+      alert(response.message);
        hide_loader();
        window.location.replace('/client/filegroups');
    
@@ -191,7 +190,7 @@
          },
          error: function(e){
            console.log(e);
-           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+           //alert(emessage +"<br>"+eerrors);
            // var element = $('#add_user_errors');
            // var form = '#addusermodal'; 
            // promt_errors(form,element,e);
@@ -295,7 +294,7 @@
           window.location.replace('/login');
         },
         error: function(e){
-          //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+          //alert(emessage +"<br>"+eerrors);
           var element = $('#update_clientuser_errors');
           var form = '#viewusermodal'; 
           promt_errors(form,element,e);

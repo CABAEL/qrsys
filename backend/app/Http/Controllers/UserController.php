@@ -179,10 +179,10 @@ class UserController extends Controller
                 'filesize' => $_FILES['logo']['size']
             );
     
-            $add_logo = Upload::fileUpload($file_params);
+            $add_logo = Upload::fileUpload($file_params)->getData();
     
-            if(!empty($add_logo['responseJSON']['errors'])){
-                return responseBuilder($add_logo['responseJSON']['message'],$add_logo['responseJSON']['errors'],[]);
+            if(!empty($add_logo->errors)){
+                return responseBuilder('Error',$add_logo->message,$add_logo->errors,[]);
             }
         }
 
@@ -215,20 +215,20 @@ class UserController extends Controller
 
             if(isset($request->logo)){
                 $select_client_user = Client_user::where('user_id',$user_id)
-                ->update(['picture' => $add_logo['responseJSON']['data'][0]]);
+                ->update(['picture' => $add_logo->data[0]]);
             }
             
             $merge_data = [
                 'user' => $user_creds,
                 'user_profile' => $client_profile,
-                'picture' => isset($add_logo['responseJSON']['data'][0])?$add_logo['responseJSON']['data'][0]:""
+                'picture' => isset($add_logo->data[0])?$add_logo->data[0]:""
             ];
 
-            return responseBuilder("User successfully added!",[],$merge_data);
+            return responseBuilder('Success',"User successfully added!",[],$merge_data);
             
         }
 
-        return responseBuilder("Invalid request.",array('User' => "Unable to add."),$merge_data);
+        return responseBuilder('Error',"Invalid request.",array('User' => "Unable to add."),$merge_data);
 
     }
 

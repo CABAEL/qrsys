@@ -198,7 +198,7 @@ class FileUploadController extends Controller
             ->first();
             $errors = array();
             if(!$validate_keys){
-                return responseBuilder("request error.",['Access error'],[]);
+                return responseBuilder("Error","request error.",['api_access' => 'Access error'],[]);
             }else{
 
                 $current_user_id = $validate_keys['user_id'];
@@ -304,7 +304,7 @@ class FileUploadController extends Controller
                 }
 
 
-            return responseBuilder("Success",[],$fileContainer);
+            return responseBuilder('success',"Your file is currently being processed. Once the processing is complete, you will find it listed.",[],$fileContainer);
 
 
         }else{
