@@ -18,6 +18,13 @@ $user_dir = $exploded_url[4];
               <span class="nav-link-text">
               Admin Accounts</span>
             </a>
+          </li>
+          <li class="nav-item <?php echo ($user_dir == "reports")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Admin Accounts">
+            <a class="nav-link" href="/admin/reports" data-parent="#exampleAccordion">
+              <i class="fa fa-line-chart"></i>
+              <span class="nav-link-text">
+              Reports</span>
+            </a>
           </li>  
           <li class="nav-item <?php echo ($user_dir == "logs")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Logs">
             <a class="nav-link" href="/admin/logs" data-parent="#exampleAccordion">

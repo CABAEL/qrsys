@@ -30,7 +30,9 @@ function signOut() {
 }
 
 
-function promt_errors(form='',element,e){
+function promt_errors(form='',element,err){
+
+  let e = JSON.parse(err.responseText);
   
     div = '';
     div += '<h6><b>'+e.message+'</b></h6>';

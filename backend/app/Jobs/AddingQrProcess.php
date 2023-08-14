@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Client;
 use App\Models\File_upload;
 use App\Models\PDFcore;
+use App\Models\Base;
 use App\Models\RedisModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -59,22 +60,7 @@ class AddingQrProcess implements ShouldQueue
                             //echo "embedder!".$embedder;
                             if($embedder){
                                 
-                                $update = File_upload::where('id',$file_data_value['id'])->update(['status' => 1]);
-                                
-                                if($update){
-            
-                                    //get array redis data
-                                    $re_fetch_redis_data = RedisModel::fetchFormattedData();
-                                    unset($re_fetch_redis_data[$file_data_value['id']]);
-            
-                                    //set Redis
-                                    if(RedisModel::setData(json_encode($re_fetch_redis_data))){
-                                        if (File::exists($source_file)) {
-                                            File::delete($source_file);
-                                        }
-                                    }
-    
-                                }
+                                $this->updateExecute($file_data_value,$source_file);
                                 //do some logging
                             }else{
                                 //do some logging
@@ -93,6 +79,42 @@ class AddingQrProcess implements ShouldQueue
         }
 
     }
+
+    public function updateExecute($file_data_value,$source_file)
+    {
+        $update = File_upload::where('id',$file_data_value['id'])->update(['status' => 1]);
+                                    
+        if($update){
+
+            //get array redis data
+            $re_fetch_redis_data = RedisModel::fetchFormattedData();
+            unset($re_fetch_redis_data[$file_data_value['id']]);
+
+            //set Redis
+            if(RedisModel::setData(json_encode($re_fetch_redis_data))){
+                if (File::exists($source_file)) {
+                    File::delete($source_file);
+                }
+            }
+
+        }else{
+            $err = ['Update error' => $update];
+            Base::writeToLogFile($err);
+        }
+    }
+
+    public function checkPdfVersion($filePath)
+    {
+
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            throw new \Exception("File does not exist or cannot be read.");
+        }
+
+        $pdfContent = file_get_contents($filePath);
+        $hasVersionIndicator = strpos($pdfContent, '1.4') !== false;
+
+        return !$hasVersionIndicator;
+    }  
 
     public function failed(\Throwable $exception)
     {

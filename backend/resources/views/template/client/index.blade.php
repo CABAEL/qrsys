@@ -11,6 +11,14 @@
          background-color:#ddd;
          cursor:pointer;
       }
+      #dynamic-iframe {
+    width: 100%;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-height: 700px; /* Set your desired minimum height here */
+}
    </style>
 
    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -156,31 +164,38 @@
                </li>
             </ol>
             <hr/>
-            <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="files-table" style="width:100%">
-               <thead>
-                  <tr>
-                     <th>UPLOAD NAME</th>
-                     <th>UPLOADED BY</th>
-                     <th>DOCUMENT CODE</th>
-                     <th>DATE UPLOADED</th>
-                     <th>---</th>
-                  </tr>
-               </thead>
-               <tbody id="FileListBody">
-                  <tr>
-                     <td colspan="5">
-                        <center>Loading...</center>
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
+            <iframe id="dynamic-iframe" src="{{ url('file_list') }}" frameborder="0"></iframe>
          </div>
          <!-- /.container-fluid -->
       </div>
       <!-- /.content-wrapper -->
       @include('template.footer')
       @include('template.client.segments.custom.script_index')
-      @include('template.client.segments.modal.view_file_modal')
+      
+      <script>
+function adjustIframeHeight() {
+    const iframe = document.getElementById('dynamic-iframe');
+    if (iframe) {
+        const newHeight = Math.max(iframe.contentWindow.document.body.scrollHeight, 500);
+        iframe.style.height = newHeight + 'px';
+    }
+}
+
+// Send a message to the iframe to request its content height
+function requestIframeHeight() {
+    const iframe = document.getElementById('dynamic-iframe');
+    if (iframe) {
+        iframe.contentWindow.postMessage('requestHeight', '*');
+    }
+}
+
+// Listen for messages from the iframe
+window.addEventListener('message', function(event) {
+    if (event.data === 'sendHeight') {
+        adjustIframeHeight();
+    }
+});
+      </script>      
       <script>
          const FILE_ALLOWED_COUNT = "{{ env('ALLOWED_FILE_COUNT') }}";
       </script>

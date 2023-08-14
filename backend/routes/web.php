@@ -212,10 +212,38 @@ Route::get('/code_list',[Document_CodeController::class,'list'])
 
 Route::get('/file_list',function(){
 
-    $file_list_controller = new FileUploadController();
-    return $file_list = $file_list_controller->clientfileList();
+    $current_user_auth = Auth::user();
+    $conditions = array(
+        ["file_uploads.status", '=', 1]
+    );
+    
+    $search = \Request::get('search');
 
-    return view('template.iframe_views.file_list');
+    if(isset($search)){
+        $conditions[] = ["file_uploads.file_name", 'LIKE', '%' . $search . '%'];
+    }
+
+    if ($current_user_auth->role == 'client') {
+        $current_user = $current_user_auth->client_data;
+        $current_user_id = $current_user['client_id'];
+        $conditions[] = ["file_uploads.client_id", '=', $current_user_id];
+    } else if ($current_user_auth->role == 'user') {
+        $current_user = $current_user_auth->client_users_data;
+        $current_user_id = $current_user['client_id'];
+        $conditions[] = ["file_uploads.client_id", '=', $current_user_id];
+    }
+    
+    $files = File_upload::select('file_uploads.*', 'users.username');
+    $files->join('users', 'file_uploads.uploaded_by', '=', 'users.id');
+
+    foreach ($conditions as $condition) {
+        $files->where(...$condition);
+    }
+    
+    $files = $files->paginate(20);
+    
+
+    return view('template.iframe_views.file_list',compact('files'));
 })
 ->middleware('auth')
 ->name('file_list');

@@ -16,46 +16,46 @@
    }
 
    
-   $.ajax({
-    url: base_url('clientfiles'),
-    type: 'GET',
-    dataType: 'json',
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-    },
-    success: function(ret) {
-      console.log(ret);
-      //let ret = JSON.parse(data_ret);
-      var div = '';
+  //  $.ajax({
+  //   url: base_url('clientfiles'),
+  //   type: 'GET',
+  //   dataType: 'json',
+  //   headers: {
+  //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+  //   },
+  //   success: function(ret) {
+  //     console.log(ret);
+  //     //let ret = JSON.parse(data_ret);
+  //     var div = '';
     
-      var count = 0;
-       $.each(ret.data, function( index, value ) {
-       let date = getFormattedDate(value.created_at);
+  //     var count = 0;
+  //      $.each(ret.data, function( index, value ) {
+  //      let date = getFormattedDate(value.created_at);
    
-       div +='<tr>'; 
-       div +='<td><pre>'+value.file_name+'</pre></td>';
-       div +='<td>'+value.username+'</td>';
-       div +='<td>'+value.document_code+'</td>';
-       div +='<td>'+date+'</td>';
-       div +='<td><button type="button" class="btn btn-sm btn-default viewqr" data-id="'+value.id+'"><i class="fa fa-qrcode"></i></button></td>';
-       div +='</tr>';
-       count ++;
-     });
+  //      div +='<tr>'; 
+  //      div +='<td><pre>'+value.file_name+'</pre></td>';
+  //      div +='<td>'+value.username+'</td>';
+  //      div +='<td>'+value.document_code+'</td>';
+  //      div +='<td>'+date+'</td>';
+  //      div +='<td><button type="button" class="btn btn-sm btn-default viewqr" data-id="'+value.id+'"><i class="fa fa-qrcode"></i></button></td>';
+  //      div +='</tr>';
+  //      count ++;
+  //    });
       
    
-     $('#FileListBody').html(div);
-     $('#uploadcount').html(count);
+  //    $('#FileListBody').html(div);
+  //    $('#uploadcount').html(count);
 
-     $( "#files-table" ).DataTable({
-      "order": [[ 3, "desc" ]], //or asc 
-      "columnDefs" : [{"targets":3, "type":"date-eu"}],
-     });
+  //    $( "#files-table" ).DataTable({
+  //     "order": [[ 3, "desc" ]], //or asc 
+  //     "columnDefs" : [{"targets":3, "type":"date-eu"}],
+  //    });
     
-    },
-    error: function(e){
+  //   },
+  //   error: function(e){
     
-    }
-    });
+  //   }
+  //   });
 
 
     fetchAllFilegroups('#uploadForm',value = null)

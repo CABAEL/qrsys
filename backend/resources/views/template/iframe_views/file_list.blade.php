@@ -25,41 +25,86 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader>
-
-    <style>
-        .qrwrapper{
-            text-align:center;
-        }
-    </style>
     </head>
+
     <body>
-    <div class="container">
-        <div class="form-row">
-            <div class="col-md-12">
-                HR
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+
+            </div>
+            <div class="col-md-3"> 
+            </div>
+            <div class="col-md-3">
+                <form action="">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="search" value="<?php if(isset($_GET['search'])){ echo $_GET['search'];}else{echo "";}?>" placeholder="Search for..." aria-label="Search for..." autocomplete="off">
+                        <button class="btn btn-primary" id="search"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </div>
+
+                </form>    
             </div>
         </div>
-    </div>
+        <br>
+
+    <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="files-table" style="width:100%">
+        <thead>
+            <tr>
+                <th>UPLOAD NAME</th>
+                <th>UPLOADED BY</th>
+                <th>DOCUMENT CODE</th>
+                <th>DATE UPLOADED</th>
+                <th>---</th>
+            </tr>
+        </thead>
+        <tbody id="FileListBody">
+        @foreach($files as $file)
+        <tr>
+            <td>{{ $file->file_name }}</td>
+            <td>{{ $file->username }}</td>
+            <td>{{ $file->document_code }}</td>
+            <td>{{ $file->created_at }}</td>
+            <td><button type="button" class="btn btn-sm btn-default viewqr" data-id="<?php echo $file->id?>"><i class="fa fa-qrcode"></i></button></td>
+            <!-- Add more columns as needed -->
+        </tr>
+        @endforeach
+        </tbody>
+    </table>
+    <?php
+        if(isset($_GET['search'])){ $search = $_GET['search'];}else{$search =  "";}
+    ?>
+    {{ $files->appends(['search' => $search])->links() }}
+    @include('template.client.segments.modal.view_file_modal')
+
     <script src="{{ asset('packages/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('packages/popper/popper.min.js') }}"></script>
     <script src="{{ asset('packages/bootstrap/js/bootstrap.min.js') }}"></script>
+
     <!-- Plugin JavaScript -->
     <script src="{{ asset('packages/jquery-easing/jquery.easing.min.js') }}"></script>
-    <!--<script src="{{ asset('packages/chart.js/Chart.min.js') }}"></script>-->
     <script src="{{ asset('packages/datatables/jquery.dataTables.js') }}"></script>
     <script src="{{ asset('packages/datatables/dataTables.bootstrap4.js') }}"></script>
     <script src="{{ asset('packages/jquery.md5.min.js') }}"></script>
+
     <!-- Custom scripts for this template -->
     <script src="{{ asset('js/sb-admin.min.js') }}"></script>
+
     <!-- Custom js-->
     <script src="{{ asset('js/custom/preloader.js') }}"></script>
-    <!-- <script src="{{ asset('js/custom/home.js') }}"></script>
-    <script src="{{ asset('js/custom/custom.js') }}"></script> -->
     <script src="{{ asset('js/custom/general.js') }}"></script>
+    <script>
 
-    <script src="{{asset('packages/qrcode/jquery.qrcode.js')}}"></script>
-    <script src="{{ asset('packages/qrcode/qrcode.js') }}"></script>
-    <script src="{{ asset('packages/htmltocanvas/html2canvas.min.js') }}"></script>
+        $(document).on('click','.viewqr',function(){
+        let file_id = $(this).data('id');
+        let fileViewerUrl = url_host('fileviewer')+'/'+file_id;
 
+        $('#viewfile').modal('show');
+
+        $('.iframe_viewfiles').attr('src', fileViewerUrl);
+
+
+        })
+
+    </script>
     </body>
 </html>
