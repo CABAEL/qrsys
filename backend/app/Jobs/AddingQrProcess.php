@@ -54,19 +54,56 @@ class AddingQrProcess implements ShouldQueue
                         $outputFilePath = public_path(env('CLIENT_DIR_PATH').MD5($get_client->client_name).'/file_uploads/'.$file_data_value['file_name']);
                         $file_upload_data = File_upload::where('id',$file_data_value['id'])->first();
 
-
                         try{
                             $embedder = PDFcore::addQrToPdf($source_file,$outputFilePath,$file_upload_data->blob_qr);
                             //echo "embedder!".$embedder;
                             if($embedder){
                                 
                                 $this->updateExecute($file_data_value,$source_file);
+
+                                $err = ['upload_success' => $source_file];
+                                Base::writeToLogFile($err);
                                 //do some logging
                             }else{
-                                //do some logging
+                                //do some convertion if embedder does not work.
                             }
                         }catch(\Exception $e){
-                            echo $e;
+                            $err = ['file_convert' => $file_data_value['file_name']];
+                            Base::writeToLogFile($err);
+
+
+                            $sc_output = storage_path('tmp').'\\'.'SC_'.time().$file_data_value['file_name'];
+
+                            $command = sprintf(''.env('GS_HANDLER').' -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o %s %s', $sc_output, $source_file);
+                            exec($command,$output,$returnCode);
+
+                            $outputFilePath = public_path(env('CLIENT_DIR_PATH').MD5($get_client->client_name).DIRECTORY_SEPARATOR.'file_uploads'.DIRECTORY_SEPARATOR.$file_data_value['file_name']);
+                            
+                            if ($returnCode === 0) {
+
+                                // // // Add QR code to the modified PDF
+                                $embedder = PDFcore::addQrToPdf($sc_output,$outputFilePath,$file_upload_data->blob_qr);
+                                
+                                if($embedder){
+                            
+                                    $this->updateExecute($file_data_value,$source_file);
+
+                                    $err = ['upload_success' => $source_file];
+                                    Base::writeToLogFile($err);
+                                    //do some logging
+                                    if(File::exists($sc_output)){
+                                        File::delete($sc_output);
+                                    }
+                                    if(File::exists($source_file)){
+                                        File::delete($source_file);
+                                    }
+                                }
+                                
+
+                                
+                            }
+
+                            continue;
                         }
                         // do some logging
                     }

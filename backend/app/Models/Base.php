@@ -10,16 +10,23 @@ class Base extends Model
 {
     use HasFactory;
 
-    public static function writeToLogFile($data) {
-        $date_today = date('Y-M-D');
-        $logFilePath = storage_path('logs/'.$date_today.'/microservice.log');
+    public static function writeToLogFile($data_params) {
+        $data = json_encode($data_params);
+        $date_today = date('Y-m-d');
     
+        $logFilePath = 'logs' . DIRECTORY_SEPARATOR . $date_today . DIRECTORY_SEPARATOR . 'microservice.log';
+
         if (Storage::exists($logFilePath)) {
             // Append data to the existing log file
-            Storage::append($logFilePath, $data);
+            Storage::append($logFilePath, "[".date('Y-m-d H:i:s')."]".$data);
         } else {
             // Create the log file and add data
             Storage::put($logFilePath, $data);
+        
+            // Set file permissions to 0750
+            if (Storage::exists($logFilePath)) {
+                Storage::chmod($logFilePath, 0750);
+            }
         }
     }
 
