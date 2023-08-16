@@ -30,4 +30,9 @@ class Base extends Model
         }
     }
 
+
+    public static function serviceInfo(){
+        
+    }
+
 }

@@ -25,6 +25,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader>
+    <style>
+        p{
+            word-wrap: break-word;
+            color:#777;
+        }
+    </style>
     </head>
 
     <body>
@@ -37,46 +43,32 @@
             <div class="col-md-3"> 
             </div>
             <div class="col-md-3">
-                <form action="">
-                    <div class="input-group">
-                        <input class="form-control" type="text" name="search" value="<?php if(isset($_GET['search'])){ echo $_GET['search'];}else{echo "";}?>" placeholder="Search filename" aria-label="Search for..." autocomplete="off">
-                        <button class="btn btn-primary" id="search"><i class="fa fa-search" aria-hidden="true"></i></button>
-                    </div>
-
-                </form>    
             </div>
         </div>
         <br>
-
-    <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="files-table" style="width:100%">
-        <thead>
-            <tr>
-                <th>UPLOAD NAME</th>
-                <th>UPLOADED BY</th>
-                <th>DOCUMENT CODE</th>
-                <th>DATE UPLOADED</th>
-                <th>---</th>
-            </tr>
-        </thead>
-        <tbody id="FileListBody">
+        
+        <div class="container-fluid">
         @foreach($files as $file)
-        <tr>
-            <td>{{ $file->file_name }}</td>
-            <td>{{ $file->username }}</td>
-            <td>{{ $file->document_code }}</td>
-            <td>{{ $file->created_at }}</td>
-            <td><button type="button" class="btn btn-sm btn-default viewqr" data-id="<?php echo $file->id?>"><i class="fa fa-qrcode"></i></button></td>
-            <!-- Add more columns as needed -->
-        </tr>
+            <div style="border:solid 0.5px #aaa;margin-top:2%;padding:1%;">
+                <!-- Breadcrumbs -->
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    * <b>{{ $file->file_name }}</b>
+                </li>
+                </ol>
+                <em>Created at: {{ $file->created_at }}</em>
+                <hr>
+                <p><?php if($file->description != ''){echo $file->description;}else{echo "No Description.";}?></p>
+            </div>
         @endforeach
-        </tbody>
-    </table>
-   
+        </div>
+
 
 
     <?php
         if(isset($_GET['search'])){ $search = $_GET['search'];}else{$search =  "";}
     ?>
+    <br>
     {{ $files->appends(['search' => $search])->links() }}
     @include('template.client.segments.modal.view_file_modal')
 
@@ -96,20 +88,11 @@
     <!-- Custom js-->
     <script src="{{ asset('js/custom/preloader.js') }}"></script>
     <script src="{{ asset('js/custom/general.js') }}"></script>
-    <script>
-
-        $(document).on('click','.viewqr',function(){
-        let file_id = $(this).data('id');
-        let fileViewerUrl = url_host('fileviewer')+'/'+file_id;
-
-        $('#viewfile').modal('show');
-
-        $('.iframe_viewfiles').attr('src', fileViewerUrl);
-
-
-        })
-
-    </script>
      </div>
+     <br>
+     <br>
+     <br>
+     <br>
+     <br>
     </body>
 </html>

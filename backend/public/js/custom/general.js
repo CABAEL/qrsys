@@ -206,6 +206,11 @@ function getFormattedDate(date) {
     return bytes;
   }
 
+  function searchsubmit(){
+    event.preventDefault();
+    console.log("sample");
+  }
+
 
   // Function to clear password input fields on page load
   // function clearPasswordInputs() {

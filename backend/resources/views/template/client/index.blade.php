@@ -12,13 +12,13 @@
          cursor:pointer;
       }
       #dynamic-iframe {
-    width: 100%;
-    display: block;
-    margin: 0;
-    padding: 0;
-    border: none;
-    min-height: 700px; /* Set your desired minimum height here */
-}
+         width: 100%;
+         display: block;
+         margin: 0;
+         padding: 0;
+         border: none;
+         min-height: 100vh; /* Set your desired minimum height here */
+      }
    </style>
 
    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
