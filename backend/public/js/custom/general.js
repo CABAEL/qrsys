@@ -207,8 +207,28 @@ function getFormattedDate(date) {
   }
 
   function searchsubmit(){
+
+    $('#searchResultDiv').removeClass('hidden');
     event.preventDefault();
     console.log("sample");
+    var iframe = $('#dynamic-iframe');
+    var search = $('#search_value').val();
+    var currentSrc = url_host('search_result')+"?"+"search="+search;
+
+    iframe.attr('src',currentSrc)
+
+    // Attach a load event listener to the iframe
+    show_loader();
+    var iframeContents = iframe.contents(); // Get the iframe's document object
+    iframeContents.ready(function() {
+      // This will be executed when the iframe's content is fully loaded
+      hide_loader();
+    });
+
+  }
+
+  function closeSearch(){
+    $('#searchResultDiv').addClass('hidden');
   }
 
 

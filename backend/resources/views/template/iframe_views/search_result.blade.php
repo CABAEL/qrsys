@@ -48,6 +48,7 @@
         <br>
         
         <div class="container-fluid">
+
         @foreach($files as $file)
             <div style="border:solid 0.5px #aaa;margin-top:2%;padding:1%;">
                 <!-- Breadcrumbs -->
@@ -55,12 +56,25 @@
                 <li class="breadcrumb-item">
                     * <b>{{ $file->file_name }}</b>
                 </li>
+                {{ base64_decode($file->blob_qr) }}
                 </ol>
                 <em>Created at: {{ $file->created_at }}</em>
+                <button type="button" class="btn btn-sm btn-default viewqr" data-id="{{ $file->id }}"><i class="fa fa-qrcode"></i> View QR</button>
                 <hr>
+                
                 <p><?php if($file->description != ''){echo $file->description;}else{echo "No Description.";}?></p>
             </div>
         @endforeach
+        <?php if(count($files) == 0){ ?>
+            <div style="margin-top:2%;padding:1%;">
+                <!-- Breadcrumbs -->
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <b>No data found.</b>
+                </li>
+                </ol>
+            </div>
+        <?php }?>    
         </div>
 
 
@@ -94,5 +108,11 @@
      <br>
      <br>
      <br>
+     <script>
+        $(document).on('click','.viewqr',function(){
+            let id = $(this).data('id');
+            window.open(url_host('fileviewer/'+id), '_blank');
+        })
+     </script>
     </body>
 </html>

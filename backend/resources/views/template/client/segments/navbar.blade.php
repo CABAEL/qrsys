@@ -10,7 +10,7 @@
         <li class="nav-item">
         <form onsubmit="searchsubmit()">
               <div class="input-group">
-                  <input class="form-control" type="text" placeholder="Search filename" aria-label="Search filename" aria-describedby="btnNavbarSearch">
+                  <input class="form-control" id="search_value" type="text" placeholder="Search filename" aria-label="Search filename" aria-describedby="btnNavbarSearch" autocomplete="off">
                   <!-- <input type="submit" class="btn btn-primary" id="btnNavbarSearch" /> -->
                   <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
               </div>
@@ -37,12 +37,12 @@
         </ul>
         @include('template.client.segments.leftnav')
       </div>
-      <div id="searchResultDiv" class="content-wrapper">
 
+      <div id="searchResultDiv" class="hidden content-wrapper">
         <div id="resultWrapper" class="col-md-12">
-          <iframe id="dynamic-iframe" src="{{url_host('search_result')}}" frameborder="0"></iframe>
+          <button id="iframe_btn" onclick="closeSearch()" class="btn btn-default btn-sm">Close</button>
+          <iframe id="dynamic-iframe" frameborder="0"></iframe>
         </div>
         
-      
       </div>
     </nav>
