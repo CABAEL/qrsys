@@ -208,7 +208,10 @@ function getFormattedDate(date) {
 
   function searchsubmit(){
 
-    $('#searchResultDiv').removeClass('hidden');
+    //$('#searchResultDiv').removeClass('hidden');
+    
+
+    
     event.preventDefault();
     console.log("sample");
     var iframe = $('#dynamic-iframe');
@@ -223,12 +226,31 @@ function getFormattedDate(date) {
     iframeContents.ready(function() {
       // This will be executed when the iframe's content is fully loaded
       hide_loader();
+      $("#searchResultDiv")
+      .css({
+          left: '-100%', // Start off-screen
+          display: 'block' // Display the element
+      })
+      .animate({
+          opacity: 1,
+          left: '0%' // Slide in from the left
+      }, 'slow');
     });
 
   }
 
   function closeSearch(){
-    $('#searchResultDiv').addClass('hidden');
+      //$('#searchResultDiv').addClass('hidden');
+      $("#searchResultDiv")
+      .css("left", "0%") // Reset the left position
+      .fadeIn("slow") // Fade in
+      .animate({
+          opacity: 0,
+          left: '-100%' // Slide out to the left
+      }, "slow", function() {
+          $(this).css("display", "none"); // Hide after animation
+      });
+      $('#search_value').val(null);
   }
 
 

@@ -14,8 +14,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Constraint\ExceptionMessage;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Process\Process;
 
 class AddingQrProcess implements ShouldQueue
 {
@@ -50,69 +52,103 @@ class AddingQrProcess implements ShouldQueue
                     $source_file = storage_path('tmp').'\\'.$file_data_value['file_name'];
                     $get_client = Client::where('client_id',$file_data_value['client_id'])->first();
 
-                    if($get_client){
+                    if($get_client && (File::exists($source_file))){
                         $outputFilePath = public_path(env('CLIENT_DIR_PATH').MD5($get_client->client_name).'/file_uploads/'.$file_data_value['file_name']);
                         $file_upload_data = File_upload::where('id',$file_data_value['id'])->first();
 
                         try{
+
                             $embedder = PDFcore::addQrToPdf($source_file,$outputFilePath,$file_upload_data->blob_qr);
-                            //echo "embedder!".$embedder;
+
                             if($embedder){
                                 
                                 $this->updateExecute($file_data_value,$source_file);
 
                                 $err = ['upload_success' => $source_file];
                                 Base::writeToLogFile($err);
-                                //do some logging
+
                             }else{
                                 //do some convertion if embedder does not work.
+                                $err = ['error' => 'QR embedder error.'];
+                                Base::writeToLogFile($err);
                             }
+
                         }catch(\Exception $e){
+
                             $err = ['file_convert' => $file_data_value['file_name']];
                             Base::writeToLogFile($err);
 
+                            $sc_output = storage_path('tmp').DIRECTORY_SEPARATOR.'SC_'.time()."_".$file_data_value['file_name'];
 
-                            $sc_output = storage_path('tmp').'\\'.'SC_'.time().$file_data_value['file_name'];
+                            $command = [
+                                env('GS_HANDLER'),
+                                '-dNOPAUSE',
+                                '-dBATCH',
+                                '-dSAFER',
+                                '-sDEVICE=pdfwrite',
+                                '-dCompatibilityLevel=1.4',
+                                '-o',
+                                $sc_output,
+                                $source_file
+                            ];
 
-                            $command = sprintf(''.env('GS_HANDLER').' -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o %s %s', $sc_output, $source_file);
-                            exec($command,$output,$returnCode);
+                            try{
 
-                            $outputFilePath = public_path(env('CLIENT_DIR_PATH').MD5($get_client->client_name).DIRECTORY_SEPARATOR.'file_uploads'.DIRECTORY_SEPARATOR.$file_data_value['file_name']);
-                            
-                            if ($returnCode === 0) {
-
-                                // // // Add QR code to the modified PDF
-                                $embedder = PDFcore::addQrToPdf($sc_output,$outputFilePath,$file_upload_data->blob_qr);
+                                $process = new Process($command);
+                                $process->run();
+    
+                                $outputFilePath = public_path(env('CLIENT_DIR_PATH').MD5($get_client->client_name).DIRECTORY_SEPARATOR.'file_uploads'.DIRECTORY_SEPARATOR.$file_data_value['file_name']);
                                 
-                                if($embedder){
-                            
-                                    $this->updateExecute($file_data_value,$source_file);
+                                if ($process->isSuccessful()) {
+    
+                                    // // // Add QR code to the modified PDF
+                                    $embedder = PDFcore::addQrToPdf($sc_output,$outputFilePath,$file_upload_data->blob_qr);
+                                    
+                                    if($embedder){
+                                
+                                        $this->updateExecute($file_data_value,$source_file);
+    
+                                        $err = ['upload_success' => $source_file];
+                                        Base::writeToLogFile($err);
 
-                                    $err = ['upload_success' => $source_file];
-                                    Base::writeToLogFile($err);
-                                    //do some logging
-                                    if(File::exists($sc_output)){
-                                        File::delete($sc_output);
+                                        if(File::exists($sc_output)){
+                                            File::delete($sc_output);
+                                        }
+                                        if(File::exists($source_file)){
+                                            File::delete($source_file);
+                                        }
                                     }
-                                    if(File::exists($source_file)){
-                                        File::delete($source_file);
-                                    }
+
+                                    continue;
+                                    
+                                }else{
+                                    // Handle Ghostscript error
+                                    $errorMessage = $process->getErrorOutput();
+                                    Base::writeToLogFile(['error' => $errorMessage]);
+                                    continue;
                                 }
-                                
+                            }catch(\Exception $e2){
 
-                                
+                                Base::writeToLogFile(['error' => $e2->getMessage()]);
+                                continue;
+
                             }
 
                             continue;
+
                         }
-                        // do some logging
+                    }else{
+                        $errorMessage = "Source file does not exist: ".$source_file;
+                        Base::writeToLogFile(['error' => $errorMessage]);
+                        continue;
                     }
 
                 }
     
             }
         }catch(\Exception $e){
-            echo $e;
+            $errorMessage = $e->getMessage();
+            Base::writeToLogFile(['error' => $errorMessage]);
         }
 
     }

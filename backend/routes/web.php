@@ -244,6 +244,7 @@ Route::get('/file_list',function(){
     foreach ($conditions as $condition) {
         $files->where(...$condition);
     }
+    $files->orderBy('file_uploads.created_at','DESC');
     
     $files = $files->paginate(20);
     
@@ -279,12 +280,13 @@ Route::get('/search_result',function(){
     
     $files = File_upload::select('file_uploads.*', 'users.username');
     $files->join('users', 'file_uploads.uploaded_by', '=', 'users.id');
+    $files->orderBy('file_uploads.created_at','DESC');
 
     foreach ($conditions as $condition) {
         $files->where(...$condition);
     }
     
-    $files = $files->paginate(10);
+    $files = $files->paginate(1);
     
 
     return view('template.iframe_views.search_result',compact('files'));

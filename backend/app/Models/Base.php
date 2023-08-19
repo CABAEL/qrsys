@@ -31,7 +31,19 @@ class Base extends Model
     }
 
 
-    public static function serviceInfo(){
+    public static function serviceInfo($user_id,$operation,$data){
+         
+        $logs = Request_log::create([
+            'operation' => $operation,
+            'data' => json_encode($data),
+            'created_by' => $user_id
+        ]);
+
+        if($logs){
+            return responseBuilder('Success','log added!',[],$logs);
+        }
+
+        return false;
         
     }
 

@@ -9193,20 +9193,4 @@ a.text-dark:hover {
     position: absolute;
   }
 
-  #searchResultDiv{
-    position:absolute;
-    top: 100%;
-    left: -1%;
-    width:100%;
-    height: 100vh !important;
-    background-color: #fff;
-    z-index: -100; 
-
-  }
-
-  #iframe_btn{
-    position: fixed;
-    right: 1px;
-    margin-right: 3%;
-  }
 /*# sourceMappingURL=bootstrap.min.css.map */

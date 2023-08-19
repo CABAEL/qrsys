@@ -38,11 +38,34 @@
         @include('template.client.segments.leftnav')
       </div>
 
-      <div id="searchResultDiv" class="hidden content-wrapper">
+      <style>
+          #searchResultDiv {
+          position:absolute;
+          visibility:visible;
+          display:none;
+          top: 100%;
+          left: -1%;
+          width:100%;
+          height: 100vh !important;
+          background-color: #fff;
+          z-index: -100; 
+        }
+
+        #dynamic-iframe{
+          width:100%;
+          height: 100vh !important;
+        }
+
+        #iframe_btn{
+          position: relative;
+          right: 1px;
+          margin-right: 3%;
+        }
+      </style>
+      <div id="searchResultDiv" class="content-wrapper">
         <div id="resultWrapper" class="col-md-12">
-          <button id="iframe_btn" onclick="closeSearch()" class="btn btn-default btn-sm">Close</button>
+          <button id="iframe_btn" onclick="closeSearch()" class="btn btn-default btn-lg"><i class="fa fa-arrow-left"></i></button>
           <iframe id="dynamic-iframe" frameborder="0"></iframe>
         </div>
-        
       </div>
     </nav>
