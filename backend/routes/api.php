@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FilegroupsController;
 use App\Http\Controllers\FileUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ use App\Http\Controllers\LogoutController;
 */
 
 Route::post('/file_upload',[FileUploadController::class,'APIuploadFile']);
+
+Route::get('/all_filegroups',[FilegroupsController::class,'ApishowFilegroups']);
 
 
 

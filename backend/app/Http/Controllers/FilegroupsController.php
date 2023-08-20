@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\App_key;
+use App\Models\Client;
 use App\Models\File_group;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -104,6 +106,73 @@ class FilegroupsController extends Controller
             return responseBuilder('Success','Successfully fetch!',[],$filegroups);
         }
         return false;
+
+    }
+
+
+    public function ApishowFilegroups(Request $request){
+
+        $errors = array();
+        if(!isset($request->timestamp)){
+            $errors [] = ['timestamp' => "Timestamp is required."];
+        }
+        if(is_numeric($request->timestamp) && strtotime(date('Y-m-d H:i:s', $request->timestamp)) === (int)$request->timestamp){
+
+            // Get the server's current Unix timestamp using the current date function
+            $serverTimestamp = strtotime(date('Y-m-d H:i:s'));
+
+            // Calculate the difference in seconds between the given timestamp and the server's current timestamp
+            $difference = $serverTimestamp - $request->timestamp;
+
+            // Check if the difference is less than 60 seconds (1 minute)
+            //return $difference >= 60;
+            if($difference >= 60){
+                $errors [] = ['timestamp' => "Timestamp expired."];
+            }
+
+        }else{
+            $errors [] = ['timestamp' => "Invalid Timestamp."];
+        }
+
+        if($request->has('appkey') && $request->has('appsecret')){
+
+            $validate_keys = App_key::select('clients.*')
+            ->where('appkey',$request->appkey)
+            ->join('clients','clients.client_id','=','app_keys.client_id')
+            ->where('appsecret',$request->appsecret)
+            ->first();
+
+            if(!$validate_keys){
+                $errors [] = ['validate_keys' => "request error."]; 
+            }
+
+        }else{
+            $errors [] = ['appkey_appsecret' => "Both the 'appkey' and 'appsecret' are required."];
+        }
+
+
+        if(empty($errors)){
+
+            $select_client = Client::where('client_id',$validate_keys->client_id)->first();
+            
+            $user_id = $select_client->user_id;
+
+            $requestor = User::select('users.id','users.status','users.username','clients.client_id')
+            ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user_id)
+            ->first();
+    
+            $filegroups = File_group::select("id","group_name","description","created_at")
+            ->where('client_id',$requestor->client_id)->get();
+    
+            if($filegroups){
+                return responseBuilder('Success','Successfully fetch!',[],$filegroups);
+            }
+
+        }else{
+           return responseBuilder('Error','An error occured.',$errors,[]);
+        }
+
+
 
     }
 

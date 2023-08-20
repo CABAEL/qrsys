@@ -180,11 +180,13 @@ class FileUploadController extends Controller
             // Check if the difference is less than 60 seconds (1 minute)
             //return $difference >= 60;
             if($difference >= 60){
-                $errors [] = "Timestamp expired.";
+               $err = ["timestamp" => "Timestamp expired."];
+               return responseBuilder("Error","request error.",$err,[]);
             }
 
         }else{
-            $errors [] = "Invalid timestamp.";
+           $err = ["timestamp" => "Invalid timestamp."];
+           return responseBuilder("Error","request error.",$err,[]);
         }
 
 
@@ -308,7 +310,7 @@ class FileUploadController extends Controller
 
 
         }else{
-            return responseBuilder("Both the 'appkey' and 'appsecret' are required.",["access key required"],[]);
+            return responseBuilder("error","Both the 'appkey' and 'appsecret' are required.",["access key required"],[]);
         }
     
     }    

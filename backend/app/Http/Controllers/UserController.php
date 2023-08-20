@@ -398,4 +398,40 @@ class UserController extends Controller
         return response()->json($data);
 
     }
+
+
+    public static function myAccountView($id){
+
+        $user = User::where('id',$id)->first();
+
+        if($user->role = 'client'){
+
+            $fetch = User::select('client_users.*','clients.client_name','users.role','users.id','users.status','users.username')
+            ->join('clients','users.id','=','clients.user_id')
+            ->join('client_users','clients.client_id','=','client_users.client_id')
+            ->where('users.id',$id)
+            ->first();
+
+            if($fetch){
+                $data = array(
+                    'data' => $fetch,
+                    'img_path' => env('CLIENT_DIR_PATH').md5($fetch->client_name)
+                );
+    
+                return responseBuilder('Success','Successfully fetch!',[],$data);
+            }
+
+            return false;
+
+
+        }else if($user->role = 'user'){
+            
+        }else if($user->role = 'admin'){
+
+        }else{
+            return false;
+        }
+
+    }
+
 }

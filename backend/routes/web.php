@@ -295,10 +295,9 @@ Route::get('/search_result',function(){
 ->name('file_list');
 
 
-
+Route::get('/my_account_view/{id}',[UserController::class,'myAccountView']);
 
 //dispatch routes for job
-
 Route::get('dispatch_job',[JobsDispatcherController::class,'dispatchFiles']);
 
 

@@ -254,14 +254,64 @@ function getFormattedDate(date) {
   }
 
 
-  // Function to clear password input fields on page load
-  // function clearPasswordInputs() {
-  //   const passwordInputs = document.querySelectorAll('input[type="password"]');
-  //   passwordInputs.forEach(input => {
-  //       input.value = null;
-  //   });
-  // }
+  // $(document).on('click','#myaccountbtn',function(){
 
-  // // Call the function when the page loads
-  // window.addEventListener('DOMContentLoaded', clearPasswordInputs);
+
+  // });
+
+  function myAccount(id){
+    show_loader();
+    $.ajax({
+      url: url_host("my_account_view/"+id),
+      type: 'GET', 
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+      },
+      success: function(data){
+        hide_loader();
+        console.log(data.data.data.picture);
+
+        $('#myaccount .alert').css('height','0px');
+        $('#myaccount .alert').css('overflow','hidden');
+        $('#myaccount .alert').css('visibility','hidden');
+
+        let logo = '/img/bg_logo.png';
+
+        if(data.data.data.picture){
+
+          if(data.data.data.role == 'client'){
+            let client_logo_path = data.data.img_path; 
+            logo = url_host(client_logo_path+'/user_pictures/'+data.data.data.picture);
+            
+          }
+
+        }
+
+        $('#my_account_form .logoContainer').css('background-image','url('+logo+')');
+
+
+        $('#my_account_form').attr('data-id',data.data.data.id);
+        $('#my_account_form #fname').val(data.data.data.fname);
+        $('#my_account_form #mname').val(data.data.data.mname);
+        $('#my_account_form #lname').val(data.data.data.lname);
+        $('#my_account_form #address').val(data.data.data.address);
+        $('#my_account_form #email').val(data.data.data.email);
+        $('#my_account_form #username').val(data.data.data.username);
+        $('#my_account_form #contact_number').val(data.data.data.contact_no);
+        $('#my_account_form #description').val(data.data.data.description);
+        $('#my_account_form #password').val("");
+        $('#my_account_form #password_confirmation').val("");
+   
+        $('#my_account_form #updatelogo').val("");
+
+        $('#my_account_modal').modal('show');
+
+
+      },
+      error: function(e) {
+        hide_loader();
+      }
+    });
+  }
 

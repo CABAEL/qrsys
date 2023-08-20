@@ -27,7 +27,7 @@
         &nbsp;
         </li>
         <li class="nav-item">
-          <button class="btn btn-primary btn-sm" type="button" id="myaccountbtn"><i class="fa fa-user"></i> &nbsp;My account</button>&nbsp;
+          <button class="btn btn-primary btn-sm" type="button" id="myaccountbtn" onclick="myAccount('{{\Auth::user()->id}}')" ><i class="fa fa-user"></i> &nbsp;My account</button>&nbsp;
         </li>
         <li class="nav-item">
           <a class="btn" data-toggle="modal" data-target="#logoutmodal">
@@ -69,3 +69,5 @@
         </div>
       </div>
     </nav>
+    
+    @include('template.my_account_modal')

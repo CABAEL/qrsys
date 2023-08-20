@@ -281,7 +281,7 @@ class AdminUsersController extends Controller
         ->join("users",'users.id','=','admin_users.user_id')
         ->where('users.role','=','admin')
         ->where('users.deleted_at','=',null)
-        ->where('id', '!=' , $current_user->id)
+        //->where('id', '!=' , $current_user->id)
         ->get();
         
         if($data){
