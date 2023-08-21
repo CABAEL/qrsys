@@ -69,6 +69,11 @@
             <!-- Add more columns as needed -->
         </tr>
         @endforeach
+        @if(count($files) == 0)
+        <tr>
+            <td colspan="5"><center>No Data</center></td>
+        </tr>
+        @endif
         </tbody>
     </table>
    

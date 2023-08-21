@@ -270,7 +270,6 @@ function getFormattedDate(date) {
       },
       success: function(data){
         hide_loader();
-        console.log(data.data.data.picture);
 
         $('#myaccount .alert').css('height','0px');
         $('#myaccount .alert').css('overflow','hidden');
@@ -278,23 +277,23 @@ function getFormattedDate(date) {
 
         let logo = '/img/bg_logo.png';
 
-        if(data.data.data.picture){
-
-          if(data.data.data.role == 'client'){
-            let client_logo_path = data.data.img_path; 
-            logo = url_host(client_logo_path+'/user_pictures/'+data.data.data.picture);
-            
-          }
-
+        //for client
+        if(data.data.data.role == 'client'){
+          $('#my_account_form #client_name').val(data.data.data.client_name);
+          let img_path = data.data.img_path;
+          logo = url_host(img_path+'/'+data.data.data.logo);
         }
-
-        $('#my_account_form .logoContainer').css('background-image','url('+logo+')');
-
+        if(data.data.data.role == 'user'){
+          $('#my_account_form #fname').val(data.data.data.fname);
+          $('#my_account_form #mname').val(data.data.data.mname);
+          $('#my_account_form #lname').val(data.data.data.lname);
+        }
+        
 
         $('#my_account_form').attr('data-id',data.data.data.id);
-        $('#my_account_form #fname').val(data.data.data.fname);
-        $('#my_account_form #mname').val(data.data.data.mname);
-        $('#my_account_form #lname').val(data.data.data.lname);
+        
+        $('#my_account_form .logoContainer').css('background-image','url('+logo+')');
+
         $('#my_account_form #address').val(data.data.data.address);
         $('#my_account_form #email').val(data.data.data.email);
         $('#my_account_form #username').val(data.data.data.username);
@@ -314,4 +313,75 @@ function getFormattedDate(date) {
       }
     });
   }
+
+  updateMyAcc2 = async (event) => {
+    event.preventDefault();
+
+    const form = document.getElementById('my_account_form');
+    const formData = new FormData(form);
+    let element = '#update_myacc_errors';
+
+    try {
+        var updateUrl = url_host('update_my_acc');
+
+        const response = await fetch(updateUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            if (jsonResponse.success) {
+                // Data updated successfully, display success message
+                alert(jsonResponse.message);
+            } else {
+                // Display error message from server
+                alert(jsonResponse.message);
+            }
+        } else {
+          const jsonResponse = await response.json();
+            // Handle errors or validation issues
+            promt_errors(form,element,jsonResponse);
+            console.error('Data update failed');
+        }
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
+}
+
+  updateMyAcc = async (event) => {
+    event.preventDefault();
+
+    // Get form
+     var form = $('#my_account_form')[0];
+     var element = $('#update_myacc_errors');
+    // FormData object
+    var formData = new FormData(form);
+    
+    show_loader();
+   
+    $.ajax({
+    url: url_host('update_my_acc'),
+    type: 'POST', 
+    dataType: 'json',
+    contentType: false,
+    processData: false,
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+    },
+    data:formData,
+    success: function(response) {
+
+      alert(response.message);
+   
+    },
+    error: function(e) {
+      element = $('#update_myacc_errors');
+      form = '#my_account_form'; 
+      promt_errors(form,element,e);
+      hide_loader();
+    }
+    });
+}
+
 

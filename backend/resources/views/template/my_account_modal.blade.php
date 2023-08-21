@@ -6,11 +6,11 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
          </div>
-         <form id="my_account_form" onSubmit="updateClientUserSubmit()" enctype="multipart/form-data">
+         <form id="my_account_form" onSubmit="updateMyAcc(event)" enctype="multipart/form-data">
             <div class="modal-body">
          
             <center>
-               <div class="alert alert-danger" id="update_clientuser_errors"></div>
+               <div class="alert alert-danger" id="update_myacc_errors"></div>
             </center>
             <div class="container-fluid">
             <center>
@@ -18,6 +18,7 @@
                </center>
                   <input type="file" id="updatelogo" name="updatelogo" class="hidden" accept="image/png, image/jpg,image/IMG, image/jpeg" autocomplete="off"/>
                   <div class="form-group">
+                  @if(Auth::user()->role == 'user')
                      <div class="form-row">
                         <div class="col-md-4">
                            <label for="name">First Name</label>
@@ -32,6 +33,20 @@
                            <input type="text" class="form-control" id="lname" name="lname" autofocus autocomplete="off"/>
                         </div>
                      </div>
+                  @endif
+                  
+                  @if(Auth::user()->role == 'client')
+                     <div class="form-group">
+                        <div class="form-row">
+                           <div class="col-md-12">
+                              <label for="name">Client/Organization Name</label>
+                              <input type="text" class="form-control" id="client_name" name="client_name" autofocus autocomplete="off"/>
+                           </div>
+                        </div>
+                     </div>
+                  @endif
+
+                     
                   </div>
                   <div class="form-group">
                      <div class="form-row">
@@ -66,41 +81,16 @@
                      </div>
                   </div>
                   <div class="form-group">
-                     <div class="form-row">
-                        <div class="col-md-6">
-                           <label for="retypePassword">Password</label>
-                           <div class="input-group" id="show_hide_password">
-                              <input class="form-control" id="password" name="password" type="password"/>
-                              <div class="input-group-addon">
-                              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="col-md-6">
-                           <label for="password_confirmation">Retype Password</label>
-                           <div class="input-group" id="show_hide_password2">
-                              <input class="form-control" id="password_confirmation" name="password_confirmation" type="password"/>
-                              <div class="input-group-addon">
-                              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="container">
-                           <button class="btn btn-sm" id="generate_pass"><i class="fa fa-recycle"></i> Generate</button>
-                           <button class="btn btn-sm btn-default" id="copy" onclick="copy_text('#update_clientuser_form #password')"><i class="fa fa-copy"></i> Copy</button> 
-                           <button class="btn btn-sm btn-info" id="clear"><i class="fa fa-clear"></i> Clear</button>
-                        </div>
-                     </div>
+                     <?php
+                       $id = \Auth::user()->id;
+                     ?>
+                     <a class="btn btn-warning" onClick="window.open('<?php echo url_host('change_my_password/'.$id);?>', '_blank')">Change Password</a>
                   </div>
                
             </div>
             <br>
             <div class="modal-footer">
                <button type="submit" class="btn btn-primary btn-block">Update</button>
-               <br>
-               <button class="btn btn-default btn-block status_toggle">Deactivate</button>
-               <br>
-               <button class="btn btn-danger btn-block delete">Delete</button>
             </div>
             <br>
          </form>

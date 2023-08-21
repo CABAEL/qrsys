@@ -7,7 +7,9 @@ use App\Http\Controllers\ClientUsersController;
 use App\Http\Controllers\Document_CodeController;
 use App\Http\Controllers\FilegroupsController;
 use App\Http\Controllers\JobsDispatcherController;
+use App\Http\Controllers\MyaccountController;
 use App\Http\Controllers\PDFController;
+use App\Models\Base;
 use App\Models\Client;
 use App\Models\File_upload;
 use App\Models\RedisModel;
@@ -297,8 +299,18 @@ Route::get('/search_result',function(){
 
 Route::get('/my_account_view/{id}',[UserController::class,'myAccountView']);
 
+Route::post('/update_my_acc',[MyaccountController::class,'update']);
+
+Route::get('/change_my_password/{id}',function(){
+    return view('change_password');
+});
+
 //dispatch routes for job
 Route::get('dispatch_job',[JobsDispatcherController::class,'dispatchFiles']);
+
+
+//change pass
+Route::post('changePass',[LoginController::class,'changePass'])->name('changePass');
 
 
 

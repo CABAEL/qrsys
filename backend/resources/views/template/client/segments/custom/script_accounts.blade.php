@@ -228,9 +228,9 @@
    
    
    $(document).on("click","#generate_pass",function(event) {
-   event.preventDefault();
-   element = $('#viewusermodal #password');
-   random_text_generator(element);
+    event.preventDefault();
+    element = $('#viewusermodal #password');
+    random_text_generator(element);
    });
    
    function copy_text(element) {
