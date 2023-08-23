@@ -18,14 +18,26 @@
         </li>
 
         <li class="nav-item">
+        &nbsp;
+        </li>
+        <li class="nav-item">
+        &nbsp;
+        </li>
+        <li class="nav-item">
+        &nbsp;
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-primary btn-sm" type="button" id="myaccountbtn" onclick="myAccount('{{\Auth::user()->id}}')" ><i class="fa fa-user"></i> &nbsp;My account</button>&nbsp;
+        </li>
+        <li class="nav-item">
           <a class="btn" data-toggle="modal" data-target="#logoutmodal">
             <i class="fa fa-fw fa-sign-out" style="color:#fff;"></i>
           </a>
         </li>
-
         </ul>
-        @include('template.admin.segments.leftnav')
+        @include('template.client.segments.leftnav')
       </div>
+
       <style>
           #searchResultDiv {
           position:absolute;
@@ -56,5 +68,6 @@
           <iframe id="dynamic-iframe" frameborder="0"></iframe>
         </div>
       </div>
-
     </nav>
+    
+    @include('template.my_account_modal')

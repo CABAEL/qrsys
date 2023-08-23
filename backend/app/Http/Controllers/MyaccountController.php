@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -36,24 +38,24 @@ class MyaccountController extends Controller
 
         if($current_user->role == 'client'){
 
-            $validator = Validator::make($request->all(), [
-                'client_name' => [
-                    'required',
-                    'max:100',
-                    Rule::unique('clients')->ignore($current_user->id, 'user_id') // Replace $clientId with the actual client's ID
-                ],
+            $update_client = Client::where('user_id',$current_user->id)
+            ->update([
+                'address' => $request->address,
+                'email' => $request->email,
+                'description' => $request->description,
+                'contact_no' => $request->contact_number
             ]);
 
-            if($validator->fails()){
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422); // 422 Unprocessable Entity
+            $update_username = User::where('id',$current_user->id)
+            ->update([
+                'username' => $request->username
+            ]);
+
+            if($update_client && $update_username){
+                return responseBuilder('Success','Account successfully updated!',[],$update_client);
             }
 
-
-            return "client";
+            return false;
 
         }else if($current_user->role == 'user'){
 

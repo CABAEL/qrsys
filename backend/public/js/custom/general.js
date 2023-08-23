@@ -373,6 +373,8 @@ function getFormattedDate(date) {
     success: function(response) {
 
       alert(response.message);
+      hide_loader();
+      window.location.reload();
    
     },
     error: function(e) {
@@ -384,4 +386,18 @@ function getFormattedDate(date) {
     });
 }
 
+
+$('#my_account_form .logoContainer').on('click',function(){
+  $('#my_account_form #updatelogo').trigger('click');
+});
+
+$('#my_account_form #updatelogo').on('change',function(){
+    
+  var oFReader = new FileReader();
+  oFReader.readAsDataURL(document.getElementById("updatelogo").files[0]);
+ 
+  oFReader.onload = function (oFREvent) {
+      $('#my_account_form .logoContainer').css("background-image", "url('"+oFREvent.target.result+"')");
+  };
+ }); 
 
