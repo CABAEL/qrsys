@@ -100,62 +100,61 @@
     
     }
     });
-    
-    
-    var myLineChart1 = new Chart(document.getElementById('myBarChart'), {
-      type: 'bar',
-        data: {
-          labels: ['Monday', 'Tuesday' , 'Wednesday' , 'Thursday' , 'Friday' , 'Saturday' , 'Sunday '],
-          datasets: [
-            {
-              label: 'Client',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#36A2EB',
-              backgroundColor: '#035fae',
-            },
-            {
-              label: 'Users',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#36A2EB',
-              backgroundColor: '#777',
-            },
-            {
-              label: 'Uploads',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#16f4f0',
-              backgroundColor: '#ace4ee',
-            },
-          ],
+
+
+  $(document).ready(function() {
+
+    $.ajax({
+        url: url_host('system_usage_graph'),
+        type: 'GET',
+        contentType: false,
+        processData: false,
+        enctype: "multipart/form-data",
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-      // options: {
-      //   scales: {
-      //     xAxes: [{
-      //       time: {
-      //         unit: 'month'
-      //       },
-      //       gridLines: {
-      //         display: true
-      //       },
-      //       ticks: {
-      //         maxTicksLimit: 12
-      //       }
-      //     }],
-      //     yAxes: [{
-      //       ticks: {
-      //         min: 0,
-      //         max: 100,
-      //         maxTicksLimit: 10
-      //       },
-      //       gridLines: {
-      //         display: true
-      //       }
-      //     }],
-      //   },
-      //   legend: {
-      //     display: true
-      //   }
-      // }
-    });
+        success: function(response) {
+          
+          // let res = JSON.parse(response);
+          let file_upload = response.file_uploads;
+          let week = response.week;
+          console.log(file_upload);
+
+
+          var myLineChart1 = new Chart(document.getElementById('myBarChart'), {
+            type: 'bar',
+              data: {
+                labels: week,
+                datasets: [
+                  {
+                    label: 'Client',
+                    data: [2, 3, 1, 4, 2, 1, 1],
+                    borderColor: '#36A2EB',
+                    backgroundColor: '#3e4b4f',
+                  },
+                  {
+                    label: 'Users',
+                    data: [1, 2, 3, 4, 5, 6, 7],
+                    borderColor: '#36A2EB',
+                    backgroundColor: '#777',
+                  },
+                  {
+                    label: 'Uploads',
+                    data: file_upload,
+                    borderColor: '#16f4f0',
+                    backgroundColor: '#035fae' ,
+                  },
+                ],
+              },
+          });          
+
+        },
+        error: function(e) {
+
+        }
+      });
+    
+  });
     
     
     $(document).on('click','.viewclient',function(event) {

@@ -33,9 +33,9 @@ $user_dir = $exploded_url[4];
               Logs</span>
             </a>
           </li>                  
-          <li class="nav-item <?php echo ($user_dir == "logs")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Logs">
+          <li class="nav-item <?php echo ($user_dir == "api_access")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Logs">
             <a class="nav-link" href="/admin/api_access" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-list"></i>
+              <i class="fa fa-fw fa-key"></i>
               <span class="nav-link-text">
               API</span>
             </a>

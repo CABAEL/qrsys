@@ -9,6 +9,7 @@ use App\Http\Controllers\FilegroupsController;
 use App\Http\Controllers\JobsDispatcherController;
 use App\Http\Controllers\MyaccountController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ReportsController;
 use App\Models\Base;
 use App\Models\Client;
 use App\Models\File_upload;
@@ -106,6 +107,14 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/home',function(Request $request){
             return view('template.admin.index');
+        });
+
+        Route::get('/api_access',function(Request $request){
+            return view('template.admin.api');
+        });
+
+        Route::get('/reports',function(Request $request){
+            return view('template.admin.reports');
         });
 
 
@@ -297,9 +306,9 @@ Route::get('/search_result',function(){
 ->name('file_list');
 
 
-Route::get('/my_account_view/{id}',[UserController::class,'myAccountView']);
+Route::get('/my_account_view/{id}',[UserController::class,'myAccountView'])->middleware('auth');
 
-Route::post('/update_my_acc',[MyaccountController::class,'update']);
+Route::post('/update_my_acc',[MyaccountController::class,'update'])->middleware('auth');
 
 Route::get('/change_my_password/{id}',function(){
     return view('change_password');
@@ -309,8 +318,11 @@ Route::get('/change_my_password/{id}',function(){
 Route::get('dispatch_job',[JobsDispatcherController::class,'dispatchFiles']);
 
 
-//change pass
+//change password route 
 Route::post('changePass',[LoginController::class,'changePass'])->name('changePass');
+
+//graph
+Route::get('system_usage_graph',[ReportsController::class,'systemUsageGraph'])->name('systemUsageGraph')->middleware('auth');
 
 
 
