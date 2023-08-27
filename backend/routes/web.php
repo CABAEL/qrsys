@@ -324,6 +324,11 @@ Route::post('changePass',[LoginController::class,'changePass'])->name('changePas
 //graph
 Route::get('system_usage_graph',[ReportsController::class,'systemUsageGraph'])->name('systemUsageGraph')->middleware('auth');
 
+Route::get('/client_report', [ReportsController::class,'clientReports'])->middleware('auth')->name('client_report');
+
+Route::get('/download_client_report', [ReportsController::class,'generateClientReport'])->middleware('auth')->name('download_client_report');
+
+
 
 
 

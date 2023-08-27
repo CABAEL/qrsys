@@ -28,4 +28,9 @@ class Client extends Model
     public function user () : BelongsTo{
         return $this->belongsTo(User::class,'user_id','id');
     }
+
+    public function fileUploads()
+    {
+        return $this->hasMany(File_upload::class, 'client_id','client_id');
+    }
 }

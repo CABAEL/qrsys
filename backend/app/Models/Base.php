@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class Base extends Model
@@ -31,12 +32,19 @@ class Base extends Model
     }
 
 
-    public static function serviceInfo($user_id,$operation,$data){
-         
-        $logs = Request_log::create([
-            'operation' => $operation,
+    public static function serviceInfo($operation,$data){
+       
+        if(Auth::user()->id){
+            $user_id =Auth::user()->id;
+            $created_by = $user_id;
+        }else{
+            $created_by = 'system';
+        }
+
+        $logs = Service_report::create([
+            'report_name' => $operation,
             'data' => json_encode($data),
-            'created_by' => $user_id
+            'created_by' => $created_by
         ]);
 
         if($logs){

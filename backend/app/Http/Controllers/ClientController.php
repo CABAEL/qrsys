@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Base;
 use App\Models\Client;
 use App\Models\Upload;
 use App\Models\User;
@@ -111,6 +112,8 @@ class ClientController extends Controller
                 'client_profile' => $client_profile,
                 'logo' => isset($add_logo->data[0])?$add_logo->data[0]:""
             ];
+
+            Base::serviceInfo('add_client',array('added_by' => Auth::user()->id,'client' => $client_profile->client_name));
 
             return responseBuilder("Success","User successfully added!",[],$merge_data);
             

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Base;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,12 +39,15 @@ class LoginController extends Controller
             $rdr ='';
             if($role === 'admin'){
                 $rdr = '/admin/home';
+                $logged_in = 'logged_in_admin';
             }
             if($role === 'client'){
                 $rdr = '/client/home';
+                $logged_in = 'logged_in_client';
             }
             if($role === 'user'){
                 $rdr = '/user/home';
+                $logged_in = 'logged_in_user';
             }
 
             $data = [
@@ -52,6 +56,9 @@ class LoginController extends Controller
                 'rdr' => $rdr,
                 'status' => 200,
             ];
+
+            Base::serviceInfo($logged_in,Auth::user());
+
            return $data;
 
         }

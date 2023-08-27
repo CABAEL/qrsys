@@ -117,6 +117,9 @@
           
           // let res = JSON.parse(response);
           let file_upload = response.file_uploads;
+          let clients = response.clients;
+          let users = response.users;
+          
           let week = response.week;
           console.log(file_upload);
 
@@ -128,13 +131,13 @@
                 datasets: [
                   {
                     label: 'Client',
-                    data: [2, 3, 1, 4, 2, 1, 1],
+                    data: clients,
                     borderColor: '#36A2EB',
                     backgroundColor: '#3e4b4f',
                   },
                   {
                     label: 'Users',
-                    data: [1, 2, 3, 4, 5, 6, 7],
+                    data: users,
                     borderColor: '#36A2EB',
                     backgroundColor: '#777',
                   },

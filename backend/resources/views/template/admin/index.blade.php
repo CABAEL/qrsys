@@ -4,18 +4,6 @@
    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
       @include('template.admin.segments.navbar')
       <div class="content-wrapper">
-         <div class="container-fluid">
-            <div class="row">
-
-            </div>
-            <!-- Breadcrumbs -->
-            <ol class="breadcrumb">
-               <li class="breadcrumb-item">
-                  <b>DEMOGRAPHICS</b>
-               </li>
-            </ol>
-            <hr/>
-         </div>
          <!-- /.container-fluid -->
          <div class="container-fluid">
             <div class="row">
@@ -23,7 +11,7 @@
                   <div class="card mb-4">
                      <div class="card-header">
                         <i class="fas fa-chart-bar me-1"></i>
-                        Usage graph
+                        Usage Graph (Current Week)
                      </div>
                      <div class="card-body">
                         <div class="chartjs-size-monitor">
