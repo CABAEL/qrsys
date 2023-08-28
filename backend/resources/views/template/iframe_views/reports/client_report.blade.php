@@ -26,17 +26,51 @@
     </head>
     <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader>
     <style>
-        body{
-            height:100px;
+
+        canvas {
+        page-break-inside: avoid;
+        }
+          @media print {
+            body {
+                transform: scale(0.5); /* Adjust the scaling factor as needed */
+                transform-origin: top left; /* Set the scaling origin */
+                margin: 5%;
+                text-align:center;
+            }
+            td{
+                margin: 50%;
+            }
+            @page {
+                size: portrait; /* Set the page orientation to landscape */
+            }
+                        
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+            /* Add your print-specific styles here */
+            .print-only {
+                display: block;
+            }
+
+            /* Hide elements on print */
+            .no-print {
+                display: none;
+            }
         }
     </style>
     </head>
 
     <body>
+
     <div class="container">
+    <br>
+    <h1 style="font-weight:bolder;">Intelodocs Client Report</h1>
+    <br>
         <br>
-        <a href="{{ route('download_client_report', ['from' => '2023-08-01', 'to' => '2023-08-31']) }}">Download EXCEL</a>
-        ||
+        <a href="{{ route('download_client_report', ['from' => '2023-08-01', 'to' => '2023-08-31']) }}"><button class="btn-sm no-print">Download Excel</button></a>
+
+        <button onclick="window.print();" class="btn-sm no-print"> Print PDF</button>
         
         <div class="row">
             <div class="col-md-12">
@@ -54,6 +88,7 @@
             </div>
         </div>
         <br>
+
         <div class="row">
             <div class="col-md-6">
             <?php
@@ -61,36 +96,47 @@
                 if(isset($_GET['to'])){ $to = $_GET['to'];}else{$to =  "";}
             ?>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" class="no-print">
                 <form onsubmit="dateFilter()" class="form-row">
                     <div class="col-md-5">
-                    <label for="name">From</label>
-                        <input type="date" placeholder="FROM" class="form-control" id="from" name="from" value="{{$from}}" autofocus autocomplete="off" required/>
+                    <label for="name" class="no-print">From</label>
+                        <input class="no-print" type="date" placeholder="FROM" class="form-control" id="from" name="from" value="{{$from}}" autofocus autocomplete="off"/>
                     </div>
                     <div class="col-md-5">
-                    <label for="name">To</label>
-                        <input type="date" placeholder="TO" class="form-control" id="to" name="to" value="{{$to}}" autofocus autocomplete="off" required/>
+                    <label for="name" class="no-print">To</label>
+                        <input class="no-print" type="date" placeholder="TO" class="form-control" id="to" name="to" value="{{$to}}" autofocus autocomplete="off"/>
                     </div>
                     <div class="col-md-2">
-                    <label for="name" class="">---</label>
                         <!-- <input class="form-control" type="submit" value="submit"> -->
-                        <button type="submit" class="form-control btn-sm"><i class="fa fa-filter"></i></button>
+                        <button type="submit" class="form-control btn-sm"><i class="no-print fa fa-filter"></i></button>
                     </div>
                     </div>
                 </form> 
             </div>
         <br/>
-    <table cellspacing="0" class="display table table-bordered table-responsive" id="files-table" style="max-width:100%">
+
+        <div class="print-only">
+            <span><b>From:</b> {{$from}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>To:</b> {{$to}}</span>
+        </div>
+        <br>
+        <br>
+
+    <table cellspacing="0" style="width:80em !important;" class="" width="100%" id="files-table">
         <thead>
             <tr>
+                <th></th>
                 <th>CLIENT NAME</th>
                 <th>DOCUMENT COUNT</th>
                 <th>CREATED AT</th>
             </tr>
         </thead>
         <tbody id="FileListBody">
-        @foreach($clients as $client)
+        @php
+            $startIndex = ($clients->currentPage() - 1) * $clients->perPage();
+        @endphp
+        @foreach($clients as $index => $client)
         <tr>
+            <td>{{ $startIndex + $loop->iteration }}</td>
             <td>{{ $client['client_name'] }}</td>
             <td>{{ $client['file_uploads_count'] }}</td>
             <td>{{ $client['created_at'] }}</td>
@@ -102,8 +148,10 @@
         </tr>
         @endif
         </tbody>
+        <tfoot></tfoot>
     </table>
-
+        <br>
+        <br>
     {{ $clients->appends(['from' => $from, 'to' => $to])->links() }}
     @include('template.client.segments.modal.view_file_modal')
 
@@ -124,6 +172,7 @@
     <script src="{{ asset('js/custom/preloader.js') }}"></script>
     <script src="{{ asset('js/custom/general.js') }}"></script>
     <script src="{{ asset('packages/chart.js/Chart.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"></script>
     <script>
         var ctx = document.getElementById("myLineChart");
         var clientNames = @json($clientNames);
@@ -155,6 +204,7 @@
             },
         });
              
+        $('nav').addClass('no-print');
     </script>
 
      </div>

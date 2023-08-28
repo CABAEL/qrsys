@@ -12,6 +12,8 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Illuminate\Support\Facades\Response;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class ReportsController extends Controller
 {
@@ -117,51 +119,53 @@ class ReportsController extends Controller
         
         $startOfDay = $this->formatDate($request->from) . ' 00:00:00';
         $endOfDay = $this->formatDate($request->to) . ' 23:59:59';
-
-
+        
         $clients = Client::withCount('fileUploads')
-        ->orderBy('file_uploads_count', 'desc')
-        ->whereBetween('created_at', [$startOfDay, $endOfDay])
-        ->get();
-
-        // Extract and format data from the HTML view
-        $data = array();
-
-        $data [] = ['CLIENT NAME', 'DOCUMENT COUNT', 'CREATED AT'];
-
-        foreach($clients as $client){
-            $data [] = array(
-                $client->client_name,
-                $client->file_uploads_count,
-                $client->created_at
-            );
-        }
-
+            ->orderBy('file_uploads_count', 'desc')
+            ->whereBetween('created_at', [$startOfDay, $endOfDay])
+            ->get();
+        
         // Create a new Spreadsheet instance
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-
+        
+        // Set header styles
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+        $sheet->getStyle('A1:C1')->applyFromArray($headerStyle);
+        
+        // Populate the header row
+        $sheet->fromArray(['CLIENT NAME', 'DOCUMENT COUNT', 'CREATED AT'], null, 'A1');
+        
         // Populate the sheet with data
-        foreach ($data as $rowIndex => $rowData) {
-            foreach ($rowData as $columnIndex => $cellData) {
-                $cellAddress = chr(65 + $columnIndex) . ($rowIndex + 1);
-                $sheet->setCellValue($cellAddress, $cellData);
-            }
+        $rowIndex = 2;
+        foreach ($clients as $client) {
+            $sheet->setCellValue('A' . $rowIndex, $client->client_name);
+            $sheet->setCellValue('B' . $rowIndex, $client->file_uploads_count);
+            $sheet->setCellValue('C' . $rowIndex, $client->created_at);
+            $rowIndex++;
         }
-
-        // Calculate and set column widths
-        $sheet->calculateColumnWidths();
-
+        
+        // Auto-size columns after populating data
+        foreach (range('A', 'C') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+        
         // Create a writer for the XLSX format
         $writer = new Xlsx($spreadsheet);
-
+        
         // Set the appropriate headers for downloading
-        $fileName = 'view_export.xlsx';
+        $fileName = 'client_report_' . date('Y_m_d') . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
-
+        
         // Write the spreadsheet content to the output
         $writer->save('php://output');
+        
+        
 
         
     }
@@ -189,5 +193,5 @@ class ReportsController extends Controller
     function formatDate($date) {
         return Carbon::parse($date)->format('Y-m-d');
     }
-    
+
 }
