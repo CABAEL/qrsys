@@ -11,6 +11,7 @@ class App_key extends Model
 
     protected $fillable = [
         'client_id',
+        'description',
         'appkey',
         'appsecret',
         'created_by',

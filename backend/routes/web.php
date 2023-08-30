@@ -1,15 +1,18 @@
 <?php
 
 use App\Http\Controllers\AdminUsersController;
+use App\Http\Controllers\AppAccessController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
 use App\Http\Controllers\Document_CodeController;
 use App\Http\Controllers\FilegroupsController;
 use App\Http\Controllers\JobsDispatcherController;
+use App\Http\Controllers\LogsController;
 use App\Http\Controllers\MyaccountController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ReportsController;
+use App\Models\App_key;
 use App\Models\Base;
 use App\Models\Client;
 use App\Models\File_upload;
@@ -96,7 +99,10 @@ Route::middleware(['auth','role'])->group(function(){
         'prefix' => 'admin',
         'as' => 'admin',
         ],function(){
-        
+
+        //search client
+        Route::get('/search_clients',[ClientController::class,'searchClients'])->name('searchClients');
+
         Route::get('/',function(Request $request){
             return redirect('admin/home');
         })->name('admin_home');
@@ -136,7 +142,9 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::post('add_client',[ClientController::class,'storeClient']);
 
-        Route::get('/active_clients',[ClientController::class,'activeClients']);
+        Route::POST('/add_access_key',[AppAccessController::class,'addAccessKey'])->name('add_access_key');
+
+        Route::get('/active_clients',[ClientController::class,'activeClients'])->name('activeClients');
 
         Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
@@ -145,6 +153,8 @@ Route::middleware(['auth','role'])->group(function(){
         Route::post('add_admin',[AdminUsersController::class,'store']);
 
         Route::post('/update_adminuser_data/{id}',[AdminUsersController::class,'updateAdminUser']);
+
+        Route::get('/logs', [LogsController::class,'adminLogView'])->middleware('auth')->name('adminLogView');
     
     });
 

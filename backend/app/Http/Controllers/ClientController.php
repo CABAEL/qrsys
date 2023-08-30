@@ -113,7 +113,8 @@ class ClientController extends Controller
                 'logo' => isset($add_logo->data[0])?$add_logo->data[0]:""
             ];
 
-            Base::serviceInfo('add_client',array('added_by' => Auth::user()->id,'client' => $client_profile->client_name));
+            $message = 'A new client ('.$validated_user['client_name'].') has been added by '.strtoupper($current_user->role).' [User ID: '.$current_user->id.']';
+            Base::serviceInfo($message,Base::ADD_CLIENT,array('added_by' => Auth::user()->id,'client' => $client_profile->client_name));
 
             return responseBuilder("Success","User successfully added!",[],$merge_data);
             
@@ -134,6 +135,28 @@ class ClientController extends Controller
 
         if($clients){
             return responseBuilder("Success","Successfully loaded.",[],$clients);
+        }
+        
+        return false;
+
+    }
+
+    public function searchClients(Request $request){
+
+        $query = $request->input('q'); // Assuming _query is the parameter name from the request
+
+        $clients = User::join('clients', 'users.id', '=', 'clients.user_id')
+            ->select('clients.*', 'users.id')
+            ->where('users.role', 'client')
+            ->where('users.status', 1)
+            ->where(function ($q) use ($query) {
+                $q->where('clients.client_name', 'LIKE', '%' . $query . '%');
+            })
+            ->limit(10)
+            ->get();
+
+        if($clients){
+           return $clients;
         }
         
         return false;

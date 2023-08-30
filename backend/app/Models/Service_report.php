@@ -12,6 +12,7 @@ class Service_report extends Model
     protected $fillable = [
         'report_name',
         'data',
+        'description',
         'created_by',
     ];
 

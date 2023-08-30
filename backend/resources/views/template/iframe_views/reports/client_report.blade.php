@@ -120,7 +120,7 @@
         </div>
         <br>
         <br>
-
+    <div class="row" style="overflowX:scroll;width:80em;">
     <table cellspacing="0" style="width:80em !important;" class="" width="100%" id="files-table">
         <thead>
             <tr>
@@ -150,9 +150,13 @@
         </tbody>
         <tfoot></tfoot>
     </table>
+    </div>
         <br>
         <br>
-    {{ $clients->appends(['from' => $from, 'to' => $to])->links() }}
+    
+    {{ $clients->appends(['from' => $from, 'to' => $to])->links() }} 
+    <br/>
+    <b>Total Items: {{ $clients->total() }}</b>
     @include('template.client.segments.modal.view_file_modal')
 
     <script src="{{ asset('packages/jquery/jquery.min.js') }}"></script>

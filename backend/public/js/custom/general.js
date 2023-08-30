@@ -401,3 +401,29 @@ $('#my_account_form #updatelogo').on('change',function(){
   };
  }); 
 
+
+ function generateRandomString($id,length) {
+  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let currentTimestamp = Math.floor(Date.now() / 1000);
+  let id_mask = btoa(currentTimestamp+$id);
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+  }
+  return result+id_mask;
+}
+
+function generateRandomNumericString($id,length) {
+  const characters = '0123456789';
+  let currentTimestamp = Math.floor(Date.now() / 1000);
+  let id_mask = currentTimestamp+$id;
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+  }
+  return result+id_mask;
+}

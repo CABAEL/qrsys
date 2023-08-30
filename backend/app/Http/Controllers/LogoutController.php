@@ -9,8 +9,20 @@ use Illuminate\Support\Facades\Auth;
 class LogoutController extends Controller
 {
     public function logout_user(Request $request){
-
-        Base::serviceInfo('logged_out',Auth::user());
+        
+        $role = Auth::user()->role;
+        $message = '['.strtoupper($role)."] : ".Auth::user()->id." Has logged out.";
+        $operation = '';
+        if($role == 'admin'){
+            $operation = Base::ADMIN_LOGGED_OUT;
+        }else if($role = 'client'){
+            $operation = Base::CLIENT_LOGGED_OUT;
+        }else if($role = 'client'){
+            $operation = Base::USER_LOGGED_OUT;
+        }else{
+            $operation = '';
+        }
+        Base::serviceInfo($message,$operation,Auth::user());
 
         Auth::logout();
 

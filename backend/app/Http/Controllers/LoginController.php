@@ -57,7 +57,20 @@ class LoginController extends Controller
                 'status' => 200,
             ];
 
-            Base::serviceInfo($logged_in,Auth::user());
+            $message = '['.strtoupper($role)."] : ".Auth::user()->id." Has logged in.";
+            $operation = '';
+
+            if($role == 'admin'){
+                $operation = Base::ADMIN_LOGGED_OUT;
+            }else if($role = 'client'){
+                $operation = Base::CLIENT_LOGGED_OUT;
+            }else if($role = 'client'){
+                $operation = Base::USER_LOGGED_OUT;
+            }else{
+                $operation = '';
+            }
+
+            Base::serviceInfo($message,$logged_in,Auth::user());
 
            return $data;
 
