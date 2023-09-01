@@ -14,18 +14,20 @@
                </li>
             </ol>
             <hr/>
-            <button class="btn btn-sm" type="button" id="addApi_btn" data-toggle="modal" data-target="#addclient"> + Access Key</button>
+            <button class="btn btn-sm" type="button" id="addApi_btn" data-toggle="modal" data-target=""> + Access Key</button>
             <hr/>
-            <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="clients-table" style="width:100%;">
+            <table cellspacing="0" class="display table table-bordered table-responsive" width="100%" id="apikeys-table" style="width:100%;">
                <thead>
                   <tr>
-                     <th>ADMIN NAME</th>
-                     <th>STATUS</th>
-                     <th>DATE CREATED</th>
+                     <th>Client Name</th>
+                     <th>App key</th>
+                     <th>App Secret</th>
+                     <th>Description</th>
+                     <th>Date created</th>
                      <th>---</th>
                   </tr>
                </thead>
-               <tbody id="ClientListBody">
+               <tbody id="apiListBody">
                   <tr>
                      <td colspan="4">
                         <center>Loading...</center>

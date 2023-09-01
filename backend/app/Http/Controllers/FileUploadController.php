@@ -38,7 +38,7 @@ class FileUploadController extends Controller
             // identifying user
             $current_user = $current_user_auth->client_users_data;
             $current_user_id = $current_user['user_id'];
-            $select_client = Client::find( $current_user['client_id'])->first();
+            $select_client = Client::where('client_id',$current_user['client_id'])->first();
             $folder_name = md5($select_client['client_name']);
 
         }else{

@@ -269,6 +269,7 @@ function getFormattedDate(date) {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
       },
       success: function(data){
+        console.log(data);
         hide_loader();
 
         $('#myaccount .alert').css('height','0px');

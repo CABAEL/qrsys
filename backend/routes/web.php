@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\AppAccessController;
+use App\Http\Controllers\AppkeysController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
@@ -155,6 +156,8 @@ Route::middleware(['auth','role'])->group(function(){
         Route::post('/update_adminuser_data/{id}',[AdminUsersController::class,'updateAdminUser']);
 
         Route::get('/logs', [LogsController::class,'adminLogView'])->middleware('auth')->name('adminLogView');
+
+        Route::get('/api_key_list', [AppkeysController::class,'apiKeys'])->middleware('auth')->name('apiKeys');
     
     });
 
@@ -225,6 +228,75 @@ Route::middleware(['auth','role'])->group(function(){
 
     });
 
+
+    Route::group([                                           
+        'prefix' => 'user',
+        'as' => 'user',
+        ],function(){
+        
+        Route::get('/',function(Request $request){
+            return redirect('user/home');
+        })->name('user_home');
+
+        Route::get('/home',function(Request $request){
+            return view('template.user.index');
+        });
+
+
+        Route::get('/accounts',function(Request $request){
+            return view('template.user.accounts');
+        });
+
+        Route::get('/filegroups', function(){
+            return view('template.user.filegroups');
+        });
+
+
+        Route::get('/logout',function(Request $request){
+            return redirect(route('logout'));
+        });
+
+        Route::post('/update_clientuser_data/{id}',[ClientUsersController::class,'updateClientUser']);
+
+        Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
+
+        Route::delete('/confirm_delete/{id}',[UserController::class,'destroy']);
+
+        Route::get('/user_list',[UserController::class,'index']);
+
+        Route::get('/user_info/{id}',[ClientUsersController::class,'show']);
+
+        Route::post('add_user',[UserController::class,'storeUser']);
+
+        Route::get('/active_clients',[ClientController::class,'activeClients']);
+
+        Route::get('/active_client_users',[ClientUsersController::class,'activeClientUsers']);
+
+        Route::post('/file_upload',[FileUploadController::class,'uploadFile']);
+
+        Route::get('/file_groups',[FilegroupsController::class,'index']);
+
+        Route::get('/show_filegroup/{id}',[FilegroupsController::class,'show']);
+
+        Route::post('/add_filegroup',[FilegroupsController::class,'store']);
+
+        Route::post('/update_filegroup/{id}',[FilegroupsController::class,'update']);
+        
+        Route::delete('/delete_filegroup/{id}',[FilegroupsController::class,'destroy']);
+
+        Route::get('/activate_user/{id}',[UserController::class,'activate']);
+
+        Route::get('/all_filegroups',[FilegroupsController::class,'showFilegroups']);
+
+        Route::get('/clientfiles',[FileUploadController::class,'clientfileList']);
+
+        Route::get('/filecollections',function(){
+            return view('template.user.filecollections');
+        });
+
+    });
+
+
 });
 
 Route::get('/document_code/{id}',[Document_CodeController::class,'CodeDocuments'])
@@ -250,13 +322,17 @@ Route::get('/file_list',function(){
     }
 
     if ($current_user_auth->role == 'client') {
+
         $current_user = $current_user_auth->client_data;
         $current_user_id = $current_user['client_id'];
         $conditions[] = ["file_uploads.client_id", '=', $current_user_id];
+
     } else if ($current_user_auth->role == 'user') {
+
         $current_user = $current_user_auth->client_users_data;
         $current_user_id = $current_user['client_id'];
         $conditions[] = ["file_uploads.client_id", '=', $current_user_id];
+        $conditions[] = ["file_uploads.file_group_id", '=', $current_user->file_group_id];
     }
     
     $files = File_upload::select('file_uploads.*', 'users.username');
@@ -290,13 +366,19 @@ Route::get('/search_result',function(){
     }
 
     if ($current_user_auth->role == 'client') {
+
         $current_user = $current_user_auth->client_data;
         $current_user_id = $current_user['client_id'];
         $conditions[] = ["file_uploads.client_id", '=', $current_user_id];
+
     } else if ($current_user_auth->role == 'user') {
+
         $current_user = $current_user_auth->client_users_data;
         $current_user_id = $current_user['client_id'];
+        
         $conditions[] = ["file_uploads.client_id", '=', $current_user_id];
+        $conditions[] = ["file_uploads.file_group_id", '=', $current_user->file_group_id];
+
     }
     
     $files = File_upload::select('file_uploads.*', 'users.username');

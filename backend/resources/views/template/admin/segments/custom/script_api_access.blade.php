@@ -1,8 +1,9 @@
 @include('template.admin.segments.modal.add_api_access_modal')
+@include('template.admin.segments.modal.edit_api_access_modal')
 <script src="{{ asset('packages/chart.js/Chart.min.js') }}"></script>
 <script>
   $.ajax({
-    url: base_url('admin_list'),
+    url: base_url('api_key_list'),
     type: 'GET',
     dataType: 'json',
     headers: {
@@ -13,34 +14,24 @@
       var div = '';
     
    
-       $.each(ret.data, function( index, value ) {
-
-       let date = getFormattedDate(value.created_at);
-       let status = "";
-       let color = "red";
-       let name = value.fname+" "+value.mname+" "+value.lname;
-
-       if(value.status == 1){
-        status = "Active";
-        color = "green";
-       }else{
-        status = "Inactive";
-        color = "red";
-       }
-   
+       $.each(ret, function( index, value ) {
+        console.log(value);
        div +='<tr>'; 
-       div +='<td>'+name+'</td>';
-       div +='<td><em style="color:'+color+'">'+status+'</em></td>';
-       div +='<td>'+date+'</td>';
-       div +='<td><button type="button" class="btn btn-sm btn-default viewadmin" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
+       div +='<td>'+value.client_name+'</td>';
+       div +='<td>'+value.appkey+'</td>';
+       div +='<td>'+value.appsecret+'</td>';
+       div +='<td>'+value.description+'</td>';
+       div +='<td>'+getFormattedDate(value.created_at)+'</td>';
+       div +='<td><button type="button" class="btn btn-sm btn-default editApikeys" data-id="'+value.id+'"><i class="fa fa-user-circle"></i></button></td>';
        div +='</tr>';
        
      });
       
    
-     $('#ClientListBody').html(div);
-     $( "#clients-table" ).DataTable({
-      "order": [[ 3, "desc" ]], //or asc 
+     $('#apiListBody').html(div);
+     
+     $( "#apikeys-table" ).DataTable({
+      "order": [[ 4, "desc" ]], //or asc 
       "columnDefs" : [{"targets":3, "type":"date-eu"}],
      });
     
@@ -88,6 +79,13 @@
       $('#appsecret').val(appSecret);
       $('#appkey').val(appKey);
 
+    });
+
+
+    $(document).on('click','.editApikeys', function() {
+      let id = $(this).data('id');
+      // alert(id);
+      $('#EditApi').modal('show');
     });
 
 

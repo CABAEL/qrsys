@@ -94,17 +94,31 @@ class FilegroupsController extends Controller
 
 
     public function showFilegroups(){
-        $user_id = Auth::user()->id;
+        $user = Auth::user();
+       
+        if($user->role == "client"){
+            $requestor = User::select('users.id','users.status','users.username','clients.client_id')
+            ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user->id)
+            ->first();
+        }else if($user->role == "user"){
+            $requestor = User::select('users.id','users.status','users.username','client_users.client_id','client_users.file_group_id')
+            ->join('client_users', 'users.id', '=', 'client_users.user_id')->where('users.id','=',$user->id)
+            ->first();
+        }
 
-        $requestor = User::select('users.id','users.status','users.username','clients.client_id')
-        ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user_id)
-        ->first();
-
-        $filegroups = File_group::where('client_id',$requestor->client_id)->get();
+        if($user->role == "client"){
+            $filegroups = File_group::where('client_id',$requestor->client_id)->get();
+        }
+        if($user->role == "user"){
+            $filegroups = File_group::where('client_id',$requestor->client_id)
+            ->where('id',$requestor->file_group_id)
+            ->get();
+        }
 
         if($filegroups){
             return responseBuilder('Success','Successfully fetch!',[],$filegroups);
         }
+        
         return false;
 
     }

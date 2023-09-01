@@ -35,7 +35,7 @@
           </a>
         </li>
         </ul>
-        @include('template.client.segments.leftnav')
+        @include('template.user.segments.leftnav')
       </div>
 
       <style>
