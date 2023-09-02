@@ -30,6 +30,7 @@ class Base extends Model
     const UPDATE_USER = 'update_user';
 
     const ADD_CLIENT_API_ACCESS = 'add_client_api_access';
+    const UPDATE_CLIENT_API_ACCESS = 'update_client_api_access';
 
     public static function writeToLogFile($data_params) {
         $data = json_encode($data_params);

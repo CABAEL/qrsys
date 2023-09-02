@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\AppAccessController;
-use App\Http\Controllers\AppkeysController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
@@ -157,7 +156,13 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/logs', [LogsController::class,'adminLogView'])->middleware('auth')->name('adminLogView');
 
-        Route::get('/api_key_list', [AppkeysController::class,'apiKeys'])->middleware('auth')->name('apiKeys');
+        Route::get('/api_key_list', [AppAccessController::class,'apiKeys'])->middleware('auth')->name('apiKeys');
+
+        Route::get('/show_app_key/{id}', [AppAccessController::class,'showAppKey'])->middleware('auth')->name('showAppKeys');
+        
+        Route::post('/update_access_key/{id}', [AppAccessController::class,'updateAppKey'])->middleware('auth')->name('updateAppKey');
+
+        Route::delete('/confirm_delete_api_access/{id}', [AppAccessController::class,'destroy'])->middleware('auth')->name('destroyApiAccess');
     
     });
 
