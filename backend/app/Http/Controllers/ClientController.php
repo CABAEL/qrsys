@@ -55,14 +55,18 @@ class ClientController extends Controller
 
         
 
-        //$folder_name = md5($validated_user['client_name']);
+        $folder_name = md5($validated_user['client_name']);
+        $client_dir = public_path('uploads/system_files/clients_directory/').$folder_name.'/file_uploads';
+
         $logo_path = env('CLIENT_DIR_PATH')."/logo/";
 
         if (!file_exists($logo_path)) {
-            mkdir($logo_path, 0777, true);
+            mkdir($logo_path, 0755, true);
         }
 
-        //return $logo_path;
+        if (!file_exists($client_dir)) {
+            mkdir($client_dir, 0755, true);
+        }
 
         if(isset($request->logo)){
             $file_params [] = array(

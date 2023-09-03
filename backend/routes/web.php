@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
 use App\Http\Controllers\Document_CodeController;
 use App\Http\Controllers\FilegroupsController;
+use App\Http\Controllers\FilePasswordController;
 use App\Http\Controllers\JobsDispatcherController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\MyaccountController;
@@ -76,7 +77,9 @@ Route::get('/fileviewer/{id}', function($id) {
         'filename' => $file['file_name'],
         'client_folder' => md5($client->client_name),
         'client_code' => $file->document_code,
-        'logo' => $client->logo
+        'logo' => $client->logo,
+        'file_password' => ($file->password != '') ? true : false,
+        'file_id' => $id
     );
 
     if(!$file){
@@ -86,9 +89,10 @@ Route::get('/fileviewer/{id}', function($id) {
 
 });
 
-Route::get('/verify_password', function() {
-    return view('file_password');
-});
+Route::get('/verify_password/{id}', [FilePasswordController::class,'VerifyFilePassword'])->name('file_password_verify');
+
+
+Route::post('/submit_file_password/{id}',[FilePasswordController::class,'submitFilePassword'])->name('submitFilePassword');
 
 Route::get('/upload-pdf', [PDFController::class, 'addQrDummy'])->name('upload.pdf');
 

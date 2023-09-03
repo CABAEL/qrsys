@@ -50,7 +50,7 @@
             <div class="col-md-4"></div>
         </div>
         <br>
-
+        
         <div class="form-row">
         <div class="col-md-4">
         </div>
@@ -101,9 +101,23 @@
     <script src="{{asset('packages/qrcode/jquery.qrcode.js')}}"></script>
     <script src="{{ asset('packages/qrcode/qrcode.js') }}"></script>
     <script src="{{ asset('packages/htmltocanvas/html2canvas.min.js') }}"></script>
+        <?php
+            $link = "Error.";
+            if($data['file_password'] != "true"){
+                
+               $link = $download_link;
+
+            }else{
+
+                $link = route('file_password_verify',['id' => $data['file_id'] ]);
+
+            }
+
+            //dd($link);
+        ?>
     <script>
         jQuery('#qrcodeCanvas').qrcode({
-            text	: "{{$download_link}}"
+            text	:  "{{$link}}"
         });
 
         

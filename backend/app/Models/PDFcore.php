@@ -35,6 +35,7 @@ class PDFcore extends Model
         ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
         ->logoPath($logopath)
         ->logoResizeToWidth(50)
+        ->logoResizeToHeight(50)
         ->logoPunchoutBackground(true)
         ->labelText('INTELODOCS')
         ->labelFont(new NotoSans(20))

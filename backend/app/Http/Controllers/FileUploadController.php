@@ -55,10 +55,11 @@ class FileUploadController extends Controller
                     'filegroups' => 'required',
                     'code' => 'required|unique:file_uploads,document_code',
                     'description' => 'nullable',
-                    'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
+                    'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6,60}$/'],
                     'pdf_file' => [
                         'required',
                         'file',
+                        'mimetypes:application/pdf',
                         function ($attribute, $value, $fail) use ($env_max_file_size, $formatted_max_file_size) {
                             $fileName = $value->getClientOriginalName();
                             $extension = $value->getClientOriginalExtension();
@@ -73,7 +74,7 @@ class FileUploadController extends Controller
                 ],
                 [
                     'pdf_file.mimetypes' => 'Files selected in files1 must be in PDF format.',
-                    'password' => 'File password must be composed of at least 1 uppercase, 1 special character, and 1 number with a character count of 6.',
+                    'password.regex' => 'File password must be composed of at least 1 uppercase, 1 special character, and 1 number with a character count of atleast 6 to 60',
                 ]);
             
 
