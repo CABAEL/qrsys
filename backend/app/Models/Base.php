@@ -28,6 +28,7 @@ class Base extends Model
     const ADD_USER = 'add_user';
     const DELETE_USER = 'delete_user';
     const UPDATE_USER = 'update_user';
+    const UPDATE_MY_ACCOUNT = 'update_my_account';
 
     const ADD_CLIENT_API_ACCESS = 'add_client_api_access';
     const UPDATE_CLIENT_API_ACCESS = 'update_client_api_access';

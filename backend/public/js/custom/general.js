@@ -285,6 +285,9 @@ function getFormattedDate(date) {
           logo = url_host(img_path+'/'+data.data.data.logo);
         }
         if(data.data.data.role == 'user'){
+          let img_path = data.data.img_path;
+          logo = url_host(img_path+'/user_pictures/'+data.data.data.picture);
+
           $('#my_account_form #fname').val(data.data.data.fname);
           $('#my_account_form #mname').val(data.data.data.mname);
           $('#my_account_form #lname').val(data.data.data.lname);
@@ -310,6 +313,7 @@ function getFormattedDate(date) {
 
       },
       error: function(e) {
+        console.log(e);
         hide_loader();
       }
     });
@@ -388,19 +392,19 @@ function getFormattedDate(date) {
 }
 
 
-$('#my_account_form .logoContainer').on('click',function(){
-  $('#my_account_form #updatelogo').trigger('click');
-});
+// $('#my_account_form .logoContainer').on('click',function(){
+//   $('#my_account_form #updatelogo').trigger('click');
+// });
 
-$('#my_account_form #updatelogo').on('change',function(){
+// $('#my_account_form #updatelogo').on('change',function(){
     
-  var oFReader = new FileReader();
-  oFReader.readAsDataURL(document.getElementById("updatelogo").files[0]);
+//   var oFReader = new FileReader();
+//   oFReader.readAsDataURL(document.getElementById("updatelogo").files[0]);
  
-  oFReader.onload = function (oFREvent) {
-      $('#my_account_form .logoContainer').css("background-image", "url('"+oFREvent.target.result+"')");
-  };
- }); 
+//   oFReader.onload = function (oFREvent) {
+//       $('#my_account_form .logoContainer').css("background-image", "url('"+oFREvent.target.result+"')");
+//   };
+//  }); 
 
 
  function generateRandomString($id,length) {

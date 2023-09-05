@@ -117,7 +117,7 @@ class ClientController extends Controller
                 'logo' => isset($add_logo->data[0])?$add_logo->data[0]:""
             ];
 
-            $message = 'A new client ('.$validated_user['client_name'].') has been added by '.strtoupper($current_user->role).' [User ID: '.$current_user->id.']';
+            $message = 'A new client ('.$validated_user['client_name'].') has been added by ['.strtoupper($current_user->role).'] : ['.$current_user->username.'] : ['.$current_user->id.']';
             Base::serviceInfo($message,Base::ADD_CLIENT,array('added_by' => Auth::user()->id,'client' => $client_profile->client_name));
 
             return responseBuilder("Success","User successfully added!",[],$merge_data);

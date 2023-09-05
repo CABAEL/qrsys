@@ -50,7 +50,7 @@
                 <form method="POST" id="passwordForm">
                     @csrf
                     <div class="form-group">
-                        <label for="password">Password:</label>
+                        <label for="password">Old password:</label>
                         <input type="password" class="form-control" id="oldpassword" name="oldpassword" autocomplete="off" required>
                         <label for="repassword">Re-type password:</label>
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" autocomplete="off" required>

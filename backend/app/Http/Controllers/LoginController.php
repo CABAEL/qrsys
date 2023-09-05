@@ -57,7 +57,8 @@ class LoginController extends Controller
                 'status' => 200,
             ];
 
-            $message = '['.strtoupper($role)."] : ".Auth::user()->id." Has logged in.";
+            $message = '['.strtoupper($role)."] : [".Auth::user()->username."] : [".Auth::user()->id."] has logged in.";
+
             $operation = '';
 
             if($role == 'admin'){

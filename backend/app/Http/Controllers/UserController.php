@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Base;
 use App\Models\Client_user;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -276,6 +277,7 @@ class UserController extends Controller
 
     public function updateClient(Request $request,$id)
     {
+        $current_user = Auth::user();
 
         $validated_user = $request->validate([
             'address' => 'required',
@@ -305,7 +307,7 @@ class UserController extends Controller
         $merge_data = array();
 
         $user_creds = User::find($id);
-
+        $old_user_creds = $user_creds;
         if($validated_user['username'] != "" ){
             $user_creds->username = $validated_user['username'];
         }
@@ -315,12 +317,21 @@ class UserController extends Controller
         }
 
         $user_creds->save();
+        $new_user_creds = $user_creds;
         
         if($user_creds){
 
             $client = Client::where('user_id', $id)->first();
+            if($client){
+                $old_merge_data = [
+                    'user' => $old_user_creds,
+                    'client_profile' => $client,
+                    'logo' => $client->logo
+                ];
+            }
 
-            $client->update([
+
+            $client->where('user_id', $id)->update([
                 'client_name' => $validated_user['client_name'],
                 'address' => $validated_user['address'],
                 'contact_no' => $validated_user['contact_number'],
@@ -362,12 +373,17 @@ class UserController extends Controller
                 }
             }
 
-            
+            $new_client_data = Client::where('user_id', $id)->first();
+
             $merge_data = [
-                'user' => $user_creds,
-                'client_profile' => $client,
-                'logo' => $logo_file
+                'user' => $new_user_creds,
+                'client_profile' => $new_client_data,
+                'logo' => $new_client_data->logo
             ];
+
+            $message = '['.strtoupper($current_user->role).'] : ['.$current_user->username.'] : ['.$current_user->id.'] has updated client information for client id: ('.$client->client_name.')';
+            Base::serviceInfo($message,Base::UPDATE_CLIENT,array('from' => $old_merge_data,'to' => $merge_data));
+
 
             return responseBuilder("Success","User successfully added!",[],$merge_data);
             
@@ -404,7 +420,7 @@ class UserController extends Controller
 
         $user = User::where('id',$id)->first();
         
-        if($user->role = 'client'){
+        if($user->role == 'client'){
 
             $fetch = User::select('clients.*','users.role','users.id','users.status','users.username')
             ->join('clients','users.id','=','clients.user_id')
@@ -422,10 +438,25 @@ class UserController extends Controller
 
             return false;
 
+        }else if($user->role == 'user'){
 
-        }else if($user->role = 'user'){
+            $fetch = User::select('client_users.*','users.role','users.id','users.status','users.username')
+            ->join('client_users','users.id','=','client_users.user_id')
+            ->where('users.id',$id)
+            ->first();
+
+            $select_client = Client::select('client_name')->where('client_id',$fetch->client_id)->first();
+
+            if($fetch){
+                $data = array(
+                    'data' => $fetch,
+                    'img_path' => env('CLIENT_DIR_PATH').md5($select_client->client_name)
+                );
+    
+                return responseBuilder('Success','Successfully fetch!',[],$data);
+            }
             
-        }else if($user->role = 'admin'){
+        }else if($user->role == 'admin'){
 
         }else{
             return false;
