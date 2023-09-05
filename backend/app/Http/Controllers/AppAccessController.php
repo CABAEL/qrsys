@@ -37,7 +37,7 @@ class AppAccessController extends Controller
 
         if($create_key){
 
-            $message = "[".strtoupper($current_user->role).'] : ['.Auth::user()->id.'] has created new access for client_id: ['.$request->select_client.']';
+            $message = "[".strtoupper($current_user->role).'] : ['.Auth::user()->id.'] has created new api access for client_id: ['.$request->select_client.']';
             Base::serviceInfo($message,Base::ADD_CLIENT_API_ACCESS,$create_key);
             return responseBuilder('Success','Added successfully.',[],$create_key);
             
