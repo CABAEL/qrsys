@@ -76,6 +76,9 @@ class UserController extends Controller
         $request->status = 1;
         $request->save();
 
+        $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has activate admin ID : ['.$id.']';
+        Base::serviceInfo($message,Base::ACTIVATE_ADMIN,$request);
+
         $data = [
             'response_time' => LARAVEL_START,
             'data' => $request,
@@ -225,6 +228,9 @@ class UserController extends Controller
                 'picture' => isset($add_logo->data[0])?$add_logo->data[0]:""
             ];
 
+            $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has added new user ['.$validated_user['username'].']';
+            Base::serviceInfo($message,Base::ADD_CLIENT_API_ACCESS,$merge_data);
+
             return responseBuilder('Success',"User successfully added!",[],$merge_data);
             
         }
@@ -269,6 +275,10 @@ class UserController extends Controller
         $user_table->status = 0;
 
         if($user_table->save()){
+
+            $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has deactivated admin ID : ['.$id.']';
+            Base::serviceInfo($message,Base::DEACTIVATE_ADMIN,$user_table);
+
             return responseBuilder("User Deactivated!",[],$user_table);
         }
 
@@ -406,6 +416,10 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $user->delete();
+
+        $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has deleted admin ID : ['.$id.']';
+        Base::serviceInfo($message,Base::DELETE_ADMIN,$user);
+
         $data = [
             'flag' => 1,
             'message' => "User deleted!"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\App_key;
+use App\Models\Base;
 use App\Models\Client;
 use App\Models\Document_code;
 use App\Models\File_upload;
@@ -12,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
@@ -170,35 +172,36 @@ class FileUploadController extends Controller
 
         $errors = array();
 
-        if(is_numeric($request->timestamp) && strtotime(date('Y-m-d H:i:s', $request->timestamp)) === (int)$request->timestamp){
+        // if(is_numeric($request->timestamp) && strtotime(date('Y-m-d H:i:s', $request->timestamp)) === (int)$request->timestamp){
 
-            // Get the server's current Unix timestamp using the current date function
-            $serverTimestamp = strtotime(date('Y-m-d H:i:s'));
+        //     // Get the server's current Unix timestamp using the current date function
+        //     $serverTimestamp = strtotime(date('Y-m-d H:i:s'));
 
-            // Calculate the difference in seconds between the given timestamp and the server's current timestamp
-            $difference = $serverTimestamp - $request->timestamp;
+        //     // Calculate the difference in seconds between the given timestamp and the server's current timestamp
+        //     $difference = $serverTimestamp - $request->timestamp;
 
-            // Check if the difference is less than 60 seconds (1 minute)
-            //return $difference >= 60;
-            if($difference >= 60){
-               $err = ["timestamp" => "Timestamp expired."];
-               return responseBuilder("Error","request error.",$err,[]);
-            }
+        //     // Check if the difference is less than 60 seconds (1 minute)
+        //     //return $difference >= 60;
+        //     if($difference >= 60){
+        //        $err = ["timestamp" => "Timestamp expired."];
+        //        return responseBuilder("Error","request error.",$err,[]);
+        //     }
 
-        }else{
-           $err = ["timestamp" => "Invalid timestamp."];
-           return responseBuilder("Error","request error.",$err,[]);
-        }
+        // }else{
+        //    $err = ["timestamp" => "Invalid timestamp."];
+        //    return responseBuilder("Error","request error.",$err,[]);
+        // }
 
 
 
         if($request->has('appkey') && $request->has('appsecret')){
 
             $validate_keys = App_key::select('clients.*')
-            ->where('appkey',$request->appkey)
             ->join('clients','clients.client_id','=','app_keys.client_id')
+            ->where('appkey',$request->appkey)
             ->where('appsecret',$request->appsecret)
             ->first();
+
             $errors = array();
             if(!$validate_keys){
                 return responseBuilder("Error","request error.",['api_access' => 'Access error'],[]);
@@ -212,10 +215,15 @@ class FileUploadController extends Controller
             $pdf_file = $request->file('pdf_file')?$request->file('pdf_file'):[];
 
             $validated_inputs = Validator::make($request->all(), [
-                'filegroups' => 'required',
+                'filegroups' => [
+                    'required',
+                    Rule::exists('file_groups', 'id')->where(function ($query) use ($select_client) {
+                        $query->where('client_id', $select_client['client_id']);
+                    }),
+                ],
                 'code' => 'required|unique:file_uploads,document_code',
                 'description' => 'nullable',
-                'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6}$/'],
+                'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6,60}$/'],
                 'pdf_file' => [
                     'required',
                     'file',
@@ -243,7 +251,7 @@ class FileUploadController extends Controller
             ],
             [
                 'pdf_file.mimetypes' => 'Files selected in files1 must be in PDF format.',
-                'password.regex' => 'File password must be composed of at least 1 uppercase, 1 special character, and 1 number with a character count of 6.',
+                'password.regex' => 'File password must be composed of at least 1 uppercase, 1 special character, and 1 number with a character count of atleast 6 to 60',
             ]);
         
             // Check if validation fails
@@ -306,6 +314,8 @@ class FileUploadController extends Controller
                     // Perform further operations with the file
                 }
 
+                $message = '[CLIENT] : Client ID ['.$validate_keys['client_id'].'] has uploaded new data using API.';
+                Base::serviceInfo($message,Base::API_UPLOAD,$file_upload,$validate_keys['user_id']);
 
             return responseBuilder('success',"Your file is currently being processed. Once the processing is complete, you will find it listed.",[],$fileContainer);
 

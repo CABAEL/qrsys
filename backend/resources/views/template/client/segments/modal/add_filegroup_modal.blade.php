@@ -31,7 +31,7 @@
             </div>
             <br>
             <div class="modal-footer">
-               <button class="btn btn-primary btn-block" id="AddAccountSubmit">Submit</button>
+               <button class="btn btn-primary" id="AddAccountSubmit">Submit</button>
             </div>
             <br>
             </form>

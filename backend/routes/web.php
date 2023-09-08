@@ -231,6 +231,8 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/clientfiles',[FileUploadController::class,'clientfileList']);
 
+        Route::get('/logs', [LogsController::class,'clientLogView'])->middleware('auth')->name('clientLogView');
+
         Route::get('/filecollections',function(){
             return view('template.client.filecollections');
         });

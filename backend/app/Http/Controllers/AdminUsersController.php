@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin_user;
+use App\Models\Base;
 use App\Models\Upload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -114,6 +115,9 @@ class AdminUsersController extends Controller
                 'user_profile' => $admin_profile,
                 'picture' => isset($add_logo->data[0])?$add_logo->data[0]:""
             ];
+
+            $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has created new admin access username: ['.$validated_user['username'].']';
+            Base::serviceInfo($message,Base::ADD_ADMIN,$merge_data);
 
             return responseBuilder("Success","User successfully added!",[],$merge_data);
             
@@ -254,6 +258,9 @@ class AdminUsersController extends Controller
                 'user_profile' => $admin_user,
                 'picture' => $admin_user->picture
             ];
+
+            $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->username.': '.Auth::user()->id.'] has updated admin access ID : ['.$id.']';
+            Base::serviceInfo($message,Base::UPDATE_ADMIN,$merge_data);
 
             return responseBuilder("Success","User successfully added!",[],$merge_data);
             

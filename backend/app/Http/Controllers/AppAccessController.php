@@ -111,7 +111,7 @@ class AppAccessController extends Controller
                 'message' => "Access deleted!"
             ];
 
-            $message = "[".strtoupper($current_user->role).'] : ['.Auth::user()->username.': '.Auth::user()->id.'] has deleted API ACCESS KEY ID: ['.$id.']';
+            $message = "[".strtoupper($current_user->role).'] : ['.Auth::user()->username.'] : ['.Auth::user()->id.'] has deleted API ACCESS KEY ID: ['.$id.']';
             Base::serviceInfo($message,Base::UPDATE_CLIENT_API_ACCESS,$id);
 
             return responseBuilder('Success','Deleted successfully!',[],$data);

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Base;
 use App\Models\Client;
 use App\Models\File_upload;
 use App\Models\Service_report;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -153,6 +155,10 @@ class ReportsController extends Controller
         foreach (range('A', 'C') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
+
+        //log
+        $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has downloaded client report.';
+        Base::serviceInfo($message,Base::DOWNLAOD_EXCEL_REPORT,$clients);
         
         // Create a writer for the XLSX format
         $writer = new Xlsx($spreadsheet);

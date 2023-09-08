@@ -13,6 +13,8 @@ class Base extends Model
 
     const ADMIN_LOGGED_IN = 'admin_logged_in';
     const ADMIN_LOGGED_OUT = 'admin_logged_out';
+    const DEACTIVATE_ADMIN = 'deactivate_admin';
+    const ACTIVATE_ADMIN = 'activate_admin';
     const CLIENT_LOGGED_IN = 'client_logged_in';
     const CLIENT_LOGGED_OUT = 'client_logged_out';
     const USER_LOGGED_IN = 'user_logged_in';
@@ -32,6 +34,8 @@ class Base extends Model
 
     const ADD_CLIENT_API_ACCESS = 'add_client_api_access';
     const UPDATE_CLIENT_API_ACCESS = 'update_client_api_access';
+    const DOWNLAOD_EXCEL_REPORT = 'download_excel_report';
+    const API_UPLOAD = 'api_upload';
 
     public static function writeToLogFile($data_params) {
         $data = json_encode($data_params);
@@ -54,13 +58,13 @@ class Base extends Model
     }
 
 
-    public static function serviceInfo($description,$operation,$data){
+    public static function serviceInfo($description,$operation,$data,$default = 'system'){
        
-        if(Auth::user()->id){
-            $user_id =Auth::user()->id;
+        if(Auth::user()){
+            $user_id = Auth::user()->id;
             $created_by = $user_id;
         }else{
-            $created_by = 'system';
+            $created_by = $default;
         }
 
         $logs = Service_report::create([
