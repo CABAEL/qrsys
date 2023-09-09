@@ -30,6 +30,10 @@
             word-wrap: break-word;
             color:#777;
         }
+        .highlight {
+            background-color: yellow; /* You can adjust the highlight style as needed */
+            font-weight: bold;
+        }
     </style>
     </head>
 
@@ -48,13 +52,19 @@
         <br>
         
         <div class="container-fluid">
-
         @foreach($files as $file)
             <div style="border:solid 0.5px #aaa;margin-top:2%;padding:1%;">
                 <!-- Breadcrumbs -->
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    * <b>{{ $file->file_name }}</b>
+
+                @php
+                    $fileName = $file->file_name;
+                    $search = preg_quote($search, '/'); // Quote the search term for use in the regular expression
+                    $highlightedFileName = preg_replace('/' . $search . '/i', '<span class="highlight">$0</span>', $fileName);
+                @endphp
+
+                <li class="breadcrumb-item filename">
+                    <p>{!! $highlightedFileName !!}</p>
                 </li>
                 {{ base64_decode($file->blob_qr) }}
                 </ol>

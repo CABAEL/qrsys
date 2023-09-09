@@ -29,7 +29,7 @@ $user_dir = $exploded_url[4];
             </a>
           </li>
           <li class="nav-item <?php echo ($user_dir == "reports")? "active":'';?>" data-toggle="tooltip" data-placement="right" title="Admin Accounts">
-            <a class="nav-link" href="/admin/reports" data-parent="#exampleAccordion">
+            <a class="nav-link" href="/client/reports" data-parent="#exampleAccordion">
               <i class="fa fa-line-chart"></i>
               <span class="nav-link-text">
               Reports</span>

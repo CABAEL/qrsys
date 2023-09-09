@@ -74,6 +74,5 @@
       </div>
       <!-- /.content-wrapper -->
       @include('template.footer')
-      @include('template.admin.segments.custom.script_adminaccounts')
    </body>
 </html>

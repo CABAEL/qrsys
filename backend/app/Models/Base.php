@@ -36,6 +36,9 @@ class Base extends Model
     const UPDATE_CLIENT_API_ACCESS = 'update_client_api_access';
     const DOWNLAOD_EXCEL_REPORT = 'download_excel_report';
     const API_UPLOAD = 'api_upload';
+    const FILE_UPLOAD = 'file_upload';
+    const ADD_FILEGROUP = 'add_filegroup';
+    const UPDATE_FILEGROUP = 'update_filegroup';
 
     public static function writeToLogFile($data_params) {
         $data = json_encode($data_params);

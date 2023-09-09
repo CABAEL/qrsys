@@ -110,7 +110,8 @@ class FileUploadController extends Controller
                             'file_name' => $file_upload['file_name']
                         ]));
     
-                        $cr_code_value = url_host('uploads/system_files/clients_directory/').$folder_name.'/file_uploads'.'/'.$file_upload->file_name;
+                        //$cr_code_value = url_host('uploads/system_files/clients_directory/').$folder_name.'/file_uploads'.'/'.$file_upload->file_name;
+                        $cr_code_value = url_host('file_info/'.base64_encode($file_upload['id']));
                         $logopath = 'uploads/system_files/clients_directory/'.'logo'.'/'.$select_client->logo;
                         $file_upload_id = $file_upload->id;
     
@@ -125,6 +126,10 @@ class FileUploadController extends Controller
                             'size' => $filesize,
                             'type' => $filetype
                         ];
+
+                        $message = '['.strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has uploaded new file ID:['.$file_upload['id'].'] ['.$file_upload->file_name.']';
+                        Base::serviceInfo($message,Base::FILE_UPLOAD,$file_upload,$fileContainer);
+
                     }else{
                         return responseBuilder("Error",'File upload error',['File upload error'],[]);
                     }
@@ -172,25 +177,25 @@ class FileUploadController extends Controller
 
         $errors = array();
 
-        // if(is_numeric($request->timestamp) && strtotime(date('Y-m-d H:i:s', $request->timestamp)) === (int)$request->timestamp){
+        if(is_numeric($request->timestamp) && strtotime(date('Y-m-d H:i:s', $request->timestamp)) === (int)$request->timestamp){
 
-        //     // Get the server's current Unix timestamp using the current date function
-        //     $serverTimestamp = strtotime(date('Y-m-d H:i:s'));
+            // Get the server's current Unix timestamp using the current date function
+            $serverTimestamp = strtotime(date('Y-m-d H:i:s'));
 
-        //     // Calculate the difference in seconds between the given timestamp and the server's current timestamp
-        //     $difference = $serverTimestamp - $request->timestamp;
+            // Calculate the difference in seconds between the given timestamp and the server's current timestamp
+            $difference = $serverTimestamp - $request->timestamp;
 
-        //     // Check if the difference is less than 60 seconds (1 minute)
-        //     //return $difference >= 60;
-        //     if($difference >= 60){
-        //        $err = ["timestamp" => "Timestamp expired."];
-        //        return responseBuilder("Error","request error.",$err,[]);
-        //     }
+            // Check if the difference is less than 60 seconds (1 minute)
+            //return $difference >= 60;
+            if($difference >= 60){
+               $err = ["timestamp" => "Timestamp expired."];
+               return responseBuilder("Error","request error.",$err,[]);
+            }
 
-        // }else{
-        //    $err = ["timestamp" => "Invalid timestamp."];
-        //    return responseBuilder("Error","request error.",$err,[]);
-        // }
+        }else{
+           $err = ["timestamp" => "Invalid timestamp."];
+           return responseBuilder("Error","request error.",$err,[]);
+        }
 
 
 
@@ -293,7 +298,8 @@ class FileUploadController extends Controller
                     ]));
                     
 
-                    $cr_code_value = url_host('uploads/system_files/clients_directory/').$folder_name.'/file_uploads'.'/'.$file_upload->file_name;
+                    //$cr_code_value = url_host('uploads/system_files/clients_directory/').$folder_name.'/file_uploads'.'/'.$file_upload->file_name;
+                    $cr_code_value = url_host('file_info/'.base64_encode($file_upload['id']));
                     $logopath = 'uploads/system_files/clients_directory/'.'logo'.'/'.$select_client->logo;
                     $file_upload_id = $file_upload->id;
 
@@ -314,7 +320,7 @@ class FileUploadController extends Controller
                     // Perform further operations with the file
                 }
 
-                $message = '[CLIENT] : Client ID ['.$validate_keys['client_id'].'] has uploaded new data using API.';
+                $message = '[CLIENT] : Client ID ['.$validate_keys['client_id'].'] has uploaded new file using API.';
                 Base::serviceInfo($message,Base::API_UPLOAD,$file_upload,$validate_keys['user_id']);
 
             return responseBuilder('success',"Your file is currently being processed. Once the processing is complete, you will find it listed.",[],$fileContainer);
@@ -328,7 +334,9 @@ class FileUploadController extends Controller
 
 
     public function totalCount(){
-        return File_upload::all()->count();
+        return File_upload::all()
+        ->where('deleted_at','=',null)
+        ->count();
     }
 
     public function clientfileList(){
@@ -358,6 +366,48 @@ class FileUploadController extends Controller
             return responseBuilder('Success','Successfully fetch!',[],$files);
         }
         return false;
+    }
+
+
+    public function fileInfo($id){
+
+        $id = base64_decode($id);
+
+        $get_file_information = File_upload::select('document_code','file_name','client_id')->find($id);
+
+        if(!$get_file_information)abort(404, 'File Not Found');
+
+        $client = Client::select('client_name')->where('client_id',$get_file_information->client_id)->first();
+
+        $client_folder = md5($client->client_name);
+
+        $file_name = $get_file_information->file_name;
+
+        $file_path = public_path(env('CLIENT_DIR_PATH').$client_folder.'/'.'file_uploads'.'/'.$file_name); 
+
+        if (file_exists($file_path)) {
+            // Get file size in bytes
+            $file_size = filesize($file_path);
+        
+            // Get the MIME type of the file
+            $file_mime_type = mime_content_type($file_path);
+        
+            // Get file last modified timestamp
+            $file_last_modified = filemtime($file_path);
+        
+        } else {
+            // Handle the case where the file does not exist
+        }
+
+
+        $file = array(
+            'file_name' => $file_name,
+            'code' => $get_file_information->document_code,
+            'type' => $file_mime_type,
+            'size' => Upload::formatSizeUnits($file_size),
+        );
+    
+        return view('template.iframe_views.file_info',compact('file'));
     }
 
 }

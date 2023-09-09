@@ -241,7 +241,7 @@
    
     formData.append('image', $('input[type=file]')[0].files[0]);
     
-    //show_loader();
+    show_loader();
    
     $.ajax({
     url: base_url("add_client"),

@@ -432,3 +432,32 @@ function generateRandomNumericString($id,length) {
   }
   return result+id_mask;
 }
+
+function greetings(){
+  const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+  fetch('/greetings', {
+    method: 'GET',
+    headers: {
+      'X-CSRF-TOKEN': csrfToken,
+      'Accept': 'application/json', // You can adjust the Accept header based on your response type
+    },
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then((data) => {
+    // Handle the data received from the /greetings endpoint
+    let greeting = data.greeting
+    $('#greetings #greetings_content').html(greeting+' &nbsp;');
+    console.log(data);
+  })
+  .catch((error) => {
+    // Handle errors, e.g., network issues or invalid response
+    console.error('There was a problem with the fetch operation:', error);
+  });
+
+}

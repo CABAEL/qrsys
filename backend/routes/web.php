@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\AppAccessController;
-use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUsersController;
 use App\Http\Controllers\Document_CodeController;
@@ -43,9 +42,7 @@ Route::post('login/login_post',[LoginController::class,'authenticate'])->name('l
 
 Route::get('/test_redis', function (Request $request) {
 
-    $data = "test";
-    $date_today = date('Y-m-d');
-
+    return base64_encode("1");
 
     //return storage_path('tmp');
     //return RedisModel::updateQueueData(array(['id'=>'test2','file_name'=>'test']));
@@ -58,11 +55,6 @@ Route::get('/', function (Request $request) {
 Route::get('/login', function (Request $request) {
     return view('/login');
 })->middleware('role')->name('login');
-
-
-Route::get('/hash',[ApplicantController::class,'incrementalHash']);
-
-Route::resource('/register/add_user',ApplicantController::class);
 
 Route::get('/logout',[LogoutController::class,'logout_user'])->name('logout');
 
@@ -197,6 +189,10 @@ Route::middleware(['auth','role'])->group(function(){
             return redirect(route('logout'));
         });
 
+        Route::get('/reports',function(Request $request){
+            return view('template.client.reports');
+        });
+
         Route::post('/update_clientuser_data/{id}',[ClientUsersController::class,'updateClientUser']);
 
         Route::put('/confirm_deactivate/{id}',[UserController::class,'deactivateUser']);
@@ -277,8 +273,6 @@ Route::middleware(['auth','role'])->group(function(){
 
         Route::get('/user_info/{id}',[ClientUsersController::class,'show']);
 
-        Route::post('add_user',[UserController::class,'storeUser']);
-
         Route::get('/active_clients',[ClientController::class,'activeClients']);
 
         Route::get('/active_client_users',[ClientUsersController::class,'activeClientUsers']);
@@ -290,16 +284,12 @@ Route::middleware(['auth','role'])->group(function(){
         Route::get('/show_filegroup/{id}',[FilegroupsController::class,'show']);
 
         Route::post('/add_filegroup',[FilegroupsController::class,'store']);
-
-        Route::post('/update_filegroup/{id}',[FilegroupsController::class,'update']);
         
         Route::delete('/delete_filegroup/{id}',[FilegroupsController::class,'destroy']);
 
         Route::get('/activate_user/{id}',[UserController::class,'activate']);
 
         Route::get('/all_filegroups',[FilegroupsController::class,'showFilegroups']);
-
-        Route::get('/clientfiles',[FileUploadController::class,'clientfileList']);
 
         Route::get('/filecollections',function(){
             return view('template.user.filecollections');
@@ -403,7 +393,7 @@ Route::get('/search_result',function(){
     $files = $files->paginate(1);
     
 
-    return view('template.iframe_views.search_result',compact('files'));
+    return view('template.iframe_views.search_result',compact('files','search'));
 })
 ->middleware('auth')
 ->name('file_list');
@@ -427,9 +417,21 @@ Route::post('changePass',[LoginController::class,'changePass'])->name('changePas
 //graph
 Route::get('system_usage_graph',[ReportsController::class,'systemUsageGraph'])->name('systemUsageGraph')->middleware('auth');
 
+
+//reports
 Route::get('/client_report', [ReportsController::class,'clientReports'])->middleware('auth')->name('client_report');
+Route::get('/user_report', [ReportsController::class,'userReports'])->middleware('auth')->name('user_report');
 
 Route::get('/download_client_report', [ReportsController::class,'generateClientReport'])->middleware('auth')->name('download_client_report');
+Route::get('/download_user_report', [ReportsController::class,'generateUserReport'])->middleware('auth')->name('download_user_report');
+
+
+//greetings route
+Route::get('/greetings', [MyaccountController::class,'Greetings'])->middleware('auth')->name('download_user_report');
+
+//file_info
+Route::get('/file_info/{id}',[FileUploadController::class,'fileInfo'])->name('fileInfo');
+
 
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\App_key;
+use App\Models\Base;
 use App\Models\Client;
 use App\Models\File_group;
 use App\Models\User;
@@ -69,7 +70,12 @@ class FilegroupsController extends Controller
             'created_by' => $requestor_client->client_id,
         ]);
 
+
         if($user_creds){
+
+            $message = "[".strtoupper($user_id->role).'] : ['.$user_id->username.'] : ['.$user_id->id.'] has added new file group.';
+            Base::serviceInfo($message,Base::ADD_FILEGROUP,$user_creds);
+
             return responseBuilder('Success','Successfully added!',[],$user_creds);
         }
 
@@ -226,14 +232,21 @@ class FilegroupsController extends Controller
         ->join('clients', 'users.id', '=', 'clients.user_id')->where('users.id','=',$user_id)
         ->first();
 
-        $update_filegroup = File_group::where('id',$id)->update([
+        $update_filegroup = File_group::where('id',$id);
+        $old_filegroup = $update_filegroup->get();
+        $update_filegroup->update([
             'client_id' => $requestor->client_id,
             'group_name' => $validated_filegroups['group_name'],
             'description' => $validated_filegroups['description'],
             'created_by' => $user_id,
         ]);
+        $new_filegroup = $update_filegroup->get();
 
         if($update_filegroup){
+
+            $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->username.'] : ['.Auth::user()->id.'] has updated file group ID: ['.$id.']';
+            Base::serviceInfo($message,Base::UPDATE_FILEGROUP,['from'=> $old_filegroup,'to' => $new_filegroup]);
+
             return responseBuilder('Success','Successfully updated!',[],$update_filegroup);
         }
         return false;
@@ -248,7 +261,12 @@ class FilegroupsController extends Controller
      */
     public function destroy($id)
     {
+        $id = base64_decode($id);
         $user = File_group::find($id);
+
+        $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->username.'] : ['.Auth::user()->id.'] has deleted file group ID: ['.$id.']';
+        Base::serviceInfo($message,Base::UPDATE_FILEGROUP,$user);
+
         $user->delete();
         $data = [
             'flag' => 1,
