@@ -66,9 +66,15 @@
     <div class="container">
     <br>
     <h1 style="font-weight:bolder;">Intelodocs Client Report</h1>
+    <?php 
+        $today = date('Y-m-d');
+        $from = !isset($_GET['from']) ? '': $_GET['from'];
+        $to = !isset($_GET['to']) ? '': $_GET['to'];
+        $url = route('download_client_report', ['from' => $from, 'to' => $to]);
+    ?>
     <br>
         <br>
-        <a href="{{ route('download_client_report', ['from' => '2023-08-01', 'to' => '2023-08-31']) }}"><button class="btn-sm no-print">Download Excel</button></a>
+        <a href="{{$url}}"><button class="btn-sm no-print">Download Excel</button></a>
 
         <button onclick="window.print();" class="btn-sm no-print"> Print PDF</button>
         

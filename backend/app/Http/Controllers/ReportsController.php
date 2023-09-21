@@ -119,14 +119,16 @@ class ReportsController extends Controller
 
     public function generateClientReport(Request $request)
     {
+        //return $request->from;
         
-        $startOfDay = isset($_GET['from']) ? $this->formatDate($_GET['from']) . ' 00:00:00' : Carbon::now()->startOfMonth();
-        $endOfDay = isset($_GET['to']) ? $this->formatDate($_GET['to']) . ' 23:59:59' : Carbon::now()->endOfMonth();
+        $startOfDay = $this->formatDate($request->from) . ' 00:00:00';
+        $endOfDay = $this->formatDate($request->to) . ' 23:59:59';
         
-        $clients = Client::withCount('fileUploads')
-            ->orderBy('file_uploads_count', 'desc')
-            ->whereBetween('created_at', [$startOfDay, $endOfDay])
-            ->get();
+        $clients = Client::withCount('fileUploads');
+        if ($request->from != '' && $request->to != '') {
+            $clients->whereBetween('created_at', [$startOfDay, $endOfDay]);
+        }
+        $clients = $clients->orderBy('file_uploads_count', 'desc')->get();
         
         // Create a new Spreadsheet instance
         $spreadsheet = new Spreadsheet();
@@ -178,26 +180,17 @@ class ReportsController extends Controller
     {
         
 
-        // Check if 'from' is set in $_GET, and if not, set the default value
-        $startOfDay = isset($_GET['from']) ? $this->formatDate($_GET['from']) . ' 00:00:00' : Carbon::now()->startOfMonth();
-
-        // Check if 'to' is set in $_GET, and if not, set the default value
-        $endOfDay = isset($_GET['to']) ? $this->formatDate($_GET['to']) . ' 23:59:59' : Carbon::now()->endOfMonth();
+        $startOfDay = $this->formatDate($request->from) . ' 00:00:00';
+        $endOfDay = $this->formatDate($request->to) . ' 23:59:59';
         
         $clients = Client_user::withCount('fileUploads')
-        ->whereBetween('created_at', [$startOfDay, $endOfDay])
-        ->where('client_id',Auth::user()->client_data->client_id)
-        ->orderBy('file_uploads_count', 'desc')
-        ->get();
-
-            // $clients = Client_user::
-            // withCount('fileUploads')
-            // ->where('client_id',Auth::user()->client_data->client_id)
-            // ->whereBetween('created_at', [$startOfDay, $endOfDay])
-            // ->orderBy('file_uploads_count', 'desc')
-            // ->get();
-            
-            // return $clients;
+        ->where('client_id', Auth::user()->client_data->client_id);
+    
+        if ($request->from != '' && $request->to != '') {
+            $clients->whereBetween('created_at', [$startOfDay, $endOfDay]);
+        }
+        
+        $clients = $clients->orderBy('file_uploads_count', 'desc')->get();
         
         // Create a new Spreadsheet instance
         $spreadsheet = new Spreadsheet();
@@ -249,14 +242,11 @@ class ReportsController extends Controller
         $startOfDay = $this->formatDate($request->from) . ' 00:00:00';
         $endOfDay = $this->formatDate($request->to) . ' 23:59:59';
 
-        $clients = Client::withCount('fileUploads')
-        ->orderBy('file_uploads_count', 'desc');
-    
-        if (isset($request->from) && isset($request->to)) {
-            $clients->whereBetween('created_at', [$startOfDay, $endOfDay]); // Changed $request->from to $request->to
+        $clients = Client::withCount('fileUploads');
+        if ($request->from != '' && $request->to != '') {
+            $clients->whereBetween('created_at', [$startOfDay, $endOfDay]);
         }
-        
-        $clients = $clients->paginate(10);
+        $clients = $clients->orderBy('file_uploads_count', 'desc')->paginate(10);
     
         $clientNames = $clients->pluck('client_name');
         $uploadCounts = $clients->pluck('file_uploads_count');
@@ -269,26 +259,20 @@ class ReportsController extends Controller
     {
         $startOfDay = $this->formatDate($request->from) . ' 00:00:00';
         $endOfDay = $this->formatDate($request->to) . ' 23:59:59';
-
-        $startOfDayDefault = base64_decode($this->formatDate($request->from));
-        $endOfDayDefault = base64_decode($this->formatDate($request->to));
-
-        $users = Client_user::
-        withCount('fileUploads')
-        ->where('client_id',Auth::user()->client_data->client_id)
-        ->orderBy('file_uploads_count', 'desc');
-
-    
-        if (isset($request->from) && isset($request->to)) {
-            $users->whereBetween('created_at', [$startOfDay, $endOfDay]); // Changed $request->from to $request->to
-        }
         
-        $users = $users->paginate(10);
+        $clients = Client_user::withCount('fileUploads')
+        ->where('client_id', Auth::user()->client_data->client_id);
+    
+        if ($request->from != '' && $request->to != '') {
+            $clients->whereBetween('created_at', [$startOfDay, $endOfDay]);
+        }
+    
+        $users = $clients->orderBy('file_uploads_count', 'desc')->paginate(10);
     
         $userNames = $users->pluck('fname');
         $uploadCounts = $users->pluck('file_uploads_count');
     
-        return view('template.iframe_views.reports.user_report',compact('startOfDayDefault','endOfDayDefault','users','userNames','uploadCounts'));
+        return view('template.iframe_views.reports.user_report',compact('startOfDay','endOfDay','users','userNames','uploadCounts'));
         
     }
 

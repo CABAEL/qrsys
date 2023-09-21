@@ -34,7 +34,7 @@
                      </div>
                      <div class="col-md-2">
                            <!-- <input class="form-control" type="submit" value="submit"> -->
-                           <button type="submit" class="form-control btn-sm"><i class="no-print fa fa-filter"></i></button>
+                           <button type="submit" class="form-control btn btn-sm btn-primary"><i class="no-print fa fa-filter"></i> Submit</button>
                      </div>
                      </div>
                   </form> 

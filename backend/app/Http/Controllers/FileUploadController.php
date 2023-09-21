@@ -90,13 +90,15 @@ class FileUploadController extends Controller
                     $ext = end($file_explode);
                     $filesize = $pdf_file->getSize();
                     $filetype = $pdf_file->getClientMimeType();
-                    $formatted_name = $current_user_id . "_" . time() . "_" . str_replace(" ", "_", $file_explode[0]);
+                    //$formatted_name = $current_user_id . "_" . time() . "_" . str_replace(" ", "_", $file_explode[0]);
+                    $formatted_name = str_replace(" ", "_", $file_explode[0]);
             
                     $file_upload = File_upload::create([
                         'client_id' => $current_user['client_id'],
                         'file_group_id' => $validated_inputs['filegroups'],
                         'document_code' => strtoupper($validated_inputs['code']),
-                        'file_name' => strtoupper($validated_inputs['code']) . "_" . $formatted_name . "." . $ext,
+                        //'file_name' => strtoupper($validated_inputs['code']) . "_" . $formatted_name . "." . $ext,
+                        'file_name' => $formatted_name . "." . $ext,
                         'description' => $validated_inputs['description'],
                         'blob_qr' => '',
                         'password' => $validated_inputs['password'],
@@ -118,7 +120,8 @@ class FileUploadController extends Controller
                         PDFcore::generateQrCode($cr_code_value,$logopath,$file_upload_id);
                 
                         // Move the file to a desired location
-                        $pdf_file->move(storage_path('tmp'), strtoupper($validated_inputs['code']) . '_' . $formatted_name . "." . $ext);
+                        //$pdf_file->move(storage_path('tmp'), strtoupper($validated_inputs['code']) . '_' . $formatted_name . "." . $ext);
+                        $pdf_file->move(storage_path('tmp'), $formatted_name . "." . $ext);
     
                         // Store the file details in an array
                         $fileContainer[] = [
@@ -278,13 +281,15 @@ class FileUploadController extends Controller
                     $ext = end($file_explode);
                     $filesize = $pdf_file->getSize();
                     $filetype = $pdf_file->getClientMimeType();
-                    $formatted_name = $current_user_id . "_" . time() . "_" . str_replace(" ", "_", $file_explode[0]);
+                    //$formatted_name = $current_user_id . "_" . time() . "_" . str_replace(" ", "_", $file_explode[0]);
+                    $formatted_name = str_replace(" ", "_", $file_explode[0]);
             
                     $file_upload = File_upload::create([
                         'client_id' => $select_client['client_id'],
                         'file_group_id' => $request->filegroups,
                         'document_code' => $request->code,
-                        'file_name' => strtoupper($request->code) . "_" . $formatted_name . "." . $ext,
+                        //'file_name' => strtoupper($request->code) . "_" . $formatted_name . "." . $ext,
+                        'file_name' => $formatted_name . "." . $ext,
                         'blob_qr' => '',
                         'description' => $request->description,
                         'password' => $request->password,
@@ -306,7 +311,8 @@ class FileUploadController extends Controller
                     PDFcore::generateQrCode($cr_code_value,$logopath,$file_upload_id);
             
                     // Move the file to a desired location
-                    $pdf_file->move(storage_path('tmp'), strtoupper($request->code) . '_' . $formatted_name . "." . $ext);
+                    //$pdf_file->move(storage_path('tmp'), strtoupper($request->code) . '_' . $formatted_name . "." . $ext);
+                    $pdf_file->move(storage_path('tmp'), $formatted_name . "." . $ext);
                     // RedisModel::addData('file_list',[$file_upload->id][storage_path('tmp').'/'.strtoupper($validated_inputs['code']) . '_' . $formatted_name . "." . $ext]);
             
                     // Store the file details in an array
@@ -408,6 +414,38 @@ class FileUploadController extends Controller
         );
     
         return view('template.iframe_views.file_info',compact('file'));
+    }
+
+    public function saveFileData(Request $request,$id){
+
+        $validated_inputs = $request->validate([
+            'code' => [
+                'required',
+                Rule::unique('file_uploads', 'document_code')->ignore($request->input('code'), 'document_code'),
+            ],
+            'description' => 'nullable',
+            'password' => ['nullable', 'regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{6,60}$/'],
+        ],
+        [
+            'password.regex' => 'File password must be composed of at least 1 uppercase, 1 special character, and 1 number with a character count of atleast 6 to 60',
+        ]);
+
+
+
+        $file = File_upload::find($id);
+
+        $file->update([
+            'document_code' => $validated_inputs['code'],
+            'description' => $validated_inputs['description'],
+            'password' => $validated_inputs['password'],
+        ]);
+
+        if($file){
+            return responseBuilder('Success','Successfully updated!',[],$file);
+        }
+
+        return false;
+
     }
 
 }

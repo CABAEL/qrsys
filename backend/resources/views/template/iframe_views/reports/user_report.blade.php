@@ -66,18 +66,15 @@
     <div class="container">
     <br>
     <h1 style="font-weight:bolder;">Intelodocs User Report</h1>
-        <?php
-            // Check if 'from' is set in $_GET, and if not, set the default value
-            $data['from'] = isset($_GET['from']) ? $_GET['from'] : '';
-
-            // Check if 'to' is set in $_GET, and if not, set the default value
-            $data['to'] = isset($_GET['to']) ? $_GET['to'] : '';
-
-        ?>
+    <?php 
+        $today = date('Y-m-d');
+        $from = !isset($_GET['from']) ? '': $_GET['from'];
+        $to = !isset($_GET['to']) ? '': $_GET['to'];
+        $url = route('download_client_report', ['from' => $from, 'to' => $to]);
+    ?>
     <br>
         <br>
-        <a href="{{ route('download_user_report',  ['from' => $data['from'], 'to' => $data['to']]) }}"><button class="btn-sm no-print">Download Excel</button></a>
-
+        <a href="{{$url}}"><button class="btn-sm no-print">Download Excel</button></a>
         <button onclick="window.print();" class="btn-sm no-print"> Print PDF</button>
         
         <div class="row">
@@ -116,7 +113,7 @@
                     </div>
                     <div class="col-md-2">
                         <!-- <input class="form-control" type="submit" value="submit"> -->
-                        <button type="submit" class="form-control btn-sm"><i class="no-print fa fa-filter"></i></button>
+                        <button type="submit" class="form-control btn-sm btn btn-primary"><i class="no-print fa fa-filter"></i> Submit</button>
                     </div>
                     </div>
                 </form> 

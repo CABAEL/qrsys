@@ -24,7 +24,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
-    <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader>
+    <!-- <preloader id="preloader"><img src="{{asset('img/loader/loader.gif')}}" class="loader_gif"></preloader> -->
     </head>
 
     <body>
@@ -65,7 +65,15 @@
             <td>{{ $file->username }}</td>
             <td>{{ $file->document_code }}</td>
             <td>{{ $file->created_at }}</td>
-            <td><button type="button" class="btn btn-sm btn-default viewqr" data-id="<?php echo $file->id?>"><i class="fa fa-qrcode"></i></button></td>
+            <td>
+                <button type="button" class="btn btn-sm btn-default viewqr" data-id="<?php echo $file->id?>"><i class="fa fa-qrcode"></i> View</button>
+                    <br>
+                    <br>
+                <button type="button" class="btn btn-sm btn-default viewupdate" data-id="<?php echo $file->id?>"><i class="fa fa-edit"></i> Edit</button>
+                    <br>
+                    <br>
+                <button type="button" class="btn btn-sm btn-danger delete" data-id="<?php echo $file->id?>"><i class="fa fa-trash"></i> Delete</button>
+            </td>
             <!-- Add more columns as needed -->
         </tr>
         @endforeach
@@ -103,6 +111,43 @@
     <script src="{{ asset('js/custom/general.js') }}"></script>
     <script>
 
+        $(document).on('click','.delete',function(){
+        let file_id = $(this).data('id');
+        let fileViewerUrl = url_host('fileviewer')+'/'+file_id;
+
+        $('#delete_yes').data('id',file_id);
+        $('#viewfile3').modal('show');
+
+
+        });
+
+        $(document).on('click','#delete_yes',function(){
+
+        let file_id = $(this).data('id');
+
+        
+        $.ajax({
+        url: url_host("view_file_delete/"+file_id),
+        type: 'GET', 
+        dataType: 'json',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function(data){
+            console.log(data);
+            $('#viewfile3').modal('hide');
+            window.location.reload();
+        },
+        error: function(e) {
+            console.log(e);
+            hide_loader();
+        }
+        });
+
+
+
+        });
+
         $(document).on('click','.viewqr',function(){
         let file_id = $(this).data('id');
         let fileViewerUrl = url_host('fileviewer')+'/'+file_id;
@@ -112,7 +157,78 @@
         $('.iframe_viewfiles').attr('src', fileViewerUrl);
 
 
-        })
+        });
+
+        
+        SaveFileInfo = (saveForm) => {
+            event.preventDefault();
+            let file_id = $(saveForm).data('id');
+            // Get form
+            var element = $('#UpdateFileForm_errors');
+            // FormData object
+            var formData = new FormData(saveForm);
+
+            $.ajax({
+            url: url_host("save_file_data/"+file_id),
+            type: 'POST',
+            contentType: false,
+            processData: false, 
+            dataType: 'json',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function(data){
+                console.log(data);
+                window.location.reload();
+            },
+            error: function(e) {
+                let element = $('#UpdateFileForm_errors');
+                let form = '#UpdateFileForm'; 
+                promt_errors(form,element,e);
+            }
+            });
+
+            
+        }
+
+        $(document).on('click','.viewupdate',function(){
+
+
+        let file_id = $(this).data('id');
+
+        let fileViewerUrl = url_host('fileviewerupdate')+'/'+file_id;
+
+        
+        $.ajax({
+        url: url_host("view_file_data/"+file_id),
+        type: 'GET', 
+        dataType: 'json',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function(data){
+            console.log(data);
+
+            $('#viewfile2 #code').val(data.document_code);
+            $('#viewfile2 #description').val(data.description);
+            $('#viewfile2 #password').val(data.password);
+            $('#viewfile2 #file_name').text(data.file_name);
+            $('#viewfile2 #UpdateFileForm').attr('data-id',data.id);
+
+            $('#viewfile2').modal('show');
+
+            $('.iframeupdate_viewfiles').attr('src', fileViewerUrl);
+
+            hide_loader();
+        },
+        error: function(e) {
+            console.log(e);
+            hide_loader();
+        }
+        });
+
+        });
 
     </script>
      </div>

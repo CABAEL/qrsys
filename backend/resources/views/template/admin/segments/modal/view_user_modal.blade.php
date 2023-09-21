@@ -22,7 +22,7 @@
                      <div class="form-row">
                         <div class="col-md-12">
                            <label for="name">Client/Organization Name</label>
-                           <input type="text" class="form-control" id="client_name" name="client_name" autofocus/>
+                           <input type="text" class="form-control" id="client_name" name="client_name" readonly/>
                         </div>
                      </div>
                   </div>

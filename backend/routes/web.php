@@ -81,6 +81,49 @@ Route::get('/fileviewer/{id}', function($id) {
 
 });
 
+
+Route::get('/view_file_data/{id}', function($id) {
+
+    $file = File_upload::where('id',$id)->select('client_id','id','file_name','description','password','document_code')
+    ->first();
+
+    return $file;
+
+})->middleware('auth');
+
+Route::post('/save_file_data/{id}',[FileUploadController::class,'saveFileData'])->middleware('auth');
+
+Route::get('/view_file_delete/{id}', function($id) {
+
+    $file = File_upload::find($id)->first();
+
+    $file->delete();
+
+    return $file;
+
+})->middleware('auth');
+
+Route::get('/fileviewerupdate/{id}', function($id) {
+    return $id;
+    // $file = File_upload::find($id);
+    // $client = Client::where('client_id',$file['client_id'])->first();
+
+    // $data = array(
+    //     'filename' => $file['file_name'],
+    //     'client_folder' => md5($client->client_name),
+    //     'client_code' => $file->document_code,
+    //     'logo' => $client->logo,
+    //     'file_password' => ($file->password != '') ? true : false,
+    //     'file_id' => $id
+    // );
+
+    // if(!$file){
+    //     return false;
+    // }
+    // return view('template.iframe_views.file_view', compact('data'));
+
+});
+
 Route::get('/verify_password/{id}', [FilePasswordController::class,'VerifyFilePassword'])->name('file_password_verify');
 
 
@@ -390,7 +433,7 @@ Route::get('/search_result',function(){
         $files->where(...$condition);
     }
     
-    $files = $files->paginate(1);
+    $files = $files->paginate(10);
     
 
     return view('template.iframe_views.search_result',compact('files','search'));

@@ -90,7 +90,7 @@
             </div>
             <br>
             <div class="modal-footer">
-               <button type="submit" class="btn btn-primary btn-block">Update</button>
+               <button type="submit" class="btn btn-primary">Update</button>
             </div>
             <br>
          </form>
