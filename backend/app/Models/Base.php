@@ -11,6 +11,7 @@ class Base extends Model
 {
     use HasFactory;
 
+    const DELETE_FILE = 'delete_file';
     const ADMIN_LOGGED_IN = 'admin_logged_in';
     const ADMIN_LOGGED_OUT = 'admin_logged_out';
     const DEACTIVATE_ADMIN = 'deactivate_admin';

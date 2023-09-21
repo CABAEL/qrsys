@@ -448,4 +448,17 @@ class FileUploadController extends Controller
 
     }
 
+    public function DeleteFile($id) {
+
+        $file = File_upload::find($id)->first();
+        
+        $file->delete();
+
+        $message = "[".strtoupper(Auth::user()->role).'] : ['.Auth::user()->id.'] has deleted file ID : ['.$id.']';
+        Base::serviceInfo($message,Base::DELETE_FILE,$file);
+    
+        return $file;
+    
+    }
+
 }

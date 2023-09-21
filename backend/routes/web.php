@@ -93,15 +93,7 @@ Route::get('/view_file_data/{id}', function($id) {
 
 Route::post('/save_file_data/{id}',[FileUploadController::class,'saveFileData'])->middleware('auth');
 
-Route::get('/view_file_delete/{id}', function($id) {
-
-    $file = File_upload::find($id)->first();
-
-    $file->delete();
-
-    return $file;
-
-})->middleware('auth');
+Route::get('/view_file_delete/{id}', [FileUploadController::class,'DeleteFile'])->middleware('auth');
 
 Route::get('/fileviewerupdate/{id}', function($id) {
     return $id;
