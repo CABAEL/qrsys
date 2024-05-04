@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'created_by'
     ];
 
     /**
@@ -33,5 +34,23 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+
+    public function admin_data()
+    {
+        return $this->hasOne(Admin_user::class);
+    }
+    
+    public function client_data()
+    {
+        return $this->hasOne(Client::class);
+    }
+
+
+    public function client_users_data()
+    {
+        return $this->hasOne(Client_user::class);
+    }
+
 
 }

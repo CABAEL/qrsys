@@ -11,9 +11,10 @@ class Client extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $primaryKey = 'client_id';
+    //protected $primaryKey = 'client_id';
 
     protected $fillable = [
+        'client_id',
         'user_id',
         'client_name',
         'address',
@@ -21,9 +22,15 @@ class Client extends Model
         'email',
         'description',
         'logo',
+        'created_by'
     ];
 
     public function user () : BelongsTo{
         return $this->belongsTo(User::class,'user_id','id');
+    }
+
+    public function fileUploads()
+    {
+        return $this->hasMany(File_upload::class, 'client_id','client_id');
     }
 }

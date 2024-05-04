@@ -50,7 +50,7 @@
             <div class="col-md-4"></div>
         </div>
         <br>
-
+        
         <div class="form-row">
         <div class="col-md-4">
         </div>
@@ -60,7 +60,7 @@
             <br>   
             <div class="qrcodeContainer">
                 <div id="qrcodeCanvas"></div>
-                <img src="{{$logo_link}}" width="65px" height="65px" class="center qr_logo"/>
+                <img src="{{$logo_link}}" width="75px" height="75px" style="border-radius:50%;" class="center qr_logo"/>
             </div>
             <pre style="position:relative;top:0px;">Document Code: {{$data['client_code']}}</pre>
             <br>
@@ -101,9 +101,23 @@
     <script src="{{asset('packages/qrcode/jquery.qrcode.js')}}"></script>
     <script src="{{ asset('packages/qrcode/qrcode.js') }}"></script>
     <script src="{{ asset('packages/htmltocanvas/html2canvas.min.js') }}"></script>
+        <?php
+            $link = "Error.";
+            if($data['file_password'] != "true"){
+                
+               $link = $download_link;
+
+            }else{
+
+                $link = route('file_password_verify',['id' => $data['file_id'] ]);
+
+            }
+
+            //dd($link);
+        ?>
     <script>
         jQuery('#qrcodeCanvas').qrcode({
-            text	: "{{$download_link}}"
+            text	:  "{{$link}}"
         });
 
         

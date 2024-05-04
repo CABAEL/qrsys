@@ -7,7 +7,7 @@
      fetch(base_url('active_client_users'))
        .then(response => response.json())
        .then(data => {
-         let client_count = data.responseJSON.data.length;
+         let client_count = data.data.length;
          $('#activeClients').html(client_count)
        })
        .catch(error => {
@@ -25,24 +25,14 @@
     },
     success: function(ret) {
       console.log(ret);
+      //let ret = JSON.parse(data_ret);
       var div = '';
     
       var count = 0;
-       $.each(ret.responseJSON.data, function( index, value ) {
-       let date = getFormattedDate(value.created_at);
-   
-       div +='<tr>'; 
-       div +='<td><pre>'+value.file_name+'</pre></td>';
-       div +='<td>'+value.username+'</td>';
-       div +='<td>'+value.document_code+'</td>';
-       div +='<td>'+date+'</td>';
-       div +='<td><button type="button" class="btn btn-sm btn-default viewqr" data-id="'+value.id+'"><i class="fa fa-qrcode"></i></button></td>';
-       div +='</tr>';
+       $.each(ret.data, function( index, value ) {
        count ++;
      });
       
-   
-     $('#FileListBody').html(div);
      $('#uploadcount').html(count);
 
      $( "#files-table" ).DataTable({
@@ -57,7 +47,7 @@
     });
 
 
-    fetchAllFilegroups('#SelectionList',value = null)
+    fetchAllFilegroups('#uploadForm',value = null)
 
     function fetchAllFilegroups(form,value = null){
     const url = base_url('all_filegroups');
@@ -68,13 +58,13 @@
         }
         return response.json();
       })
-      .then(data => {
+      .then(response => {
 
       // Handle the response data here
       const selectElement = $(form + ' #filegroups')[0] // Replace with the ID of your <select> element
       let div = '';
       div += '<option value="">-----------------</option>';
-      data.responseJSON.data.forEach(filegroup => {
+      response.data.forEach(filegroup => {
         div += '<option value="'+filegroup.id+'">'+filegroup.group_name+'</option>';
       });
 
@@ -86,7 +76,7 @@
       })
       .catch(error => {
         // Handle any errors that occur during the request
-        console.error(error);
+        //console.error(error);
       });
 
   }

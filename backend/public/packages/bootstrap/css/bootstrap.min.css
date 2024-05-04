@@ -5695,7 +5695,7 @@ a.bg-success:hover {
 }
 
 .bg-info {
-    background-color: #17a2b8 !important
+    background-color: #151324 !important
 }
 
 a.bg-info:focus,
@@ -9192,4 +9192,15 @@ a.text-dark:hover {
   .qr_logo {
     position: absolute;
   }
+
+  #greetings{
+    margin: auto;
+    width: 50%;
+    color:#fff;
+    font-size: 11px;
+  }
+  #greetings .progress{
+    width: 25%;
+  }
+
 /*# sourceMappingURL=bootstrap.min.css.map */

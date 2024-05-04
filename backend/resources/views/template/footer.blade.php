@@ -48,4 +48,7 @@
 <!-- <script src="{{ asset('js/custom/home.js') }}"></script>
 <script src="{{ asset('js/custom/custom.js') }}"></script> -->
 <script src="{{ asset('js/custom/general.js') }}"></script>
+<script>
+greetings();
+</script>
 

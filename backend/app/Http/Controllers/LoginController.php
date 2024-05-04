@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Base;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 
 class LoginController extends Controller
@@ -36,12 +39,15 @@ class LoginController extends Controller
             $rdr ='';
             if($role === 'admin'){
                 $rdr = '/admin/home';
+                $logged_in = 'logged_in_admin';
             }
             if($role === 'client'){
                 $rdr = '/client/home';
+                $logged_in = 'logged_in_client';
             }
             if($role === 'user'){
                 $rdr = '/user/home';
+                $logged_in = 'logged_in_user';
             }
 
             $data = [
@@ -50,54 +56,45 @@ class LoginController extends Controller
                 'rdr' => $rdr,
                 'status' => 200,
             ];
+
+            $message = '['.strtoupper($role)."] : [".Auth::user()->username."] : [".Auth::user()->id."] has logged in.";
+
+            $operation = '';
+
+            if($role == 'admin'){
+                $operation = Base::ADMIN_LOGGED_OUT;
+            }else if($role = 'client'){
+                $operation = Base::CLIENT_LOGGED_OUT;
+            }else if($role = 'client'){
+                $operation = Base::USER_LOGGED_OUT;
+            }else{
+                $operation = '';
+            }
+
+            Base::serviceInfo($message,$logged_in,Auth::user());
+
            return $data;
 
         }
 
     }
 
-    /*public function google_auth(Request $request)
+
+    public static function changePass(Request $request)
     {
-
-        $validated_user = $request->validate([
-            'email' => 'required|email',
-            'google_id' => 'required|string|max:255',
-            'fname' => 'required|max:60',
-            'lname' => 'required|max:60',
-        ]);
-
-        if(User::where('google_id',$validated_user['google_id'])){
-            
-            $user_data = User::all();
-
-            Auth::loginUsingId($user_data[0]['id']);
-            $role = Auth::user()->role;
-            
-            $data = [
-                'flag' => 1,
-                'role' => $role,
-                'status' => 200,
-            ];
-
-            return response()->json($data);
-
-        }else{
-
-            $request_profile = User::create([
-                'google_id' => $validated_user['google_id'],
-                'username' => $validated_user['email'],
-                'password' => ''
-            ]);
-
-            $data = [
-                'data' => $request_profile,
-                'message' => 'Google user created successfully!'
-            ];
+        $user = Auth::user();
     
-            return response()->json($data);
-        
+        if (!Hash::check($request->oldpassword, $user->password)) {
+            return responseBuilder('Error', 'Old password does not match!', ['password' => 'not match'], []);
         }
+    
+        // Update the user's password
+        $user->update([
+            'password' => Hash::make($request->input('new_password')),
+        ]);
+    
+        return responseBuilder('Success', 'Password updated successfully!', [], []);
+    }
 
-    }*/
 
 }

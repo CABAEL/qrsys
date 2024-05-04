@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\FilegroupsController;
+use App\Http\Controllers\FileUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -19,40 +21,9 @@ use App\Http\Controllers\LogoutController;
 |
 */
 
-Route::get('/index',function(){
-    return session()->get('user_data');
-});
+Route::post('/file_upload',[FileUploadController::class,'APIuploadFile']);
 
-
-Route::post('login_post',[LoginController::class,'authenticate']);
-
-Route::post('adduser',[UserController::class,'store']);
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::resource('user',UserController::class);
-    Route::get('/logout',[LogoutController::class,'logout_user']);
-
-    Route::get('/home',function(){
-        return view('index');
-    });
-
-
-    Route::get('/check',function(){
-        return Auth::id();
-    });
-});
-
-Route::get('/invalidUser',function(){
-    
-    $data = [
-        'status' => 'Invalid request.',
-        'message' => 'Access denied.',
-    ];
-
-    return response()->json($data);
-
-})->name('invalidUser');
-
+Route::get('/all_filegroups',[FilegroupsController::class,'ApishowFilegroups']);
 
 
 

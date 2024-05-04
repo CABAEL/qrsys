@@ -100,62 +100,64 @@
     
     }
     });
-    
-    
-    var myLineChart1 = new Chart(document.getElementById('myBarChart'), {
-      type: 'bar',
-        data: {
-          labels: ['Monday', 'Tuesday' , 'Wednesday' , 'Thursday' , 'Friday' , 'Saturday' , 'Sunday '],
-          datasets: [
-            {
-              label: 'Client',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#36A2EB',
-              backgroundColor: '#035fae',
-            },
-            {
-              label: 'Users',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#36A2EB',
-              backgroundColor: '#777',
-            },
-            {
-              label: 'Uploads',
-              data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
-              borderColor: '#16f4f0',
-              backgroundColor: '#ace4ee',
-            },
-          ],
+
+
+  $(document).ready(function() {
+
+    $.ajax({
+        url: url_host('system_usage_graph'),
+        type: 'GET',
+        contentType: false,
+        processData: false,
+        enctype: "multipart/form-data",
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-      // options: {
-      //   scales: {
-      //     xAxes: [{
-      //       time: {
-      //         unit: 'month'
-      //       },
-      //       gridLines: {
-      //         display: true
-      //       },
-      //       ticks: {
-      //         maxTicksLimit: 12
-      //       }
-      //     }],
-      //     yAxes: [{
-      //       ticks: {
-      //         min: 0,
-      //         max: 100,
-      //         maxTicksLimit: 10
-      //       },
-      //       gridLines: {
-      //         display: true
-      //       }
-      //     }],
-      //   },
-      //   legend: {
-      //     display: true
-      //   }
-      // }
-    });
+        success: function(response) {
+          
+          // let res = JSON.parse(response);
+          let file_upload = response.file_uploads;
+          let clients = response.clients;
+          let users = response.users;
+          
+          let week = response.week;
+          console.log(file_upload);
+
+
+          var myLineChart1 = new Chart(document.getElementById('myBarChart'), {
+            type: 'bar',
+              data: {
+                labels: week,
+                datasets: [
+                  {
+                    label: 'Client',
+                    data: clients,
+                    borderColor: '#36A2EB',
+                    backgroundColor: '#3e4b4f',
+                  },
+                  {
+                    label: 'Users',
+                    data: users,
+                    borderColor: '#36A2EB',
+                    backgroundColor: '#777',
+                  },
+                  {
+                    label: 'Uploads',
+                    data: file_upload,
+                    borderColor: '#16f4f0',
+                    backgroundColor: '#035fae' ,
+                  },
+                ],
+              },
+          });          
+
+        },
+        error: function(e) {
+
+        }
+      });
+    
+  });
     
     
     $(document).on('click','.viewclient',function(event) {
@@ -239,7 +241,7 @@
    
     formData.append('image', $('input[type=file]')[0].files[0]);
     
-    //show_loader();
+    show_loader();
    
     $.ajax({
     url: base_url("add_client"),
@@ -253,10 +255,10 @@
     data:formData,
     success: function(response) {
    
-     let error_check = response.responseJSON.errors;
+     let error_check = response.errors;
      if(error_check == null || error_check.length == 0){
    
-       alert('User added successfully!');
+       alert(response.message);
        hide_loader();
        window.location.replace('/login');
    
@@ -379,7 +381,7 @@
          },
          error: function(e){
            console.log(e);
-           //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+           //alert(emessage +"<br>"+eerrors);
            // var element = $('#add_user_errors');
            // var form = '#addusermodal'; 
            // promt_errors(form,element,e);
@@ -393,8 +395,8 @@
      // alert("pasok");
      fetch(base_url('active_clients'))
        .then(response => response.json())
-       .then(data => {
-         let client_count = data.responseJSON.data.length;
+       .then(response_data => {
+         let client_count = response_data.data.length;
          $('#activeClients').html(client_count)
        })
        .catch(error => {
@@ -441,7 +443,7 @@
       },
       data:formData,
       success: function(data) {
-        let error_check = data.responseJSON.errors;
+        let error_check = data.errors;
         if(error_check == null || error_check.length == 0){
       
           alert('User updated successfully!');
@@ -463,7 +465,7 @@
         }
       },
       error: function(e) {
-        //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+        //alert(emessage +"<br>"+eerrors);
         var element = $('#update_client_errors');
         var form = '#viewclientmodal'; 
         promt_errors(form,element,e);
@@ -506,7 +508,7 @@
           window.location.replace('/login');
         },
         error: function(e){
-          //alert(e.responseJSON.message +"<br>"+e.responseJSON.errors);
+          //alert(emessage +"<br>"+eerrors);
           var element = $('#update_client_errors');
           var form = '#viewclientmodal'; 
           promt_errors(form,element,e);

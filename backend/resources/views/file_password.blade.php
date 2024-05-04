@@ -46,8 +46,13 @@
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title text-center">Password Verification</h2>
-                <form method="POST" action="">
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+                <h2 class="card-title text-center">File Password Verification</h2>
+                <form method="POST" action="{{route('submitFilePassword',['id' => $file_id] )}}">
                     @csrf
                     <div class="form-group">
                         <label for="password">Password:</label>
