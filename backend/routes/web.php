@@ -12,6 +12,7 @@ use App\Http\Controllers\LogsController;
 use App\Http\Controllers\MyaccountController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ReportsController;
+use App\Jobs\TestLogJob;
 use App\Models\App_key;
 use App\Models\Base;
 use App\Models\Client;
@@ -35,6 +36,18 @@ use App\Http\Controllers\FileUploadController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('/debug-queue', function () {
+    return [
+        'env' => env('QUEUE_CONNECTION'),
+        'config' => config('queue.default'),
+    ];
+});
+
+Route::get('/test-job', function () {
+    TestLogJob::dispatch();
+    return 'TestJob dispatched!';
+});
 
 
 //login routes

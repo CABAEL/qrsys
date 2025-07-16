@@ -37,7 +37,7 @@ class PDFcore extends Model
         ->logoResizeToWidth(50)
         ->logoResizeToHeight(50)
         ->logoPunchoutBackground(true)
-        ->labelText('INTELODOCS')
+        ->labelText('QRDOCX')
         ->labelFont(new NotoSans(20))
         ->labelAlignment(new LabelAlignmentCenter())
         ->validateResult(false)
