@@ -12,6 +12,6 @@ class JobsDispatcherController extends Controller
     public function dispatchFiles(){
 
         dispatch(new AddingQrProcess());
-        
+        return "job dispatched!";
     }
 }

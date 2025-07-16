@@ -65,7 +65,7 @@
 
     <div class="container">
     <br>
-    <h1 style="font-weight:bolder;">Intelodocs User Report</h1>
+    <h1 style="font-weight:bolder;">QRDOCX User Report</h1>
     <?php 
         $today = date('Y-m-d');
         $from = !isset($_GET['from']) ? '': $_GET['from'];

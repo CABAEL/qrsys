@@ -10,21 +10,6 @@ class LogoutController extends Controller
 {
     public function logout_user(Request $request){
         
-        $role = Auth::user()->role;
-        $message = '['.strtoupper($role)."] : [".Auth::user()->username."] : [".Auth::user()->id."] has logged out.";
-        
-        $operation = '';
-        if($role == 'admin'){
-            $operation = Base::ADMIN_LOGGED_OUT;
-        }else if($role = 'client'){
-            $operation = Base::CLIENT_LOGGED_OUT;
-        }else if($role = 'client'){
-            $operation = Base::USER_LOGGED_OUT;
-        }else{
-            $operation = '';
-        }
-        Base::serviceInfo($message,$operation,Auth::user());
-
         Auth::logout();
 
         $request->session()->invalidate();
