@@ -137,7 +137,8 @@ Route::post('/submit_file_password/{id}',[FilePasswordController::class,'submitF
 Route::get('/upload-pdf', [PDFController::class, 'addQrDummy'])->name('upload.pdf');
 
 
-Route::middleware(['auth','role'])->group(function(){
+//Route::middleware(['auth','role'])->group(function(){
+Route::middleware(['auth'])->group(function(){
 
     Route::group([                                           
         'prefix' => 'admin',
