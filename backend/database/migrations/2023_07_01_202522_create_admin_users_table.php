@@ -25,8 +25,9 @@ class CreateAdminUsersTable extends Migration
             $table->string('address',255)->nullable();
             $table->string('description',255)->nullable();
             $table->integer('created_by');
-        $table->timestamp('created_at')->nullable(false)->useCurrent();
-        $table->timestamp('updated_at')->nullable(false)->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->timestamps();
+        //$table->timestamp('created_at')->nullable(false)->useCurrent();
+        //$table->timestamp('updated_at')->nullable(false)->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     }
