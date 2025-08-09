@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \          # <-- Added for PostgreSQL support
     zip \
     curl \
     libcurl4-openssl-dev \
     openssl \
     supervisor \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd curl xml
+    && docker-php-ext-install pdo_mysql pdo_pgsql mbstring zip exif pcntl bcmath gd curl xml
 
 # Copy composer binary
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
