@@ -21,9 +21,10 @@ class CreateUsersTable extends Migration
             $table->integer('status')->default(1);
             $table->rememberToken();
             $table->integer('created_by');
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')
-            ->default(DB::raw('NULL ON UPDATE CURRENT_TIMESTAMP'))->nullable();
+            // $table->timestamp('created_at')->useCurrent();
+            // $table->timestamp('updated_at')
+            $table->timestamps();
+            //->default(DB::raw('NULL ON UPDATE CURRENT_TIMESTAMP'))->nullable();
             $table->softDeletes();
         });
     }
