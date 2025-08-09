@@ -86,13 +86,13 @@
         success: function(data) {
           console.log(data);
           
-          if(data.flag == 1 ){
-            hide_loader();
-            window.location = (data.rdr);
-          }else{
-            alert("Login Failed!");
-            hide_loader();
-          }
+          // if(data.flag == 1 ){
+          //   hide_loader();
+          //   window.location = (data.rdr);
+          // }else{
+          //   alert("Login Failed!");
+          //   hide_loader();
+          // }
         },
         error: function(e) {
           alert("Login Failed!");
