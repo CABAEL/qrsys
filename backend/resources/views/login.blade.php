@@ -29,7 +29,7 @@
         <span style="font-size:10px;">Welcome to</span>  QRDOCX
         </div>
         <div class="card-body">
-          {{-- <form id="loginForm">
+          <form id="loginForm">
             <div class="form-group">
               <label for="username">Username</label>
               <input type="text" class="form-control" id="username" required>
@@ -55,36 +55,7 @@
            
             <input type="submit" class="btn btn-primary btn-block" id="loginBtn" value="Submit"></input>
             <br>
-          </form> --}}
-
-<form method="POST" action="{{ route('login_post') }}">
-  @csrf
-  <div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" name="username" class="form-control" id="username" required>
-  </div>
-  <div class="form-group">
-    <label>Password</label>
-    <div class="input-group" id="show_hide_password">
-      <input type="password" name="password" class="form-control" id="password" required />
-      <div class="input-group-addon">
-        <a href="#"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="form-check">
-      <label class="form-check-label">
-        <input type="checkbox" name="remember" value="remember" class="form-check-input" id="remember">
-        Remember Password
-      </label>
-    </div>
-  </div>
-  <input type="submit" class="btn btn-primary btn-block" value="Submit" />
-  <br>
-</form>
-
-
+          </form>
         </div>
       </div>
     </div>
