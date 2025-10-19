@@ -30,29 +30,26 @@ class MondaySyncController extends Controller
         $clients = $data['clients'];
 
         foreach ($clients as $client) {
-            $itemName = trim($client['client_name'] ?? '');
+            $itemName = addslashes(trim($client['client_name'] ?? 'Unnamed Client'));
 
-            // Map Sloan fields to Monday.com columns
             $columnValues = [
-                'text_mkwwy3et' => $client['status'] ?? '',      // Status
-                'text_mkwwnfvf' => $client['loan_amount'] ?? '', // Loan amount
-                'date_mkwwtchh' => $client['loan_date'] ?? '',   // Loan date
+                'text_mkwwy3et' => $client['status'] ?? '',       // Status
+                'text_mkwwnfvf' => (string) ($client['loan_amount'] ?? ''), // Loan Amount
+                'date_mkwwtchh' => $client['loan_date'] ?? '',    // Loan Date
             ];
 
-            $columnValuesJson = json_encode($columnValues);
-            $columnValuesEscaped = addslashes($columnValuesJson);
+            $columnValuesJson = json_encode($columnValues, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-            // Create new item in Monday.com
             $mutation = <<<GRAPHQL
             mutation {
-              create_item(
-                board_id: $boardId,
-                item_name: "$itemName",
-                column_values: "{$columnValuesEscaped}"
-              ) {
+            create_item(
+                board_id: {$boardId},
+                item_name: "{$itemName}",
+                column_values: "{$columnValuesJson}"
+            ) {
                 id
                 name
-              }
+            }
             }
             GRAPHQL;
 
@@ -63,6 +60,7 @@ class MondaySyncController extends Controller
 
             Log::info("Created Item: {$itemName}", $res->json());
         }
+
 
         return response()->json(['success' => true, 'message' => 'All items created successfully']);
     }
