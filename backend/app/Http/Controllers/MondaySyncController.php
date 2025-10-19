@@ -38,7 +38,7 @@ public function sync()
         $itemName = "{$client['client_name']}";
 
         $columnValues = [
-            'color_mkwwdrf8' => ['label' => $client['status']], // Status
+            'text_mkwwy3et' => $client['status'], // Status
             'date_mkwwtchh'  => $client['loan_date'] ?? '',
             'text_mkwwnfvf'  => $client['loan_amount'] ?? ''
         ];
