@@ -31,17 +31,15 @@ class MondaySyncController extends Controller
         $status = strtolower($client['status'] ?? '');
 
 
-        $emailValue = [
-            'email' => $client['email'] ?? '',
-            'text'  => $client['client_name'] ?? ''
-        ];
-
         $columnValues = [
             'color_mkwwm9wt' => [ 'label' => $status ?? ''],
             'text_mkwwnfvf' => (string) ($client['loan_amount'] ?? ''),
             'date_mkwwtchh' => $client['loan_date'] ?? '',
             'phone_mkwwgjs8' => $client['contact'] ?? '',
-            'email_mkwwe7e1' => json_encode($emailValue, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            'email_mkwwe7e1' => [
+                'email' => $client['email'] ?? '',
+                'text'  => $client['client_name'] ?? ''
+            ],
         ];
 
         // Escape JSON string for GraphQL
