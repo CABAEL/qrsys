@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MondaySyncController extends Controller
 {
     /**
-     * Sync Sloan API data structure to Monday.com board.
+     * Sync Sloan client data to Monday.com board.
      */
     public function sync()
     {
@@ -17,7 +18,6 @@ class MondaySyncController extends Controller
         $mondayApiKey = env('MONDAY_API_KEY');
         $boardId = env('MONDAY_BOARD_ID');
 
-        // 1️⃣ Get data structure from Sloan API
         $response = Http::get($sloanApiUrl);
         if ($response->failed()) {
             return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
@@ -30,7 +30,6 @@ class MondaySyncController extends Controller
             return response()->json(['error' => 'No clients found in Sloan API'], 400);
         }
 
-        // 2️⃣ Use first client to generate Monday.com columns
         $firstClient = $clients[0];
         foreach ($firstClient as $field => $value) {
             $columnTitle = ucfirst(str_replace('_', ' ', $field));
@@ -44,33 +43,33 @@ class MondaySyncController extends Controller
             }
             GRAPHQL;
 
-            Http::withHeaders([
+            $res = Http::withHeaders([
                 'Authorization' => $mondayApiKey,
                 'Content-Type' => 'application/json',
             ])->post($mondayApiUrl, ['query' => $mutation]);
+
+            Log::info("Created column: {$columnTitle}", $res->json());
         }
 
-        // 3️⃣ Add Sloan clients as items (rows)
         foreach ($clients as $client) {
             $itemName = "{$client['firstname']} {$client['lastname']}";
 
-            // Prepare column values
             $columnValues = [
-                'firstname' => $client['firstname'],
+                'firstname'  => $client['firstname'],
                 'middlename' => $client['middlename'],
-                'lastname' => $client['lastname'],
-                'status' => $client['status'],
-                'loan_date' => $client['loan_date'],
+                'lastname'   => $client['lastname'],
+                'status'     => $client['status'],
+                'loan_date'  => $client['loan_date'],
             ];
 
-            $columnValuesJson = json_encode($columnValues);
+            $columnValuesEscaped = addslashes(json_encode($columnValues));
 
             $mutation = <<<GRAPHQL
             mutation {
                 create_item (
                     board_id: $boardId,
                     item_name: "$itemName",
-                    column_values: "$columnValuesJson"
+                    column_values: "$columnValuesEscaped"
                 ) {
                     id
                     name
@@ -78,10 +77,12 @@ class MondaySyncController extends Controller
             }
             GRAPHQL;
 
-            Http::withHeaders([
+            $res = Http::withHeaders([
                 'Authorization' => $mondayApiKey,
                 'Content-Type' => 'application/json',
             ])->post($mondayApiUrl, ['query' => $mutation]);
+
+            Log::info("Created item: {$itemName}", $res->json());
         }
 
         return response()->json(['success' => true, 'message' => 'Board synced successfully']);
