@@ -15,28 +15,53 @@ public function sync()
     $mondayApiKey = env('MONDAY_API_KEY');
     $boardId = env('MONDAY_BOARD_ID');
 
+    // Step 1: Get Sloan data
     $response = Http::get($sloanApiUrl);
-    if ($response->failed()) return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
+    if ($response->failed()) {
+        return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
+    }
 
     $clients = $response->json()['clients'] ?? [];
-    if (empty($clients)) return response()->json(['error' => 'No clients found in Sloan API'], 400);
+    if (empty($clients)) {
+        return response()->json(['error' => 'No clients found in Sloan API'], 400);
+    }
 
-    // Map status to group
-    $groupMap = [
-        'payed'  => 'Payed',
-        'unpaid' => 'Unpayed',
+    // Step 2: Get Monday.com groups
+    $groupsQuery = <<<GRAPHQL
+    query {
+        boards(ids: $boardId) {
+            groups {
+                id
+                title
+            }
+        }
+    }
+    GRAPHQL;
+
+    $groupsRes = Http::withHeaders([
+        'Authorization' => $mondayApiKey,
+        'Content-Type' => 'application/json',
+    ])->post($mondayApiUrl, ['query' => $groupsQuery]);
+
+    $groupsData = $groupsRes->json()['data']['boards'][0]['groups'] ?? [];
+    $groupMap = [];
+    foreach ($groupsData as $group) {
+        $groupMap[strtolower($group['title'])] = $group['id'];
+    }
+
+    // Map Sloan status to Monday.com status labels and group names
+    $statusMap = [
+        'payed'  => ['label' => 'Paid', 'group' => 'payed'],
+        'unpaid' => ['label' => 'Unpayed', 'group' => 'unpayed'],
     ];
 
-    // Get existing items
-    $query = <<<GRAPHQL
+    // Step 3: Get existing items
+    $itemsQuery = <<<GRAPHQL
     query {
         boards(ids: $boardId) {
             items {
                 id
                 name
-                group {
-                    id
-                }
             }
         }
     }
@@ -45,43 +70,51 @@ public function sync()
     $existingItemsRes = Http::withHeaders([
         'Authorization' => $mondayApiKey,
         'Content-Type' => 'application/json',
-    ])->post($mondayApiUrl, ['query' => $query]);
+    ])->post($mondayApiUrl, ['query' => $itemsQuery]);
 
     $existingItems = $existingItemsRes->json()['data']['boards'][0]['items'] ?? [];
     $existingMap = [];
     foreach ($existingItems as $item) {
-        $existingMap[$item['name']] = $item;
+        $existingMap[$item['name']] = $item['id'];
     }
 
+    // Step 4: Upsert items
     foreach ($clients as $client) {
         $itemName = $client['client_name'];
-        $status = strtolower($client['status']);
-        $groupId = $groupMap[$status] ?? 'CLIENT DATA';
+        $statusKey = strtolower($client['status']);
+        $statusLabel = $statusMap[$statusKey]['label'] ?? 'Unpayed';
+        $groupTitle = $statusMap[$statusKey]['group'] ?? 'default';
+        $groupId = $groupMap[$groupTitle] ?? $groupMap['default'] ?? '';
+
+        if (!$groupId) {
+            Log::error("No valid group found for {$itemName}, status: {$statusKey}");
+            continue;
+        }
 
         $columnValues = [
-            'color_mkwwdrf8' => ['label' => ucfirst($status)], // make sure label matches exactly
+            'color_mkwwdrf8' => ['label' => $statusLabel], // Status
             'date_mkwwtchh'  => $client['loan_date'] ?? '',
             'text_mkwwnfvf'  => $client['loan_amount'] ?? ''
         ];
 
-        $columnValuesEscaped = addslashes(json_encode($columnValues));
+        $columnValuesJson = json_encode($columnValues, JSON_UNESCAPED_SLASHES);
 
         if (isset($existingMap[$itemName])) {
             // Update existing item
-            $itemId = $existingMap[$itemName]['id'];
+            $itemId = $existingMap[$itemName];
             $mutation = <<<GRAPHQL
             mutation {
-                change_column_values(item_id: $itemId, board_id: $boardId, column_values: "$columnValuesEscaped") {
+                change_column_values(item_id: $itemId, board_id: $boardId, column_values: "$columnValuesJson") {
                     id
                     name
                 }
             }
             GRAPHQL;
         } else {
-            // Create new item in correct group
+            // Create new item
             $mutation = <<<GRAPHQL
             mutation {
-                create_item(board_id: $boardId, group_id: "$groupId", item_name: "$itemName", column_values: "$columnValuesEscaped") {
+                create_item(board_id: $boardId, group_id: "$groupId", item_name: "$itemName", column_values: "$columnValuesJson") {
                     id
                     name
                 }
@@ -94,11 +127,18 @@ public function sync()
             'Content-Type' => 'application/json',
         ])->post($mondayApiUrl, ['query' => $mutation]);
 
-        Log::info("Upserted Item: {$itemName}", $res->json());
+        $resJson = $res->json();
+
+        if (isset($resJson['errors'])) {
+            Log::error("Monday.com mutation failed for {$itemName}", $resJson['errors']);
+        } else {
+            Log::info("Upserted Item: {$itemName}", $resJson['data']);
+        }
     }
 
     return response()->json(['success' => true, 'message' => 'Board synced successfully']);
 }
+
 
 
 
