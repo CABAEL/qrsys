@@ -30,7 +30,7 @@ class MondaySyncController extends Controller
         $itemName = addslashes(trim($client['client_name'] ?? 'Unnamed Client'));
 
         $columnValues = [
-            'color_mkwwm9wt' => $client['status'] ?? '',
+            'color_mkwwm9wt' => [ 'label' => $client['status'] ?? ''],
             'text_mkwwnfvf' => (string) ($client['loan_amount'] ?? ''),
             'date_mkwwtchh' => $client['loan_date'] ?? '',
         ];
