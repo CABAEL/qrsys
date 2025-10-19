@@ -30,7 +30,7 @@ class MondaySyncController extends Controller
         $itemName = addslashes(trim($client['client_name'] ?? 'Unnamed Client'));
 
         $columnValues = [
-            'text_mkwwy3et' => $client['status'] ?? '',
+            'color_mkwwm9wt' => [ 'label' => $client['status'] ?? ''],
             'text_mkwwnfvf' => (string) ($client['loan_amount'] ?? ''),
             'date_mkwwtchh' => $client['loan_date'] ?? '',
         ];
@@ -39,17 +39,17 @@ class MondaySyncController extends Controller
         $columnValuesJson = addslashes(json_encode($columnValues, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
         $mutation = <<<GRAPHQL
-mutation {
-    create_item(
-        board_id: {$boardId},
-        item_name: "{$itemName}",
-        column_values: "{$columnValuesJson}"
-    ) {
-        id
-        name
-    }
-}
-GRAPHQL;
+        mutation {
+            create_item(
+                board_id: {$boardId},
+                item_name: "{$itemName}",
+                column_values: "{$columnValuesJson}"
+            ) {
+                id
+                name
+            }
+        }
+        GRAPHQL;
 
         $res = Http::withHeaders([
             'Authorization' => "Bearer {$mondayApiKey}",
