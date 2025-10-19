@@ -28,9 +28,10 @@ class MondaySyncController extends Controller
 
     foreach ($clients as $client) {
         $itemName = addslashes(trim($client['client_name'] ?? 'Unnamed Client'));
+        $status = strtolower($client['status'] ?? '');
 
         $columnValues = [
-            'color_mkwwm9wt' => [ 'label' => $client['status'] ?? ''],
+            'color_mkwwm9wt' => [ 'label' => $status ?? ''],
             'text_mkwwnfvf' => (string) ($client['loan_amount'] ?? ''),
             'date_mkwwtchh' => $client['loan_date'] ?? '',
         ];
@@ -38,10 +39,21 @@ class MondaySyncController extends Controller
         // Escape JSON string for GraphQL
         $columnValuesJson = addslashes(json_encode($columnValues, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
+        if ($status === 'paid') {
+            $groupId = 'group_mkww75yv';
+        } elseif ($status === 'unpaid') {
+            $groupId = 'group_mkww9keb';
+        } else {
+            Log::warning("Status not recognized for item: {$itemName} ({$status})");
+            continue; // skip if status is not recognized
+        }
+
+
         $mutation = <<<GRAPHQL
         mutation {
             create_item(
                 board_id: {$boardId},
+                group_id: "{$groupId}",
                 item_name: "{$itemName}",
                 column_values: "{$columnValuesJson}"
             ) {
@@ -57,47 +69,6 @@ class MondaySyncController extends Controller
         ])->post($mondayApiUrl, ['query' => $mutation]);
 
         Log::info("Created Item: {$itemName}", $created_res->json());
-
-
-
-
-        //add move item to group logic here
-        $createdItem = $created_res->json('data.create_item');
-
-        // Check if creation was successful
-        if (!$createdItem || !isset($createdItem['id'])) {
-            Log::error("Failed to create item: {$itemName}", $created_res->json());
-            continue; // skip moving if creation failed
-        }
-
-        // 2️⃣ Move the item to the correct group based on status
-        $status = strtolower($client['status'] ?? '');
-
-        if ($status === 'paid') {
-            $groupId = 'group_mkww75yv';
-        } elseif ($status === 'unpaid') {
-            $groupId = 'group_mkww9keb';
-        } else {
-            Log::warning("Status not recognized for item: {$itemName} ({$status})");
-            continue; // skip if status is not recognized
-        }
-
-        $moveMutation = <<<GRAPHQL
-        mutation {
-            move_item_to_group(item_id: {$createdItem['id']}, group_id: "{$groupId}") {
-                id
-            }
-        }
-        GRAPHQL;
-
-        $moveRes = Http::withHeaders([
-            'Authorization' => "Bearer {$mondayApiKey}",
-            'Content-Type' => 'application/json',
-        ])->post($mondayApiUrl, ['query' => $moveMutation]);
-
-        Log::info("Moved Item: {$itemName} to group {$groupId}", $moveRes->json());
-
-
 
 
     }
