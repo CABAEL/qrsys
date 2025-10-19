@@ -38,11 +38,13 @@ public function sync()
         $itemName = trim("$firstname $middlename $lastname");
 
         // 🎨 Map Sloan status to Monday.com label + color
-        $statusData = match ($status) {
-            'payed', 'paid' => ['label' => 'Paid', 'color' => 'green'],
-            'unpaid' => ['label' => 'Unpaid', 'color' => 'red'],
-            default => ['label' => 'Unknown', 'color' => 'gray'],
-        };
+        if (in_array($status, ['payed', 'paid'])) {
+            $statusData = ['label' => 'Paid', 'color' => 'green'];
+        } elseif ($status === 'unpaid') {
+            $statusData = ['label' => 'Unpaid', 'color' => 'red'];
+        } else {
+            $statusData = ['label' => 'Unknown', 'color' => 'gray'];
+        }
 
         // ✅ Build column values
         $columnValues = [
