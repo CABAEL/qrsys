@@ -59,7 +59,7 @@ public function sync()
 
     // Step 3: Loop through clients and upsert
     foreach ($clients as $client) {
-        $itemName = trim("{$client['firstname']} {$client['middlename']} {$client['lastname']}");
+        $itemName = trim("{$client['client_name']}");
 
         $columnValues = [
             'color_mkwwdrf8' => ['label' => $client['status']], // Status column
