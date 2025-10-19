@@ -8,89 +8,70 @@ use Illuminate\Support\Facades\Log;
 
 class MondaySyncController extends Controller
 {
-    public function sync()
-    {
-        $sloanApiUrl = 'https://abbynavarro.github.io/Abby.github.io/api/';
-        $mondayApiUrl = 'https://api.monday.com/v2';
-        $mondayApiKey = env('MONDAY_API_KEY');
-        $boardId = env('MONDAY_BOARD_ID');
+public function sync()
+{
+    $sloanApiUrl = 'https://abbynavarro.github.io/Abby.github.io/api/';
+    $mondayApiUrl = 'https://api.monday.com/v2';
+    $mondayApiKey = env('MONDAY_API_KEY');
+    $boardId = env('MONDAY_BOARD_ID');
 
-        $response = Http::get($sloanApiUrl);
-        if ($response->failed()) {
-            return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
-        }
-
-        $data = $response->json();
-
-        if (!isset($data['clients']) || !is_array($data['clients'])) {
-            return response()->json(['error' => 'Invalid Sloan API structure'], 400);
-        }
-
-        $clients = $data['clients'];
-
-        if (empty($clients)) {
-            return response()->json(['error' => 'No clients found in Sloan API'], 400);
-        }
-
-
-        $firstClient = $clients[0];
-
-        foreach ($firstClient as $field => $value) {
-            $columnTitle = ucfirst(str_replace('_', ' ', $field));
-
-            $mutation = <<<GRAPHQL
-            mutation {
-                create_column (board_id: $boardId, title: "$columnTitle", column_type: text) {
-                    id
-                    title
-                }
-            }
-            GRAPHQL;
-
-            $res = Http::withHeaders([
-                'Authorization' => $mondayApiKey,
-                'Content-Type' => 'application/json',
-            ])->post($mondayApiUrl, ['query' => $mutation]);
-
-            Log::info("Column Created: {$columnTitle}", $res->json());
-        }
-
-
-        foreach ($clients as $client) {
-            $itemName = "{$client['firstname']} {$client['lastname']}";
-
-            $columnValues = [
-                'firstname'  => $client['firstname'] ?? '',
-                'middlename' => $client['middlename'] ?? '',
-                'lastname'   => $client['lastname'] ?? '',
-                'status'     => $client['status'] ?? '',
-                'loan_date'  => $client['loan_date'] ?? '',
-            ];
-
-            
-            $columnValuesEscaped = addslashes(json_encode($columnValues));
-
-            $mutation = <<<GRAPHQL
-            mutation {
-                create_item (
-                    board_id: $boardId,
-                    item_name: "$itemName",
-                    column_values: "$columnValuesEscaped"
-                ) {
-                    id
-                    name
-                }
-            }
-            GRAPHQL;
-
-            $res = Http::withHeaders([
-                'Authorization' => $mondayApiKey,
-                'Content-Type' => 'application/json',
-            ])->post($mondayApiUrl, ['query' => $mutation]);
-
-            Log::info("Item Created: {$itemName}", $res->json());
-        }
-
-        return response()->json(['success' => true, 'message' => 'Board synced successfully']);
+    // Step 1: Get Sloan data
+    $response = Http::get($sloanApiUrl);
+    if ($response->failed()) {
+        return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
     }
+
+    $data = $response->json();
+
+    if (!isset($data['clients']) || !is_array($data['clients'])) {
+        return response()->json(['error' => 'Invalid Sloan API structure'], 400);
+    }
+
+    $clients = $data['clients'];
+
+    if (empty($clients)) {
+        return response()->json(['error' => 'No clients found in Sloan API'], 400);
+    }
+
+    // Step 2: Loop through clients and insert into Monday board
+    foreach ($clients as $client) {
+        $itemName = "{$client['firstname']} {$client['lastname']}";
+
+        // 🧩 Correctly map Sloan fields to Monday.com column IDs
+        $columnValues = [
+            'text_mkww520e' => $client['firstname'] ?? '',   // Firstname
+            'text_mkww1rgp' => $client['middlename'] ?? '',  // Middlename
+            'text_mkww5v1g' => $client['lastname'] ?? '',    // Lastname
+            'text_mkwwvw6k' => $client['status'] ?? '',      // Status
+            'text_mkww673e' => $client['loan_date'] ?? '',   // Loan date
+        ];
+
+        // Encode to JSON and escape for GraphQL
+        $columnValuesEscaped = addslashes(json_encode($columnValues));
+
+        $mutation = <<<GRAPHQL
+        mutation {
+            create_item (
+                board_id: $boardId,
+                item_name: "$itemName",
+                column_values: "$columnValuesEscaped"
+            ) {
+                id
+                name
+            }
+        }
+        GRAPHQL;
+
+        // Step 3: Send mutation to Monday.com API
+        $res = Http::withHeaders([
+            'Authorization' => $mondayApiKey,
+            'Content-Type' => 'application/json',
+        ])->post($mondayApiUrl, ['query' => $mutation]);
+
+        Log::info("Item Created: {$itemName}", $res->json());
+    }
+
+    return response()->json(['success' => true, 'message' => 'Board synced successfully']);
+}
+
 }
