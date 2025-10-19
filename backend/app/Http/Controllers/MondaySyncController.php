@@ -15,26 +15,28 @@ public function sync()
     $mondayApiKey = env('MONDAY_API_KEY');
     $boardId = env('MONDAY_BOARD_ID');
 
-    // Step 1: Get Sloan data
     $response = Http::get($sloanApiUrl);
-    if ($response->failed()) {
-        return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
-    }
+    if ($response->failed()) return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
 
-    $data = $response->json();
-    $clients = $data['clients'] ?? [];
+    $clients = $response->json()['clients'] ?? [];
+    if (empty($clients)) return response()->json(['error' => 'No clients found in Sloan API'], 400);
 
-    if (empty($clients)) {
-        return response()->json(['error' => 'No clients found in Sloan API'], 400);
-    }
+    // Map status to group
+    $groupMap = [
+        'payed'  => 'Payed',
+        'unpaid' => 'Unpayed',
+    ];
 
-    // Step 2: Get existing items from Monday board
+    // Get existing items
     $query = <<<GRAPHQL
     query {
         boards(ids: $boardId) {
             items {
                 id
                 name
+                group {
+                    id
+                }
             }
         }
     }
@@ -45,20 +47,19 @@ public function sync()
         'Content-Type' => 'application/json',
     ])->post($mondayApiUrl, ['query' => $query]);
 
-    $existingItemsData = $existingItemsRes->json();
-    $existingItems = $existingItemsData['data']['boards'][0]['items'] ?? [];
-
+    $existingItems = $existingItemsRes->json()['data']['boards'][0]['items'] ?? [];
     $existingMap = [];
     foreach ($existingItems as $item) {
-        $existingMap[$item['name']] = $item['id'];
+        $existingMap[$item['name']] = $item;
     }
 
-    // Step 3: Loop through clients and upsert
     foreach ($clients as $client) {
         $itemName = $client['client_name'];
+        $status = strtolower($client['status']);
+        $groupId = $groupMap[$status] ?? 'CLIENT DATA';
 
         $columnValues = [
-            'color_mkwwdrf8' => ['label' => $client['status']],
+            'color_mkwwdrf8' => ['label' => ucfirst($status)], // make sure label matches exactly
             'date_mkwwtchh'  => $client['loan_date'] ?? '',
             'text_mkwwnfvf'  => $client['loan_amount'] ?? ''
         ];
@@ -67,7 +68,7 @@ public function sync()
 
         if (isset($existingMap[$itemName])) {
             // Update existing item
-            $itemId = $existingMap[$itemName];
+            $itemId = $existingMap[$itemName]['id'];
             $mutation = <<<GRAPHQL
             mutation {
                 change_column_values(item_id: $itemId, board_id: $boardId, column_values: "$columnValuesEscaped") {
@@ -77,10 +78,10 @@ public function sync()
             }
             GRAPHQL;
         } else {
-            // Create new item
+            // Create new item in correct group
             $mutation = <<<GRAPHQL
             mutation {
-                create_item(board_id: $boardId, item_name: "$itemName", column_values: "$columnValuesEscaped") {
+                create_item(board_id: $boardId, group_id: "$groupId", item_name: "$itemName", column_values: "$columnValuesEscaped") {
                     id
                     name
                 }
@@ -98,6 +99,7 @@ public function sync()
 
     return response()->json(['success' => true, 'message' => 'Board synced successfully']);
 }
+
 
 
 }
