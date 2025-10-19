@@ -33,46 +33,75 @@ public function sync()
         return response()->json(['error' => 'No clients found in Sloan API'], 400);
     }
 
-    // Step 2: Loop through clients and insert into Monday board
-    foreach ($clients as $client) {
-        $itemName = "{$client['firstname']} {$client['lastname']}";
-
-        // 🧩 Correctly map Sloan fields to Monday.com column IDs
-        $columnValues = [
-            'name' => $client['firstname'] . $client['middlename'] ?? ''. $client['lastname'] ,
-            'color_mkwwdrf8' => [
-                'label' => $client['status'] // or 'unpayed'
-            ],
-            'date_mkwwtchh' => $client['loan_date'] ?? '',
-            'text_mkwwnfvf' => $client['loan_amount']   // Loan date
-        ];
-
-        // Encode to JSON and escape for GraphQL
-        $columnValuesEscaped = addslashes(json_encode($columnValues));
-
-        $mutation = <<<GRAPHQL
-        mutation {
-            create_item (
-                board_id: $boardId,
-                item_name: "$itemName",
-                column_values: "$columnValuesEscaped"
-            ) {
+    // Step 2: Fetch existing items on the Monday board
+    $query = <<<GRAPHQL
+    query {
+        boards(ids: $boardId) {
+            items {
                 id
                 name
             }
         }
-        GRAPHQL;
+    }
+    GRAPHQL;
 
-        // Step 3: Send mutation to Monday.com API
+    $existingItemsRes = Http::withHeaders([
+        'Authorization' => $mondayApiKey,
+        'Content-Type' => 'application/json',
+    ])->post($mondayApiUrl, ['query' => $query]);
+
+    $existingItems = $existingItemsRes->json()['data']['boards'][0]['items'] ?? [];
+
+    $existingNames = [];
+    foreach ($existingItems as $item) {
+        $existingNames[$item['name']] = $item['id'];
+    }
+
+    // Step 3: Loop through clients and upsert
+    foreach ($clients as $client) {
+        $itemName = trim("{$client['firstname']} {$client['middlename']} {$client['lastname']}");
+
+        $columnValues = [
+            'color_mkwwdrf8' => ['label' => $client['status']], // Status column
+            'date_mkwwtchh'  => $client['loan_date'] ?? '',      // Loan date
+            'text_mkwwnfvf'  => $client['loan_amount'] ?? '',    // Loan amount
+        ];
+
+        $columnValuesEscaped = addslashes(json_encode($columnValues));
+
+        if (isset($existingNames[$itemName])) {
+            // Update existing item
+            $itemId = $existingNames[$itemName];
+            $mutation = <<<GRAPHQL
+            mutation {
+                change_column_values(item_id: $itemId, board_id: $boardId, column_values: "$columnValuesEscaped") {
+                    id
+                    name
+                }
+            }
+            GRAPHQL;
+        } else {
+            // Create new item
+            $mutation = <<<GRAPHQL
+            mutation {
+                create_item(board_id: $boardId, item_name: "$itemName", column_values: "$columnValuesEscaped") {
+                    id
+                    name
+                }
+            }
+            GRAPHQL;
+        }
+
         $res = Http::withHeaders([
             'Authorization' => $mondayApiKey,
             'Content-Type' => 'application/json',
         ])->post($mondayApiUrl, ['query' => $mutation]);
 
-        Log::info("Item Created: {$itemName}", $res->json());
+        Log::info("Upserted Item: {$itemName}", $res->json());
     }
 
     return response()->json(['success' => true, 'message' => 'Board synced successfully']);
 }
+
 
 }
