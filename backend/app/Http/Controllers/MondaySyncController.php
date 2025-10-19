@@ -39,11 +39,9 @@ public function sync()
 
         // 🧩 Correctly map Sloan fields to Monday.com column IDs
         $columnValues = [
-            'text_mkww520e' => $client['firstname'] ?? '',   // Firstname
-            'text_mkww1rgp' => $client['middlename'] ?? '',  // Middlename
-            'text_mkww5v1g' => $client['lastname'] ?? '',    // Lastname
-            'text_mkwwvw6k' => $client['status'] ?? '',      // Status
-            'text_mkww673e' => $client['loan_date'] ?? '',   // Loan date
+            'name' => $client['firstname'] . $client['middlename'] ?? ''. $client['lastname'] ,
+            'color_mkww1qt2' => $client['status'] ?? '',      // Status
+            'date_mkwwq5s7' => $client['loan_date'] ?? '',   // Loan date
         ];
 
         // Encode to JSON and escape for GraphQL
