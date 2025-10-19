@@ -15,38 +15,49 @@ public function sync()
     $mondayApiKey = env('MONDAY_API_KEY');
     $boardId = env('MONDAY_BOARD_ID');
 
-    // Step 1: Get Sloan data
+    // Step 1: Fetch Sloan data
     $response = Http::get($sloanApiUrl);
     if ($response->failed()) {
         return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
     }
 
     $data = $response->json();
-
-    if (!isset($data['clients']) || !is_array($data['clients'])) {
-        return response()->json(['error' => 'Invalid Sloan API structure'], 400);
-    }
-
-    $clients = $data['clients'];
+    $clients = $data['clients'] ?? [];
 
     if (empty($clients)) {
         return response()->json(['error' => 'No clients found in Sloan API'], 400);
     }
 
     foreach ($clients as $client) {
-        $itemName = trim(($client['firstname'] ?? '') . ' ' . ($client['middlename'] ?? '') . ' ' . ($client['lastname'] ?? ''));
+        $firstname = trim($client['firstname'] ?? '');
+        $middlename = trim($client['middlename'] ?? '');
+        $lastname = trim($client['lastname'] ?? '');
+        $status = strtolower($client['status'] ?? '');
+        $loanDate = $client['loan_date'] ?? '';
 
-        // 🧩 Map Sloan fields to Monday.com columns
+        $itemName = trim("$firstname $middlename $lastname");
+
+        // 🎨 Map Sloan status to Monday.com label + color
+        $statusData = match ($status) {
+            'payed', 'paid' => ['label' => 'Paid', 'color' => 'green'],
+            'unpaid' => ['label' => 'Unpaid', 'color' => 'red'],
+            default => ['label' => 'Unknown', 'color' => 'gray'],
+        };
+
+        // ✅ Build column values
         $columnValues = [
-            'text_mkww8qk' => $client['status'] ?? '',        // Status
-            'date_mkwwtchh' => $client['loan_date'] ?? '',    // Loan date
+            // Status (color + label)
+            'color_mkwwv27d' => [
+                'label' => $statusData['label'],
+                'color' => $statusData['color'],
+            ],
+            // Loan date
+            'date_mkwwtchh'  => $loanDate,
         ];
 
-        // Prepare JSON column values
-        $columnValuesJson = json_encode($columnValues);
-        $columnValuesEscaped = addslashes($columnValuesJson);
+        $columnValuesJson = json_encode($columnValues, JSON_UNESCAPED_UNICODE);
 
-        // Step 2: Check if item already exists (by name)
+        // Step 2: Check if item exists by name
         $checkQuery = <<<GRAPHQL
         query {
           items_by_column_values(
@@ -60,23 +71,23 @@ public function sync()
         }
         GRAPHQL;
 
-        $checkRes = Http::withHeaders([
+        $checkResponse = Http::withHeaders([
             'Authorization' => $mondayApiKey,
             'Content-Type' => 'application/json',
         ])->post($mondayApiUrl, ['query' => $checkQuery]);
 
-        $existingItems = $checkRes->json()['data']['items_by_column_values'] ?? [];
+        $existingItems = $checkResponse->json('data.items_by_column_values') ?? [];
 
-        // Step 3: Decide whether to update or create
+        // Step 3: Update or Create
         if (!empty($existingItems)) {
             $itemId = $existingItems[0]['id'];
 
             $mutation = <<<GRAPHQL
             mutation {
-              change_column_values(
+              change_multiple_column_values(
                 board_id: $boardId,
                 item_id: $itemId,
-                column_values: "{$columnValuesEscaped}"
+                column_values: "$columnValuesJson"
               ) {
                 id
                 name
@@ -91,7 +102,7 @@ public function sync()
               create_item(
                 board_id: $boardId,
                 item_name: "$itemName",
-                column_values: "{$columnValuesEscaped}"
+                column_values: "$columnValuesJson"
               ) {
                 id
                 name
@@ -102,13 +113,13 @@ public function sync()
             $action = 'Created';
         }
 
-        // Step 4: Send mutation to Monday.com API
-        $res = Http::withHeaders([
+        // Step 4: Send mutation
+        $mutationResponse = Http::withHeaders([
             'Authorization' => $mondayApiKey,
             'Content-Type' => 'application/json',
         ])->post($mondayApiUrl, ['query' => $mutation]);
 
-        Log::info("Item {$action}: {$itemName}", $res->json());
+        Log::info("Item {$action}: {$itemName}", $mutationResponse->json());
     }
 
     return response()->json(['success' => true, 'message' => 'Board synced successfully']);
