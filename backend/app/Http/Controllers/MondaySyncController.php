@@ -64,7 +64,11 @@ class MondaySyncController extends Controller
         //add move item to group logic here
         $createdItem = $created_res->json('data.create_item');
 
-        Log::info("Created Item: {$itemName}", $created_res->json());
+        // Check if creation was successful
+        if (!$createdItem || !isset($createdItem['id'])) {
+            Log::error("Failed to create item: {$itemName}", $created_res->json());
+            continue; // skip moving if creation failed
+        }
 
         // 2️⃣ Move the item to the correct group based on status
         $status = strtolower($client['status'] ?? '');
@@ -74,6 +78,7 @@ class MondaySyncController extends Controller
         } elseif ($status === 'unpaid') {
             $groupId = 'group_mkww9keb';
         } else {
+            Log::warning("Status not recognized for item: {$itemName} ({$status})");
             continue; // skip if status is not recognized
         }
 
