@@ -25,7 +25,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\FileUploadController;
-
+use App\Http\Controllers\MondaySyncController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,17 +37,9 @@ use App\Http\Controllers\FileUploadController;
 |
 */
 
-Route::get('/debug-queue', function () {
-    return [
-        'env' => env('QUEUE_CONNECTION'),
-        'config' => config('queue.default'),
-    ];
-});
 
-Route::get('/test-job', function () {
-    TestLogJob::dispatch();
-    return 'TestJob dispatched!';
-});
+
+Route::get('/monday/sync', [MondaySyncController::class, 'sync']);
 
 
 //login routes
@@ -70,6 +62,8 @@ Route::get('/login', function (Request $request) {
 })->middleware('role')->name('login');
 
 Route::get('/logout',[LogoutController::class,'logout_user'])->name('logout');
+
+
 
 
 //file Viewer Routes
@@ -137,8 +131,7 @@ Route::post('/submit_file_password/{id}',[FilePasswordController::class,'submitF
 Route::get('/upload-pdf', [PDFController::class, 'addQrDummy'])->name('upload.pdf');
 
 
-//Route::middleware(['auth','role'])->group(function(){
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth','role'])->group(function(){
 
     Route::group([                                           
         'prefix' => 'admin',
