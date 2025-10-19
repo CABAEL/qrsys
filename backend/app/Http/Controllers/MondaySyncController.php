@@ -35,11 +35,12 @@ public function sync()
     }
 
     foreach ($clients as $client) {
-        $itemName = trim(($client['firstname'] ?? '') . ' ' . ($client['middlename'] ?? '') . ' ' . ($client['lastname'] ?? ''));
+        $itemName = trim($client['client_name'] ?? '');
 
         // 🧩 Map Sloan fields to Monday.com columns
         $columnValues = [
-            'text_mkww8qk' => $client['status'] ?? '',        // Status
+            'text_mkwwy3et' => $client['status'] ?? '',        // Status
+            'text_mkwwnfvf' => $client['loan_amount'] ?? '',    // Loan date
             'date_mkwwtchh' => $client['loan_date'] ?? '',    // Loan date
         ];
 
