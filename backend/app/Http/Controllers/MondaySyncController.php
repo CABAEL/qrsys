@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Log;
 
 class MondaySyncController extends Controller
 {
-    /**
-     * Sync Sloan client data to Monday.com board.
-     */
     public function sync()
     {
         $sloanApiUrl = 'https://abbynavarro.github.io/Abby.github.io/api/';
@@ -24,13 +21,20 @@ class MondaySyncController extends Controller
         }
 
         $data = $response->json();
-        $clients = $data['clients'] ?? [];
+
+        if (!isset($data['clients']) || !is_array($data['clients'])) {
+            return response()->json(['error' => 'Invalid Sloan API structure'], 400);
+        }
+
+        $clients = $data['clients'];
 
         if (empty($clients)) {
             return response()->json(['error' => 'No clients found in Sloan API'], 400);
         }
 
+
         $firstClient = $clients[0];
+
         foreach ($firstClient as $field => $value) {
             $columnTitle = ucfirst(str_replace('_', ' ', $field));
 
@@ -48,20 +52,22 @@ class MondaySyncController extends Controller
                 'Content-Type' => 'application/json',
             ])->post($mondayApiUrl, ['query' => $mutation]);
 
-            Log::info("Created column: {$columnTitle}", $res->json());
+            Log::info("Column Created: {$columnTitle}", $res->json());
         }
+
 
         foreach ($clients as $client) {
             $itemName = "{$client['firstname']} {$client['lastname']}";
 
             $columnValues = [
-                'firstname'  => $client['firstname'],
-                'middlename' => $client['middlename'],
-                'lastname'   => $client['lastname'],
-                'status'     => $client['status'],
-                'loan_date'  => $client['loan_date'],
+                'firstname'  => $client['firstname'] ?? '',
+                'middlename' => $client['middlename'] ?? '',
+                'lastname'   => $client['lastname'] ?? '',
+                'status'     => $client['status'] ?? '',
+                'loan_date'  => $client['loan_date'] ?? '',
             ];
 
+            
             $columnValuesEscaped = addslashes(json_encode($columnValues));
 
             $mutation = <<<GRAPHQL
@@ -82,7 +88,7 @@ class MondaySyncController extends Controller
                 'Content-Type' => 'application/json',
             ])->post($mondayApiUrl, ['query' => $mutation]);
 
-            Log::info("Created item: {$itemName}", $res->json());
+            Log::info("Item Created: {$itemName}", $res->json());
         }
 
         return response()->json(['success' => true, 'message' => 'Board synced successfully']);
