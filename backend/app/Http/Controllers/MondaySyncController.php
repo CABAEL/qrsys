@@ -8,40 +8,89 @@ use Illuminate\Support\Facades\Log;
 
 class MondaySyncController extends Controller
 {
-public function sync()
-{
-    $sloanResponse = Http::get('https://abbynavarro.github.io/Abby.github.io/api/');
-    $sloanData = $sloanResponse->json();
+    public function sync()
+    {
+        $sloanApiUrl = 'https://abbynavarro.github.io/Abby.github.io/api/';
+        $mondayApiUrl = 'https://api.monday.com/v2';
+        $mondayApiKey = env('MONDAY_API_KEY');
+        $boardId = env('MONDAY_BOARD_ID');
 
-    $clients = $sloanData['clients'] ?? [];
+        $response = Http::get($sloanApiUrl);
+        if ($response->failed()) {
+            return response()->json(['error' => 'Failed to fetch from Sloan API'], 500);
+        }
 
-    foreach ($clients as $client) {
-        Http::withHeaders([
-            'Authorization' => env('MONDAY_API_KEY'),
-            'Content-Type' => 'application/json',
-        ])->post('https://api.monday.com/v2', [
-            'query' => '
-                mutation ($boardId: Int!, $itemName: String!, $columnValues: JSON!) {
-                    create_item (board_id: $boardId, item_name: $itemName, column_values: $columnValues) {
-                        id
-                    }
+        $data = $response->json();
+
+        if (!isset($data['clients']) || !is_array($data['clients'])) {
+            return response()->json(['error' => 'Invalid Sloan API structure'], 400);
+        }
+
+        $clients = $data['clients'];
+
+        if (empty($clients)) {
+            return response()->json(['error' => 'No clients found in Sloan API'], 400);
+        }
+
+
+        $firstClient = $clients[0];
+
+        foreach ($firstClient as $field => $value) {
+            $columnTitle = ucfirst(str_replace('_', ' ', $field));
+
+            $mutation = <<<GRAPHQL
+            mutation {
+                create_column (board_id: $boardId, title: "$columnTitle", column_type: text) {
+                    id
+                    title
                 }
-            ',
-            'variables' => [
-                'boardId' => env('MONDAY_BOARD_ID'), // your Monday board ID
-                'itemName' => $client['firstname'] . ' ' . $client['lastname'],
-                'columnValues' => json_encode([
-                    'text' => $client['firstname'], // column ID for Firstname
-                    'text1' => $client['middlename'],
-                    'text2' => $client['lastname'],
-                    'status' => ['label' => ucfirst($client['status'])],
-                    'date' => ['date' => $client['loan_date']],
-                ]),
-            ],
-        ]);
+            }
+            GRAPHQL;
+
+            $res = Http::withHeaders([
+                'Authorization' => $mondayApiKey,
+                'Content-Type' => 'application/json',
+            ])->post($mondayApiUrl, ['query' => $mutation]);
+
+            Log::info("Column Created: {$columnTitle}", $res->json());
+        }
+
+
+        foreach ($clients as $client) {
+            $itemName = "{$client['firstname']} {$client['lastname']}";
+
+            $columnValues = [
+                'firstname'  => $client['firstname'] ?? '',
+                'middlename' => $client['middlename'] ?? '',
+                'lastname'   => $client['lastname'] ?? '',
+                'status'     => $client['status'] ?? '',
+                'loan_date'  => $client['loan_date'] ?? '',
+            ];
+
+            
+            $columnValuesEscaped = addslashes(json_encode($columnValues));
+
+            $mutation = <<<GRAPHQL
+            mutation {
+                create_item (
+                    board_id: $boardId,
+                    item_name: "$itemName",
+                    column_values: "$columnValuesEscaped"
+                ) {
+                    id
+                    name
+                }
+            }
+            GRAPHQL;
+
+            $res = Http::withHeaders([
+                'Authorization' => $mondayApiKey,
+                'Content-Type' => 'application/json',
+            ])->post($mondayApiUrl, ['query' => $mutation]);
+
+            Log::info("Item Created: {$itemName}", $res->json());
+        }
+
+        return response()->json(['success' => true, 'message' => 'Board synced successfully']);
     }
-
-    return response()->json(['success' => true, 'message' => 'Board synced successfully']);
-}
-
 }
