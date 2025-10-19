@@ -34,6 +34,7 @@ class MondaySyncController extends Controller
             'color_mkwwm9wt' => [ 'label' => $status ?? ''],
             'text_mkwwnfvf' => (string) ($client['loan_amount'] ?? ''),
             'date_mkwwtchh' => $client['loan_date'] ?? '',
+            'phone_mkwwgjs8' => $client['contact'] ?? '',
         ];
 
         // Escape JSON string for GraphQL
