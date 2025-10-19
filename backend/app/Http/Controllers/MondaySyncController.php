@@ -49,14 +49,14 @@ public function sync()
 
         $mutation = <<<GRAPHQL
         mutation {
-            create_item (
-                board_id: $boardId,
-                item_name: "$itemName",
-                column_values: "$columnValuesEscaped"
-            ) {
-                id
-                name
-            }
+        create_item (
+            board_id: $boardId,
+            item_name: "{$columnValues['name']}",
+            column_values: "{$columnValuesEscaped}"
+        ) {
+            id
+            name
+        }
         }
         GRAPHQL;
 
