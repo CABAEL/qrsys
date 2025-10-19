@@ -38,7 +38,7 @@ class MondaySyncController extends Controller
             'phone_mkwwgjs8' => $client['contact'] ?? '',
             'email_mkwwe7e1' => [
                 'email' => $client['email'] ?? '',
-                'text'  => $client['client_name'] ?? ''
+                'text'  => $client['email'] ?? ''
             ],
         ];
 
